@@ -1,0 +1,35 @@
+{
+  "minor": 7, 
+  "history": {
+    "aster": "myprivate", 
+    "versionMajor": 13, 
+    "versionPatch": 99, 
+    "versionMinor": 4, 
+    "cases": [
+      {
+        "stages": [
+          1
+        ], 
+        "name": "Case_1"
+      }
+    ], 
+    "stages": [
+      {
+        "files": [
+          {
+            "handle": 10, 
+            "attr": 2, 
+            "filename": "/tmp/function.txt"
+          }
+        ], 
+        "text": "myfunc = DEFI_FONCTION(NOM_PARA='ABSC', VALE=(0.0, 0.0, 1.0, 10.0))\n\nIMPR_FONCTION(COURBE=_F(FONCTION=myfunc), FORMAT='TABLEAU', UNITE=10)", 
+        "uid": 1, 
+        "name": "Stage_1", 
+        "result": {
+          "resstate": 1, 
+          "job": {}
+        }
+      }
+    ]
+  }
+}

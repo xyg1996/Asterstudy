@@ -1,0 +1,20 @@
+#!/bin/bash
+
+if [ $# -ne 2 ]; then
+    echo "usage: `basename $0` ajsfile1 ajsfile2"
+    echo "   compare two ajs files."
+    exit 1
+fi
+
+file1=$1
+file2=$2
+
+ajs1=`mktemp --tmpdir=/tmp ajs1.XXXXXX`
+ajs2=`mktemp --tmpdir=/tmp ajs2.XXXXXX`
+
+sed -e 's/\\n/\n/g' ${file1} > ${ajs1}
+sed -e 's/\\n/\n/g' ${file2} > ${ajs2}
+
+meld ${ajs1} ${ajs2}
+
+rm -f ${ajs1} ${ajs2}

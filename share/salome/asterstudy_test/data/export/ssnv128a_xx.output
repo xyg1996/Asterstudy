@@ -1,0 +1,1011 @@
+
+--------------------------------------------------------------------------------
+ Exécution de Code_Aster
+
+<INFO> préparation de l'environnement dans /local00/tmp/G79848-dsp0837509-interactif_25011
+
+--------------------------------------------------------------------------------
+ Copie des données
+
+copie de .../G79848-dsp0837509-mer.-17-135644.002/RunCase_4_ssnv128a.comm...
+                                                                        [  OK  ]
+copie de .../G79848-dsp0837509-mer.-17-135644.002/ssnv128a.mmed...      [  OK  ]
+<INFO> Paramètres : mémoire 1024.0 Mo - temps max 900 s
+
+--------------------------------------------------------------------------------
+ Contenu de /local00/tmp/G79848-dsp0837509-interactif_25011 avant l'exécution
+
+total 208
+drwx------   3 G79848 rdusers   4096 janv. 17 13:56 .
+drwxrwxrwt 301 root   root     65536 janv. 17 13:56 ..
+-rw-r--r--   1 G79848 rdusers    749 janv. 17 13:56 25011.export
+-rw-r--r--   1 G79848 rdusers   2453 janv. 17 13:56 config.txt
+-rw-r--r--   1 G79848 rdusers   8677 janv. 17 13:56 fort.1.1
+-rw-r--r--   1 G79848 rdusers 111033 janv. 17 13:56 fort.20
+drwxr-xr-x   2 G79848 rdusers   4096 janv. 17 13:56 REPE_OUT
+
+
+--------------------------------------------------------------------------------
+ Exécution de Code_Aster
+
+<INFO> Ligne de commande 1 :
+<INFO> /usr/bin/python fort.1 --num_job=25011 --mode=interactif --rep_outils=/home/G79848/salome_meca_integr/V8_INTEGR/tools/Code_aster_frontend-salomemeca/outils --rep_mat=/home/G79848/dev/codeaster-xx/install/std/share/aster/materiau --rep_dex=/home/G79848/dev/codeaster-xx/install/std/share/aster/datg --numthreads=4 --suivi_batch --memjeveux=128.0 --tpmax=900.0
+<INFO> Contenu du fichier à exécuter
+# ------------------------------------------------------------------------------------------
+# coding=utf-8
+
+import code_aster
+from code_aster.Commands import *
+
+code_aster.init()
+DEBUT(
+    identifier=99,
+    CODE=_F(NIV_PUB_WEB='INTERNET'),
+    DEBUG=_F(SDVERI='OUI'),
+    IGNORE_ALARM='MODELE1_63'
+)
+
+MA = LIRE_MAILLAGE(
+    identifier=100, FORMAT='MED', UNITE=20, VERI_MAIL=_F(VERIF='OUI')
+)
+
+MA = MODI_MAILLAGE(
+    identifier=101,
+    reuse=MA,
+    MAILLAGE=MA,
+    ORIE_PEAU_2D=(_F(GROUP_MA='LPRESV'), _F(GROUP_MA='LPRESH'))
+)
+
+MA = DEFI_GROUP(
+    identifier=102,
+    reuse=MA,
+    CREA_GROUP_NO=_F(GROUP_MA='LCONTA', NOM='LCONTA'),
+    MAILLAGE=MA
+)
+
+MO = AFFE_MODELE(
+    identifier=103,
+    AFFE=_F(MODELISATION='D_PLAN', PHENOMENE='MECANIQUE', TOUT='OUI'),
+    MAILLAGE=MA
+)
+
+MATPLA = DEFI_MATERIAU(identifier=104, ELAS=_F(E=1.3e+11, NU=0.2))
+
+CHMAT = AFFE_MATERIAU(
+    identifier=105, AFFE=_F(MATER=MATPLA, TOUT='OUI'), MAILLAGE=MA
+)
+
+RAMPE = DEFI_FONCTION(
+    identifier=106,
+    NOM_PARA='INST',
+    PROL_DROITE='LINEAIRE',
+    PROL_GAUCHE='LINEAIRE',
+    VALE=(-4.0, 0.0, 1.0, 1.0)
+)
+
+L_INST = DEFI_LIST_REEL(
+    identifier=107,
+    DEBUT=-4.0,
+    INTERVALLE=(_F(JUSQU_A=0.0, NOMBRE=4), _F(JUSQU_A=1.0, NOMBRE=1))
+)
+
+CHA1 = AFFE_CHAR_MECA(
+    identifier=108,
+    DDL_IMPO=(
+        _F(DX=0.0, DY=0.0, GROUP_MA='LBATI'),
+        _F(DX=0.0, DY=0.0, GROUP_NO='PPS'), _F(DX=0.0, GROUP_MA='LBLOCX')
+    ),
+    MODELE=MO,
+    PRES_REP=(
+        _F(GROUP_MA='LPRESV', PRES=50000000.0),
+        _F(GROUP_MA='LPRESH', PRES=150000000.0)
+    )
+)
+
+CHA3 = DEFI_CONTACT(
+    identifier=109,
+    FORMULATION='DISCRETE',
+    FROTTEMENT='COULOMB',
+    MODELE=MO,
+    NB_ITER_GEOM=2,
+    REAC_GEOM='CONTROLE',
+    ZONE=_F(
+        ALGO_CONT='PENALISATION',
+        ALGO_FROT='PENALISATION',
+        APPARIEMENT='NODAL',
+        COEF_MATR_FROT=0.8,
+        COULOMB=1.0,
+        E_N=1e+12,
+        E_T=1e+11,
+        GROUP_MA_ESCL='LCONTA',
+        GROUP_MA_MAIT='LBATI',
+        NORMALE='MAIT_ESCL'
+    )
+)
+
+U3M = STAT_NON_LINE(
+    identifier=110,
+    CHAM_MATER=CHMAT,
+    COMPORTEMENT=_F(RELATION='ELAS'),
+    CONTACT=CHA3,
+    CONVERGENCE=_F(ARRET='OUI', ITER_GLOB_MAXI=200, RESI_GLOB_RELA=1e-05),
+    EXCIT=_F(CHARGE=CHA1, FONC_MULT=RAMPE),
+    INCREMENT=_F(LIST_INST=L_INST),
+    INFO=1,
+    MODELE=MO,
+    NEWTON=_F(REAC_ITER=1),
+    SOLVEUR=_F()
+)
+
+U3L = STAT_NON_LINE(
+    identifier=111,
+    CHAM_MATER=CHMAT,
+    COMPORTEMENT=_F(RELATION='ELAS'),
+    CONTACT=CHA3,
+    CONVERGENCE=_F(ARRET='OUI', ITER_GLOB_MAXI=200, RESI_GLOB_RELA=1e-05),
+    EXCIT=_F(CHARGE=CHA1, FONC_MULT=RAMPE),
+    INCREMENT=_F(LIST_INST=L_INST),
+    MODELE=MO,
+    NEWTON=_F(REAC_ITER=1),
+    SOLVEUR=_F(METHODE='LDLT')
+)
+
+U3M = CALC_CHAMP(
+    identifier=112,
+    reuse=U3M,
+    CONTRAINTE='SIGM_ELNO',
+    RESULTAT=U3M,
+    VARI_INTERNE='VARI_ELNO'
+)
+
+DEPL3M = CREA_CHAMP(
+    identifier=113,
+    INST=1.0,
+    NOM_CHAM='DEPL',
+    OPERATION='EXTR',
+    RESULTAT=U3M,
+    TYPE_CHAM='NOEU_DEPL_R'
+)
+
+U3L = CALC_CHAMP(
+    identifier=114,
+    reuse=U3L,
+    CONTRAINTE='SIGM_ELNO',
+    RESULTAT=U3L,
+    VARI_INTERNE='VARI_ELNO'
+)
+
+DEPL3L = CREA_CHAMP(
+    identifier=115,
+    INST=1.0,
+    NOM_CHAM='DEPL',
+    OPERATION='EXTR',
+    RESULTAT=U3L,
+    TYPE_CHAM='NOEU_DEPL_R'
+)
+
+TCONT = POST_RELEVE_T(
+    identifier=116,
+    ACTION=_F(
+        GROUP_NO='LCONTA',
+        INST=1.0,
+        INTITULE='CONT',
+        NOM_CHAM='CONT_NOEU',
+        OPERATION='EXTRACTION',
+        RESULTAT=U3L,
+        TOUT_CMP='OUI'
+    )
+)
+
+IMPR_TABLE(identifier=117, TABLE=TCONT)
+
+TEST_RESU(
+    identifier=118,
+    RESU=(
+        _F(
+            GROUP_NO='PPA',
+            INST=1.0,
+            NOM_CHAM='DEPL',
+            NOM_CMP='DX',
+            PRECISION=0.05,
+            REFERENCE='SOURCE_EXTERNE',
+            RESULTAT=U3M,
+            VALE_CALC=2.8648839013e-05,
+            VALE_REFE=2.86e-05
+        ), _F(
+            GROUP_NO='PPB',
+            INST=1.0,
+            NOM_CHAM='DEPL',
+            NOM_CMP='DX',
+            PRECISION=0.05,
+            REFERENCE='SOURCE_EXTERNE',
+            RESULTAT=U3M,
+            VALE_CALC=2.72686641895e-05,
+            VALE_REFE=2.72e-05
+        ), _F(
+            GROUP_NO='PPC',
+            INST=1.0,
+            NOM_CHAM='DEPL',
+            NOM_CMP='DX',
+            PRECISION=0.05,
+            REFERENCE='SOURCE_EXTERNE',
+            RESULTAT=U3M,
+            VALE_CALC=2.29235577257e-05,
+            VALE_REFE=2.28e-05
+        ), _F(
+            GROUP_NO='PPD',
+            INST=1.0,
+            NOM_CHAM='DEPL',
+            NOM_CMP='DX',
+            PRECISION=0.05,
+            REFERENCE='SOURCE_EXTERNE',
+            RESULTAT=U3M,
+            VALE_CALC=1.99288812011e-05,
+            VALE_REFE=1.98e-05
+        ), _F(
+            GROUP_NO='PPE',
+            INST=1.0,
+            NOM_CHAM='DEPL',
+            NOM_CMP='DX',
+            PRECISION=0.05,
+            REFERENCE='SOURCE_EXTERNE',
+            RESULTAT=U3M,
+            VALE_CALC=1.56084651799e-05,
+            VALE_REFE=1.5e-05
+        )
+    )
+)
+
+TEST_RESU(
+    identifier=119,
+    RESU=(
+        _F(
+            GROUP_NO='PPA',
+            INST=1.0,
+            NOM_CHAM='DEPL',
+            NOM_CMP='DX',
+            PRECISION=0.05,
+            REFERENCE='SOURCE_EXTERNE',
+            RESULTAT=U3L,
+            VALE_CALC=2.8648839013e-05,
+            VALE_REFE=2.86e-05
+        ), _F(
+            GROUP_NO='PPB',
+            INST=1.0,
+            NOM_CHAM='DEPL',
+            NOM_CMP='DX',
+            PRECISION=0.05,
+            REFERENCE='SOURCE_EXTERNE',
+            RESULTAT=U3L,
+            VALE_CALC=2.72686641895e-05,
+            VALE_REFE=2.72e-05
+        ), _F(
+            GROUP_NO='PPC',
+            INST=1.0,
+            NOM_CHAM='DEPL',
+            NOM_CMP='DX',
+            PRECISION=0.05,
+            REFERENCE='SOURCE_EXTERNE',
+            RESULTAT=U3L,
+            VALE_CALC=2.29235577257e-05,
+            VALE_REFE=2.28e-05
+        ), _F(
+            GROUP_NO='PPD',
+            INST=1.0,
+            NOM_CHAM='DEPL',
+            NOM_CMP='DX',
+            PRECISION=0.05,
+            REFERENCE='SOURCE_EXTERNE',
+            RESULTAT=U3L,
+            VALE_CALC=1.99288812011e-05,
+            VALE_REFE=1.98e-05
+        ), _F(
+            GROUP_NO='PPE',
+            INST=1.0,
+            NOM_CHAM='DEPL',
+            NOM_CMP='DX',
+            PRECISION=0.05,
+            REFERENCE='SOURCE_EXTERNE',
+            RESULTAT=U3L,
+            VALE_CALC=1.56084651799e-05,
+            VALE_REFE=1.5e-05
+        )
+    )
+)
+
+TEST_RESU(
+    identifier=120,
+    RESU=_F(
+        INST=1.0,
+        NOEUD='N32',
+        NOM_CHAM='CONT_NOEU',
+        NOM_CMP='PROJ_X',
+        PRECISION=1e-08,
+        REFERENCE='ANALYTIQUE',
+        RESULTAT=U3L,
+        VALE_CALC=0.03875,
+        VALE_REFE=0.03875
+    )
+)
+
+TEST_RESU(
+    identifier=121,
+    RESU=_F(
+        CRITERE=('RELATIF', ),
+        INST=1.0,
+        NOM_CHAM='CONT_NOEU',
+        NOM_CMP='PROJ_Y',
+        PRECISION=1e-08,
+        REFERENCE='ANALYTIQUE',
+        RESULTAT=U3L,
+        VALE_CALC=(0.0, ),
+        VALE_REFE=(0.0, )
+    )
+)
+
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+# 
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+# CAS_TEST__:SSNV128A
+# TEST DU GRECO CALCUL 2D
+# MODELE
+# MAILLAGE : ELEMENT 2D QUADRANGLE A 4 NOEUDS
+# UNITES   : NEWTON , METRE , SECONDE (N,M,S)
+# <MODELE1_63> : DANS UN MODELE, IL EXISTE DES ELEMENTS DE TYPE "BORD" QUI N'ONT PAS DE VOISIN AVEC RIGIDITE
+#  LE MODELE PROVOQUANT CES ALARMES CONTIENT UNE SURFACE RIGIDE POUR LE CONTACT
+# ......................................................................
+#  CALCUL TEST ELEMENTS FINIS DE CONTACT 2D QUAD4
+#  PLAQUE AVEC CONTACT ET FROTTEMENT SUR UN PLAN RIGIDE
+# ......................................................................
+# 
+# -----------------------------------------------------------
+# 
+# -----------------------------------------------------------
+# VERIF PROJECTION  (AVANT-DERNIER NOEUD A DROITE)
+FIN(identifier=123, )
+
+# ------------------------------------------------------------------------------------------
+
+  Ouverture en écriture du fichier ./vola.1
+                                                                                
+                                                                                
+        -- CODE_ASTER -- VERSION : DÉVELOPPEMENT STABILISÉE (testing) --        
+                                                                                
+                     Version 14.1.0 modifiée le 17/01/2018                      
+                   révision 186c3eed0be5 - branche 'asterxx'                    
+                         Copyright EDF R&D 1991 - 2018                          
+                                                                                
+                    Exécution du : Wed Jan 17 13:56:46 2018                     
+                         Nom de la machine : dsp0837509                         
+                              Architecture : 64bit                              
+                          Type de processeur : x86_64                           
+           Système d'exploitation : Linux debian 8.10  3.16.0-4-amd64           
+                        Langue des messages : fr (UTF-8)                        
+                                                                                
+                           Version de Python : 2.7.9                            
+                            Version de NumPy : 1.9.2                            
+                           Parallélisme MPI : inactif                           
+                          Parallélisme OpenMP : actif                           
+                        Nombre de processus utilisés : 4                        
+                     Version de la librairie HDF5 : 1.8.14                      
+                      Version de la librairie MED : 3.2.1                       
+                     Version de la librairie MFront : 3.0.0                     
+                Version de la librairie MUMPS : 5.1.1consortium                 
+                        Librairie PETSc : non disponible                        
+                     Version de la librairie SCOTCH : 6.0.4                     
+
+                  Mémoire limite pour l'exécution : 2048.00 Mo                  
+                    consommée par l'initialisation : 0.00 Mo                    
+                  par les objets du jeu de commandes : 0.00 Mo                  
+                 reste pour l'allocation dynamique : 1619.03 Mo                 
+                Taille limite des fichiers d'échange : 12.00 Go                 
+                                                                                
+starting the execution...
+   
+   !----------------------------------------------------------------------------------------------------------------------!
+   ! <A> <SUPERVIS_42>                                                                                                    !
+   !                                                                                                                      !
+   ! Les fichiers suivants ont été modifiés par rapport à la dernière révision 186c3eed0be56f1fa8e1dad86e1b07d3bbae309d : !
+   !                                                                                                                      !
+   ! astest/xxLinearMechanics001a.py                                                                                      !
+   !                                                                                                                      !
+   !                                                                                                                      !
+   ! Ceci est une alarme. Si vous ne comprenez pas le sens de cette                                                       !
+   ! alarme, vous pouvez obtenir des résultats inattendus !                                                               !
+   !----------------------------------------------------------------------------------------------------------------------!
+   
+RDTMAX
+
+  Valeur initiale du temps CPU maximum =   900 secondes
+  Valeur du temps CPU maximum passé aux commandes =   810 secondes
+  Réserve CPU prévue = 90 secondes
+
+  Ouverture en écriture du fichier ./glob.1
+
+  Ouverture en écriture du fichier ./vola.1
+
+  Ouverture en lecture du fichier /home/G79848/data/dev/codeaster-xx/install/std/lib/aster/elem.1
+
+     Nom de la base                          :  ELEMBASE
+     Créée avec la version                   :  14.01.00
+     Nombre d'enregistrements utilisés       :  44
+     Nombre d'enregistrements maximum        :  512
+     Longueur d'enregistrement (octets)      :  819200
+     Nombre d'identificateurs utilisés       :  123
+     Taille maximum du répertoire            :  300
+     Pourcentage d'utilisation du répertoire :  41 %
+
+  Ouverture en lecture du fichier /home/G79848/data/dev/codeaster-xx/install/std/lib/aster/elem.1
+
+
+     Nom de la base                          :  ELEMBASE
+     Nombre d'enregistrements utilisés       :  44
+     Nombre d'enregistrements maximum        :  512
+     Longueur d'enregistrement (octets)      :  819200
+     Nombre total d'accès en lecture         :  62
+     Volume des accès en lecture             :         48.44 Mo.
+     Nombre total d'accès en écriture        :  0
+     Volume des accès en écriture            :          0.00 Mo.
+     Nombre d'identificateurs utilisés       :  123
+     Taille maximum du répertoire            :  300
+     Pourcentage d'utilisation du répertoire :  41 %
+
+  Relecture des catalogues des éléments faite.
+
+  Fin de lecture (durée  0.035320  s.) 
+
+.. __stg1_cmd100
+----------------------------------------------------------------------------------------------------
+Command #0001 from file 'fort.1', line 15:
+'<00000001>' = LIRE_MAILLAGE(FORMAT='MED',
+                             INFO=1,
+                             INFO_MED=1,
+                             UNITE=20,
+                             VERI_MAIL=_F(APLAT=0.001,
+                                          VERIF='OUI'))
+
+
+.. __stg1_txt160
+----------------------------------------------------------------------------------------------------
+Command #0002 from file '/home/G79848/data/dev/codeaster-xx/install/std/lib/aster/code_aster/RunManager/LogicalUnit.py', line 160:
+DEFI_FICHIER(ACCES='OLD',
+             ACTION='ASSOCIER',
+             FICHIER='fort.20',
+             TYPE='BINARY',
+             UNITE=99)
+
+Statistics: user+syst:        0.00s (syst:        0.00s, elaps:        0.00s)
+----------------------------------------------------------------------------------------------------
+Vérification du maillage.
+
+------------ MAILLAGE 00000001 - IMPRESSIONS NIVEAU  1 ------------
+
+CODE_ASTER - 11.00.27 - VERSION DE DEVELOPPEMENT          - FRONTAL1         - L
+
+NOMBRE DE NOEUDS                         396
+
+NOMBRE DE MAILLES                        436
+                              SEG2                  116
+                              QUAD4                 320
+
+NOMBRE DE GROUPES DE NOEUDS               12
+                              PBA                                  1
+                              PBR                                  1
+                              PBS                                  1
+                              PHA                                  1
+                              PHS                                  1
+                              PPA                                  1
+                              PPB                                  1
+                              PPC                                  1
+                              PPD                                  1
+                              PPE                                  1
+                              PPR                                  1
+                              PPS                                  1
+
+NOMBRE DE GROUPES DE MAILLES               8
+                              LBLOCX                              10
+                              LCONTA                              32
+                              LCONTAR                             31
+                              LPRESH                              10
+                              LPRESV                              32
+                              MTOT                               352
+                              LBATI                               32
+                              SPLAQ                              320
+
+--------------------------------------------------------------------------------
+
+
+.. __stg1_txt160
+----------------------------------------------------------------------------------------------------
+Command #0003 from file '/home/G79848/data/dev/codeaster-xx/install/std/lib/aster/code_aster/RunManager/LogicalUnit.py', line 160:
+DEFI_FICHIER(ACTION='LIBERER',
+             UNITE=99)
+
+Statistics: user+syst:        0.00s (syst:        0.00s, elaps:        0.00s)
+----------------------------------------------------------------------------------------------------
+
+Result of command #0001 (LIRE_MAILLAGE): '<00000001>'
+Statistics: user+syst:        0.00s (syst:        0.00s, elaps:        0.00s)
+----------------------------------------------------------------------------------------------------
+
+.. __stg1_cmd101
+----------------------------------------------------------------------------------------------------
+Command #0004 from file 'fort.1', line 22:
+'<00000001>' = MODI_MAILLAGE(INFO=1,
+                             MAILLAGE='<00000001>',
+                             ORIE_PEAU_2D=(_F(GROUP_MA='LPRESV'),
+                                           _F(GROUP_MA='LPRESH')),
+                             reuse='<00000001>')
+
+TRAITEMENT DU GROUP_MA: LPRESV                   DE      32 MAILLES
+                             32 MAILLE(S) ONT ETE ORIENTEE(S)
+TRAITEMENT DU GROUP_MA: LPRESH                   DE      10 MAILLES
+                             10 MAILLE(S) ONT ETE ORIENTEE(S)
+AU TOTAL      42 MAILLE(S) ORIENTEE(S) 
+
+Result of command #0004 (MODI_MAILLAGE): '<00000001>'
+Statistics: user+syst:        0.00s (syst:        0.00s, elaps:        0.00s)
+----------------------------------------------------------------------------------------------------
+
+.. __stg1_cmd102
+----------------------------------------------------------------------------------------------------
+Command #0005 from file 'fort.1', line 29:
+'<00000001>' = DEFI_GROUP(ALARME='OUI',
+                          CREA_GROUP_NO=_F(CRIT_NOEUD='TOUS',
+                                           GROUP_MA='LCONTA',
+                                           NOM='LCONTA'),
+                          MAILLAGE='<00000001>',
+                          reuse='<00000001>')
+
+
+
+NOMBRE  DE GROUPES DE NOEUDS CREES :      1
+=======================================
+
+               ------------------------------------------------------
+               !         NOM DU GROUPE         ! NBRE DE NOEUDS DU  !
+               !            NOEUDS             !      GROUPE_NO     !
+               ------------------------------------------------------
+               !  LCONTA                       !        33          !
+               ------------------------------------------------------
+
+
+Result of command #0005 (DEFI_GROUP): '<00000001>'
+Statistics: user+syst:        0.00s (syst:        0.00s, elaps:        0.00s)
+----------------------------------------------------------------------------------------------------
+
+.. __stg1_cmd103
+----------------------------------------------------------------------------------------------------
+Command #0006 from file 'fort.1', line 35:
+'<00000002>' = AFFE_MODELE(AFFE=_F(MODELISATION='D_PLAN',
+                                   PHENOMENE='MECANIQUE',
+                                   TOUT='OUI'),
+                           DISTRIBUTION=_F(METHODE='SOUS_DOMAINE',
+                                           PARTITIONNEUR='METIS'),
+                           INFO=1,
+                           MAILLAGE='<00000001>',
+                           VERI_JACOBIEN='OUI')
+
+
+Sur les 436 mailles du maillage 00000001, on a demandé l'affectation de 436, on a pu en affecter 436
+   
+   !-------------------------------------------------------------------------------------!
+   ! <A> <MODELE1_63>                                                                    !
+   !                                                                                     !
+   !   -> La maille M1 porte un élément fini de bord, mais elle ne borde                 !
+   !      aucun élément ayant une "rigidité".                                            !
+   !                                                                                     !
+   !   -> Risque & Conseil :                                                             !
+   !      Cela peut entraîner des problèmes de "pivot nul" lors de la résolution.        !
+   !      Si la résolution des systèmes linéaires ne pose pas de problèmes, vous         !
+   !      pouvez ignorer ce message.                                                     !
+   !      Sinon, vérifier la définition du modèle (AFFE_MODELE) en évitant l'utilisation !
+   !      de l'opérande TOUT='OUI'.                                                      !
+   !                                                                                     !
+   !                                                                                     !
+   ! Ceci est une alarme. Si vous ne comprenez pas le sens de cette                      !
+   ! alarme, vous pouvez obtenir des résultats inattendus !                              !
+   !-------------------------------------------------------------------------------------!
+   
+   
+   !-------------------------------------------------------------------------------------!
+   ! <A> <MODELE1_63>                                                                    !
+   !                                                                                     !
+   !   -> La maille M2 porte un élément fini de bord, mais elle ne borde                 !
+   !      aucun élément ayant une "rigidité".                                            !
+   !                                                                                     !
+   !   -> Risque & Conseil :                                                             !
+   !      Cela peut entraîner des problèmes de "pivot nul" lors de la résolution.        !
+   !      Si la résolution des systèmes linéaires ne pose pas de problèmes, vous         !
+   !      pouvez ignorer ce message.                                                     !
+   !      Sinon, vérifier la définition du modèle (AFFE_MODELE) en évitant l'utilisation !
+   !      de l'opérande TOUT='OUI'.                                                      !
+   !                                                                                     !
+   !                                                                                     !
+   ! Ceci est une alarme. Si vous ne comprenez pas le sens de cette                      !
+   ! alarme, vous pouvez obtenir des résultats inattendus !                              !
+   !-------------------------------------------------------------------------------------!
+   
+   
+   !-------------------------------------------------------------------------------------!
+   ! <A> <MODELE1_63>                                                                    !
+   !                                                                                     !
+   !   -> La maille M3 porte un élément fini de bord, mais elle ne borde                 !
+   !      aucun élément ayant une "rigidité".                                            !
+   !                                                                                     !
+   !   -> Risque & Conseil :                                                             !
+   !      Cela peut entraîner des problèmes de "pivot nul" lors de la résolution.        !
+   !      Si la résolution des systèmes linéaires ne pose pas de problèmes, vous         !
+   !      pouvez ignorer ce message.                                                     !
+   !      Sinon, vérifier la définition du modèle (AFFE_MODELE) en évitant l'utilisation !
+   !      de l'opérande TOUT='OUI'.                                                      !
+   !                                                                                     !
+   !                                                                                     !
+   ! Ceci est une alarme. Si vous ne comprenez pas le sens de cette                      !
+   ! alarme, vous pouvez obtenir des résultats inattendus !                              !
+   !-------------------------------------------------------------------------------------!
+   
+   
+   !-------------------------------------------------------------------------------------!
+   ! <A> <MODELE1_63>                                                                    !
+   !                                                                                     !
+   !   -> La maille M4 porte un élément fini de bord, mais elle ne borde                 !
+   !      aucun élément ayant une "rigidité".                                            !
+   !                                                                                     !
+   !   -> Risque & Conseil :                                                             !
+   !      Cela peut entraîner des problèmes de "pivot nul" lors de la résolution.        !
+   !      Si la résolution des systèmes linéaires ne pose pas de problèmes, vous         !
+   !      pouvez ignorer ce message.                                                     !
+   !      Sinon, vérifier la définition du modèle (AFFE_MODELE) en évitant l'utilisation !
+   !      de l'opérande TOUT='OUI'.                                                      !
+   !                                                                                     !
+   !                                                                                     !
+   ! Ceci est une alarme. Si vous ne comprenez pas le sens de cette                      !
+   ! alarme, vous pouvez obtenir des résultats inattendus !                              !
+   !-------------------------------------------------------------------------------------!
+   
+   
+   !-------------------------------------------------------------------------------------!
+   ! <A> <MODELE1_63>                                                                    !
+   !                                                                                     !
+   !   -> La maille M5 porte un élément fini de bord, mais elle ne borde                 !
+   !      aucun élément ayant une "rigidité".                                            !
+   !                                                                                     !
+   !   -> Risque & Conseil :                                                             !
+   !      Cela peut entraîner des problèmes de "pivot nul" lors de la résolution.        !
+   !      Si la résolution des systèmes linéaires ne pose pas de problèmes, vous         !
+   !      pouvez ignorer ce message.                                                     !
+   !      Sinon, vérifier la définition du modèle (AFFE_MODELE) en évitant l'utilisation !
+   !      de l'opérande TOUT='OUI'.                                                      !
+   !                                                                                     !
+   !                                                                                     !
+   ! Ceci est une alarme. Si vous ne comprenez pas le sens de cette                      !
+   ! alarme, vous pouvez obtenir des résultats inattendus !                              !
+   !-------------------------------------------------------------------------------------!
+   
+   
+   !------------------------------------------------------------------------------!
+   ! <A> <CATAMESS_41>                                                            !
+   !                                                                              !
+   ! Le message d'alarme 'MODELE1_63' a été émis 5 fois, il ne sera plus affiché. !
+   !                                                                              !
+   !                                                                              !
+   ! Ceci est une alarme. Si vous ne comprenez pas le sens de cette               !
+   ! alarme, vous pouvez obtenir des résultats inattendus !                       !
+   !------------------------------------------------------------------------------!
+   
+ Modélisation     Type maille  Élément fini     Nombre
+ D_PLAN           QUAD4        MEDPQU4          320
+                  SEG2         MEPLSE2          116
+#2      Calculs elementaires et assemblages               CPU (USER+SYST/SYST/ELAPS):      0.00      0.00      0.00
+
+Result of command #0006 (AFFE_MODELE): '<00000002>'
+Statistics: user+syst:        0.01s (syst:        0.02s, elaps:        0.02s)
+----------------------------------------------------------------------------------------------------
+
+.. __stg1_cmd104
+----------------------------------------------------------------------------------------------------
+Command #0007 from file 'fort.1', line 38:
+'<00000003>' = DEFI_MATERIAU(ELAS=_F(COEF_AMOR=1.0,
+                                     E=1.3e+11,
+                                     NU=0.2),
+                             INFO=1)
+
+
+Result of command #0007 (DEFI_MATERIAU): '<00000003>'
+Statistics: user+syst:        0.01s (syst:        0.01s, elaps:        0.00s)
+----------------------------------------------------------------------------------------------------
+
+.. __stg1_cmd105
+----------------------------------------------------------------------------------------------------
+Command #0008 from file 'fort.1', line 41:
+'<00000004>' = AFFE_MATERIAU(AFFE=_F(MATER='<00000003>',
+                                     TOUT='OUI'),
+                             INFO=1,
+                             LIST_NOM_VARC=('TEMP', 'GEOM', 'CORR', 'IRRA', 'HYDR', 'SECH', 'EPSA', 'M_ACIER', 'M_ZIRC', 'NEUT1', 'NEUT2', 'PTOT', 'DIVU'),
+                             MAILLAGE='<00000001>',
+                             VARC_CORR=_F(CMP_GD='CORR',
+                                          CMP_VARC='CORR',
+                                          GRANDEUR='CORR_R',
+                                          NOM_VARC='CORR'),
+                             VARC_DIVU=_F(CMP_GD='DIVU',
+                                          CMP_VARC='DIVU',
+                                          GRANDEUR='EPSI_R',
+                                          NOM_VARC='DIVU'),
+                             VARC_EPSA=_F(CMP_GD=('EPXX', 'EPYY', 'EPZZ', 'EPXY', 'EPXZ', 'EPYZ'),
+                                          CMP_VARC=('EPSAXX', 'EPSAYY', 'EPSAZZ', 'EPSAXY', 'EPSAXZ', 'EPSAYZ'),
+                                          GRANDEUR='EPSI_R',
+                                          NOM_VARC='EPSA'),
+                             VARC_GEOM=_F(CMP_GD=('X', 'Y', 'Z'),
+                                          CMP_VARC=('X', 'Y', 'Z'),
+                                          GRANDEUR='GEOM_R',
+                                          NOM_VARC='GEOM'),
+                             VARC_HYDR=_F(CMP_GD='HYDR',
+                                          CMP_VARC='HYDR',
+                                          GRANDEUR='HYDR_R',
+                                          NOM_VARC='HYDR'),
+                             VARC_IRRA=_F(CMP_GD='IRRA',
+                                          CMP_VARC='IRRA',
+                                          GRANDEUR='IRRA_R',
+                                          NOM_VARC='IRRA'),
+                             VARC_M_ACIER=_F(CMP_GD=('V1', 'V2', 'V3', 'V4', 'V5', 'V6', 'V7'),
+                                             CMP_VARC=('PFERRITE', 'PPERLITE', 'PBAINITE', 'PMARTENS', 'TAUSTE', 'TRANSF', 'TACIER'),
+                                             GRANDEUR='VARI_R',
+                                             NOM_VARC='M_ACIER'),
+                             VARC_M_ZIRC=_F(CMP_GD=('V1', 'V2', 'V3', 'V4'),
+                                            CMP_VARC=('ALPHPUR', 'ALPHBETA', 'TZIRC', 'TEMPS'),
+                                            GRANDEUR='VARI_R',
+                                            NOM_VARC='M_ZIRC'),
+                             VARC_NEUT1=_F(CMP_GD='X1',
+                                           CMP_VARC='NEUT1',
+                                           GRANDEUR='NEUT_R',
+                                           NOM_VARC='NEUT1'),
+                             VARC_NEUT2=_F(CMP_GD='X1',
+                                           CMP_VARC='NEUT2',
+                                           GRANDEUR='NEUT_R',
+                                           NOM_VARC='NEUT2'),
+                             VARC_PTOT=_F(CMP_GD='PTOT',
+                                          CMP_VARC='PTOT',
+                                          GRANDEUR='DEPL_R',
+                                          NOM_VARC='PTOT'),
+                             VARC_SECH=_F(CMP_GD='TEMP',
+                                          CMP_VARC='SECH',
+                                          GRANDEUR='TEMP_R',
+                                          NOM_VARC='SECH'),
+                             VARC_TEMP=_F(CMP_GD=('TEMP', 'TEMP_MIL', 'TEMP_INF', 'TEMP_SUP', 'DTX', 'DTY', 'DTZ'),
+                                          CMP_VARC=('TEMP', 'TEMP_MIL', 'TEMP_INF', 'TEMP_SUP', 'DTX', 'DTY', 'DTZ'),
+                                          GRANDEUR='TEMP_R',
+                                          NOM_VARC='TEMP'))
+
+
+Result of command #0008 (AFFE_MATERIAU): '<00000004>'
+Statistics: user+syst:        0.00s (syst:        0.01s, elaps:        0.00s)
+----------------------------------------------------------------------------------------------------
+
+.. __stg1_cmd106
+----------------------------------------------------------------------------------------------------
+Command #0009 from file 'fort.1', line 49:
+'<00000005>' = DEFI_FONCTION(INFO=1,
+                             INTERPOL='LIN',
+                             NOM_PARA='INST',
+                             NOM_RESU='TOUTRESU',
+                             PROL_DROITE='LINEAIRE',
+                             PROL_GAUCHE='LINEAIRE',
+                             VALE=(-4.0, 0.0, 1.0, 1.0),
+                             VERIF='CROISSANT')
+
+
+Result of command #0009 (DEFI_FONCTION): '<00000005>'
+Statistics: user+syst:        0.01s (syst:        0.00s, elaps:        0.00s)
+----------------------------------------------------------------------------------------------------
+
+.. __stg1_cmd107
+----------------------------------------------------------------------------------------------------
+Command #0010 from file 'fort.1', line 55:
+'<00000006>' = DEFI_LIST_REEL(DEBUT=-4.0,
+                              INFO=1,
+                              INTERVALLE=(_F(JUSQU_A=0.0,
+                                             NOMBRE=4),
+                                          _F(JUSQU_A=1.0,
+                                             NOMBRE=1)))
+
+
+Result of command #0010 (DEFI_LIST_REEL): '<00000006>'
+Statistics: user+syst:        0.00s (syst:        0.00s, elaps:        0.00s)
+----------------------------------------------------------------------------------------------------
+
+.. __stg1_cmd108
+----------------------------------------------------------------------------------------------------
+Command #0011 from file 'fort.1', line 67:
+'<00000007>' = AFFE_CHAR_MECA(DDL_IMPO=(_F(DX=0.0,
+                                           DY=0.0,
+                                           GROUP_MA='LBATI'),
+                                        _F(DX=0.0,
+                                           DY=0.0,
+                                           GROUP_NO='PPS'),
+                                        _F(DX=0.0,
+                                           GROUP_MA='LBLOCX')),
+                              INFO=1,
+                              MODELE='<00000002>',
+                              PRES_REP=(_F(GROUP_MA='LPRESV',
+                                           PRES=50000000.0),
+                                        _F(GROUP_MA='LPRESH',
+                                           PRES=150000000.0)),
+                              VERI_NORM='OUI')
+
+
+Result of command #0011 (AFFE_CHAR_MECA): '<00000007>'
+Statistics: user+syst:        0.11s (syst:        0.15s, elaps:        0.07s)
+----------------------------------------------------------------------------------------------------
+Traceback (most recent call last):
+  File "fort.1", line 88, in <module>
+    NORMALE='MAIT_ESCL'
+  File "/home/G79848/data/dev/codeaster-xx/install/std/lib/aster/code_aster/Commands/ExecuteCommand.py", line 144, in run
+    cmd.create_result(keywords)
+  File "/home/G79848/data/dev/codeaster-xx/install/std/lib/aster/code_aster/Commands/ExecuteCommand.py", line 242, in create_result
+    "overridden for {0!r}.".format(self.name))
+NotImplementedError: Method 'create_result' must be overridden for 'DEFI_CONTACT'.
+Remaining jeveux objects in 00000007
+List of objects:
+  - 00000007.DUAL.PRDK      
+  - 00000007.DUAL.PRDI      
+  - 00000007.DUAL.PRDSO     
+Remaining jeveux objects in 00000001
+List of objects:
+  - 00000001           .TITR
+  - 00000001.ADAPTATION     
+  - 00000001           .LTNT
+  - 00000001           .LTNS
+  - 00000001.TB000000  .TBBA
+  - 00000001.TB000000  .TBNP
+  - 00000001.TB000000  .TBLP
+  - 00000001.TB000000  .0001
+  - 00000001.TB000000LG.0001
+  - 00000001.TB000000  .0002
+  - 00000001.TB000000LG.0002
+  - 00000001.TB000000  .0003
+  - 00000001.TB000000LG.0003
+  - 00000001.TB000000  .0004
+  - 00000001.TB000000LG.0004
+  - 00000001.TB000000  .0005
+  - 00000001.TB000000LG.0005
+  - 00000001.TB000000  .0006
+  - 00000001.TB000000LG.0006
+  - 00000001.TB000000  .0007
+  - 00000001.TB000000LG.0007
+  - 00000001.TB000000  .0008
+  - 00000001.TB000000LG.0008
+Remaining jeveux objects in 00000002
+List of objects:
+  - 00000002.MODELE    .LGRF
+  - 00000002.MODELE    .NBNO
+  - 00000002.MODELE    .LIEL
+  - 00000002.MODELE    .PRNM
+  - 00000002.MODELE    .REPE
+CHKMSG ne fait rien ?
+ ---------------------------------------------------------------------------
+ Concepts de la base: G
+    Nom       Type                 Taille (Mo)         Nombre      Nombre de
+                                                     d'objets       segments
+    TOTAL                                27.88             76            142
+  
+    &FOZERO                               0.00              2              2
+    &&_NUM_C                              0.00              1              1
+    &CATA.AC                              0.00              2              4
+    &CATA.CL                              0.87              1              3
+    &CATA.GD                              0.14              4             11
+    &CATA.ME                              0.20              2              4
+    &CATA.OP                              0.32              4             19
+    &CATA.PH                              0.00              1              1
+    &CATA.PR                              0.00              2              4
+    &CATA.TE                             26.30             17             42
+    &CATA.TH                              0.01              2              4
+    &CATA.TM                              0.01              7             11
+    00000001                              0.00             23             23
+    00000002                              0.03              5             10
+    00000007                              0.00              3              3
+ ---------------------------------------------------------------------------
+  
+ <I>       FERMETURE DES BASES EFFECTUEE
+  
+   STATISTIQUES CONCERNANT L'ALLOCATION DYNAMIQUE :
+     TAILLE CUMULEE MAXIMUM            :                   45  Mo.
+     TAILLE CUMULEE LIBEREE            :                    6  Mo.
+     NOMBRE TOTAL D'ALLOCATIONS        :                 2683
+     NOMBRE TOTAL DE LIBERATIONS       :                 2663
+     APPELS AU MECANISME DE LIBERATION :                    0
+     TAILLE MEMOIRE CUMULEE RECUPEREE  :                    0  Mo.
+     VOLUME DES LECTURES               :                    0  Mo.
+     VOLUME DES ECRITURES              :                    0  Mo.
+  
+   MEMOIRE JEVEUX MINIMALE REQUISE POUR L'EXECUTION :      34.23 Mo
+     - IMPOSE DE NOMBREUX ACCES DISQUE
+     - RALENTIT LA VITESSE D'EXECUTION
+   MEMOIRE JEVEUX OPTIMALE REQUISE POUR L'EXECUTION :      44.91 Mo
+     - LIMITE LES ACCES DISQUE
+     - AMELIORE LA VITESSE D'EXECUTION
+   MAXIMUM DE MEMOIRE UTILISEE PAR LE PROCESSUS     :     504.02 Mo
+     - COMPREND LA MEMOIRE CONSOMMEE PAR  JEVEUX, 
+       LE SUPERVISEUR PYTHON, LES LIBRAIRIES EXTERNES
+  
+ <I>       FIN D'EXECUTION LE : ME-17-JANV-2018 13:56:47
+EXECUTION_CODE_ASTER_EXIT_25011=1
+<INFO> Exécution Code_Aster terminée, diagnostic : <S>_ERROR
+
+--------------------------------------------------------------------------------
+ Contenu de /local00/tmp/G79848-dsp0837509-interactif_25011 après l'exécution
+
+.:
+total 39484
+drwx------   3 G79848 rdusers     4096 janv. 17 13:56 .
+drwxrwxrwt 301 root   root       65536 janv. 17 13:56 ..
+-rw-r--r--   1 G79848 rdusers      749 janv. 17 13:56 25011.export
+-rw-r--r--   1 G79848 rdusers     2453 janv. 17 13:56 config.txt
+-rw-r--r--   1 G79848 rdusers     8677 janv. 17 13:56 fort.1
+-rw-r--r--   1 G79848 rdusers     8677 janv. 17 13:56 fort.1.1
+-rw-r--r--   1 G79848 rdusers        0 janv. 17 13:56 fort.15
+-rw-r--r--   1 G79848 rdusers   111033 janv. 17 13:56 fort.20
+-rw-r--r--   1 G79848 rdusers    32702 janv. 17 13:56 fort.6
+-rw-r--r--   1 G79848 rdusers    13026 janv. 17 13:56 fort.8
+-rw-r--r--   1 G79848 rdusers     2734 janv. 17 13:56 fort.9
+-rw-r--r--   1 G79848 rdusers 38502408 janv. 17 13:56 glob.1
+drwxr-xr-x   2 G79848 rdusers     4096 janv. 17 13:56 REPE_OUT
+-rw-r--r--   1 G79848 rdusers  2457608 janv. 17 13:56 vola.1
+
+REPE_OUT:
+total 8
+drwxr-xr-x 2 G79848 rdusers 4096 janv. 17 13:56 .
+drwx------ 3 G79848 rdusers 4096 janv. 17 13:56 ..
+
+
+--------------------------------------------------------------------------------
+ Taille des bases
+
+<INFO> taille de vola.1 :      2457608 octets
+<INFO> taille de glob.1 :     38502408 octets
+
+--------------------------------------------------------------------------------
+ Copie des résultats
+
+copie de .../fort.6...                                                  [  OK  ]
+compression de glob.1                                                   [  OK  ]
+copie de .../glob.1.gz...                                               [  OK  ]
+
+<S>_ERROR          Exécution de Code_Aster terminée
+
+
+ 
+ ---------------------------------------------------------------------------------
+                                            cpu    système    cpu+sys     écoulé
+ ---------------------------------------------------------------------------------
+   Préparation de l'environnement          0.00       0.00       0.00       0.00
+   Copie des données                       0.01       0.00       0.01       0.03
+   Exécution de Code_Aster                 0.89       0.66       1.55       0.95
+   Copie des résultats                     0.73       0.02       0.75       0.77
+ ---------------------------------------------------------------------------------
+   Total                                   1.69       0.71       2.40       1.90
+ ---------------------------------------------------------------------------------
+
+as_run 2017.0
+
+------------------------------------------------------------
+--- DIAGNOSTIC JOB : <S>_ERROR
+------------------------------------------------------------
+
+
+EXIT_CODE=4

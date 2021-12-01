@@ -1,0 +1,54 @@
+mesh = LIRE_MAILLAGE(FORMAT='MED',
+                     UNITE=%INPUT%)
+
+mesh = MODI_MAILLAGE(reuse=mesh,
+                     MAILLAGE=mesh,
+                     ORIE_PEAU_2D=_F(GROUP_MA=%ORIE_GROUPS%,),)
+
+%CONTACT=LAC{
+lacmesh = CREA_MAILLAGE(DECOUPE_LAC=_F(GROUP_MA_ESCL=%SLAVE_ZONES%),
+                        MAILLAGE=mesh)
+}%
+
+model = AFFE_MODELE(AFFE=_F(MODELISATION=(%MODELISATION%, ),
+                            PHENOMENE='MECANIQUE',
+                            TOUT='OUI'),
+%CONTACT=LAC{                    MAILLAGE=lacmesh)}%
+%CONTACT=STANDARD{                    MAILLAGE=mesh)}%
+
+mater = DEFI_MATERIAU(ELAS=_F(E=%E%,
+                              NU=%NU%))
+
+materfl = AFFE_MATERIAU(AFFE=_F(MATER=(mater, ),
+                                TOUT='OUI'),
+                        MODELE=model)
+
+mecabc = AFFE_CHAR_MECA(DDL_IMPO=%BC%,
+                        MODELE=model)
+
+mecach = AFFE_CHAR_MECA(MODELE=model,
+                        PRES_REP=%LOAD%)
+
+contact = DEFI_CONTACT(ALGO_RESO_CONT='NEWTON',
+%CONTACT=LAC{                       ALGO_RESO_GEOM='NEWTON',}%
+                       FORMULATION='CONTINUE',
+                       MODELE=model,
+                       ZONE=%ZONES%)
+
+lst = DEFI_LIST_REEL(DEBUT=0.0,
+                     INTERVALLE=(_F(JUSQU_A=1.0,
+                                    NOMBRE=2),))
+
+mult = DEFI_FONCTION(NOM_PARA='INST',
+                     VALE=(0.0, 0.0, 1.0, 1.0))
+
+times = DEFI_LIST_INST(DEFI_LIST=_F(LIST_INST=lst))
+
+result = STAT_NON_LINE(CHAM_MATER=materfl,
+                       CONTACT=contact,
+                       EXCIT=(_F(CHARGE=mecabc,
+                                 FONC_MULT=mult),
+                              _F(CHARGE=mecach,
+                                 FONC_MULT=mult),),
+                       INCREMENT=_F(LIST_INST=times,),
+                       MODELE=model)

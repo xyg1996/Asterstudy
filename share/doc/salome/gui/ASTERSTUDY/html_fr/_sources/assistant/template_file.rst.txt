@@ -1,0 +1,56 @@
+.. _assistant-template:
+
+*************
+Template file
+*************
+
+Creating of a new *Calculation Assistant* starts with writing of a **template
+file**.
+
+Template is a ``.comm`` file containing the description of a stage in the
+**Code_Aster** language, with one or more parameters declared using special
+syntax **%PARAM%** (where **PARAM** is a name of the particular parameter).
+
+**Example**:
+
+.. code-block:: python
+
+    DEBUT()
+ 
+    ...
+ 
+    mat1 = DEFI_MATERIAU(ELAS=_F(E=%E%,
+                                 NU=%NU%,),
+                         TRACTION=_F(SIGM=REEL,),)
+ 
+    mat2 = DEFI_MATERIAU(ELAS=_F(E=%E%,
+                                 NU=%NU%,),)
+ 
+    mesh = LIRE_MAILLAGE(FORMAT='MED', UNITE=%UNITE%)
+ 
+    ...
+
+    FIN()
+
+Also, template file can include conditional blocks which will automatically
+expand depending on the choice made in the wizard dialog. The conditional blocks
+have the following syntax:
+
+.. code-block:: python
+
+    %PARAM=VALUE{
+    # code block which is inserted if PARAM has value VALUE
+    }%
+    
+    %PARAM=OTHER_VALUE{
+    # code block which is inserted if PARAM has value OTHER_VALUE
+    }%
+
+.. warning::
+    Currently, enclosed conditional blocks are not supported, i.e. it is not
+    possible to insert one conditional block into another one.
+
+The GUI controls representing particular parameters within the wizard dialog
+are configured via the :ref:`declaration file <assistant-declaration>`.
+
+See more detailed example in :ref:`Examples section <assistant-example>`.

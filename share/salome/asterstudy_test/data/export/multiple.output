@@ -1,0 +1,494 @@
+
+--------------------------------------------------------------------------------
+ Exécution de Code_Aster
+
+<INFO> préparation de l'environnement dans /local00/tmp/G79848-dsp0837509-interactif_26305-0001-dsp0837509
+
+--------------------------------------------------------------------------------
+ Copie des données
+
+copie de .../G79848-dsp0837509-ven.-22-102641.057/RunCase_9_Stage_2.comm...
+                                                                        [  OK  ]
+<INFO> Paramètres : mémoire 2048.0 Mo - temps max 900 s
+
+--------------------------------------------------------------------------------
+ Contenu de /local00/tmp/G79848-dsp0837509-interactif_26305-0001-dsp0837509 avant l'exécution
+
+total 88
+drwx------  3 G79848 rdusers  4096 juin  22 10:26 .
+drwxrwxrwt 19 root   root    65536 juin  22 10:26 ..
+-rw-r--r--  1 G79848 rdusers   668 juin  22 10:26 26305-0001-dsp0837509.export
+-rw-r--r--  1 G79848 rdusers  2962 juin  22 10:26 config.txt
+-rw-r--r--  1 G79848 rdusers   361 juin  22 10:26 fort.1.1
+drwxr-xr-x  2 G79848 rdusers  4096 juin  22 10:26 REPE_OUT
+
+
+--------------------------------------------------------------------------------
+ Exécution de Code_Aster
+
+<INFO> Ligne de commande 1 :
+<INFO> /home/G79848/data/dev/codeaster/install/std/bin/aster /home/G79848/data/dev/codeaster/install/std/lib/aster/Execution/E_SUPERV.py -commandes fort.1 --num_job=26305-0001-dsp0837509 --mode=interactif --rep_outils=/home/G79848/salome_meca_integr/V8_INTEGR/tools/Code_aster_frontend-salomemeca/outils --rep_mat=/home/G79848/dev/codeaster/install/std/share/aster/materiau --rep_dex=/home/G79848/dev/codeaster/install/std/share/aster/datg --numthreads=4 --suivi_batch --memjeveux=256.0 --tpmax=900.0
+/home/G79848/data/dev/codeaster/install/std/lib/aster/aster_settings.py:248: DeprecationWarning: this command line option is deprecated : --rep_outils
+  coreopts.parse_args(argv or sys.argv)
+# ------------------------------------------------------------------------------------------
+# Impression du contenu du fichier de commandes à exécuter :
+# ------------------------------------------------------------------------------------------
+DEBUT(LANG='FR')
+
+
+f0 = DEFI_FONCTION(identifier=u'0:1',
+                   NOM_PARA='INST',
+                   VALE=(1.0, 1.0))
+
+fx = DEFI_FONCTION(identifier=u'0:2',
+                   NOM_PARA='X',
+                   VALE=(0.0, 0.0, 1.0, 1.0))
+
+fy = DEFI_FONCTION(identifier=u'1:2',
+                   NOM_PARA='Y',
+                   VALE=(0.0, 0.0))
+
+FIN()
+# ------------------------------------------------------------------------------------------
+
+  Ouverture en écriture du fichier ./vola.1
+
+ <INFO> Démarrage de l'exécution.
+                                                                                
+                                                                                
+        -- CODE_ASTER -- VERSION : DÉVELOPPEMENT STABILISÉE (testing) --        
+                                                                                
+                     Version 14.2.0 modifiée le 21/06/2018                      
+                   révision 625cf9ff06df - branche 'default'                    
+                         Copyright EDF R&D 1991 - 2018                          
+                                                                                
+                    Exécution du : Fri Jun 22 10:26:43 2018                     
+                         Nom de la machine : dsp0837509                         
+                              Architecture : 64bit                              
+                          Type de processeur : x86_64                           
+           Système d'exploitation : Linux debian 8.10  3.16.0-6-amd64           
+                        Langue des messages : fr (UTF-8)                        
+                                                                                
+                           Version de Python : 2.7.10                           
+                           Version de NumPy : 1.12.1                            
+                           Parallélisme MPI : inactif                           
+                          Parallélisme OpenMP : actif                           
+                        Nombre de processus utilisés : 4                        
+                     Version de la librairie HDF5 : 1.8.14                      
+                      Version de la librairie MED : 3.3.1                       
+                     Version de la librairie MFront : 3.1.1                     
+                Version de la librairie MUMPS : 5.1.2consortium                 
+                        Librairie PETSc : non disponible                        
+                     Version de la librairie SCOTCH : 6.0.4                     
+
+                  Mémoire limite pour l'exécution : 2048.00 Mo                  
+                   consommée par l'initialisation : 635.92 Mo                   
+                  par les objets du jeu de commandes : 1.74 Mo                  
+                 reste pour l'allocation dynamique : 1410.34 Mo                 
+                Taille limite des fichiers d'échange : 12.00 Go                 
+                                                                                
+
+.. __stg1_txt1
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0001            Concept de type : -
+  # ------------------------------------------------------------------------------------------
+  DEBUT(LANG='FR',
+        INFO=1,
+        PAR_LOT='OUI',
+        IMPR_MACRO='NON',
+        DEBUG=_F(JEVEUX='NON',
+                 JXVERI='NON',
+                 HIST_ETAPE='NON',
+                 SDVERI='NON',),
+        MEMOIRE=_F(TAILLE_BLOC=800.0,
+                   TAILLE_GROUP_ELEM=1000,),
+        RESERVE_CPU=_F(BORNE=900,),
+        MESURE_TEMPS=_F(MOYENNE='NON',
+                        NIVE_DETAIL=1,),
+        )
+
+   
+   !---------------------------------------------------!
+   ! <I> <SUPERVIS_41>                                 !
+   !                                                   !
+   ! La version 14.2.0 a été modifiée par 2 révisions. !
+   !---------------------------------------------------!
+   
+
+  Valeur initiale du temps CPU maximum =   900 secondes
+  Valeur du temps CPU maximum passé aux commandes =   810 secondes
+  Réserve CPU prévue = 90 secondes
+
+  Ouverture en écriture du fichier ./glob.1
+
+  Ouverture en écriture du fichier ./vola.1
+
+  Ouverture en lecture du fichier /home/G79848/data/dev/codeaster/install/std/lib/aster/elem.1
+
+     Nom de la base                          :  ELEMBASE
+     Créée avec la version                   :  14.02.00
+     Nombre d'enregistrements utilisés       :  44
+     Nombre d'enregistrements maximum        :  512
+     Longueur d'enregistrement (octets)      :  819200
+     Nombre d'identificateurs utilisés       :  123
+     Taille maximum du répertoire            :  300
+     Pourcentage d'utilisation du répertoire :  41 %
+
+  Ouverture en lecture du fichier /home/G79848/data/dev/codeaster/install/std/lib/aster/elem.1
+
+
+     Nom de la base                          :  ELEMBASE
+     Nombre d'enregistrements utilisés       :  44
+     Nombre d'enregistrements maximum        :  512
+     Longueur d'enregistrement (octets)      :  819200
+     Nombre total d'accès en lecture         :  62
+     Volume des accès en lecture             :         48.44 Mo.
+     Nombre total d'accès en écriture        :  0
+     Volume des accès en écriture            :          0.00 Mo.
+     Nombre d'identificateurs utilisés       :  123
+     Taille maximum du répertoire            :  300
+     Pourcentage d'utilisation du répertoire :  41 %
+
+  Relecture des catalogues des éléments faite.
+
+  Fin de lecture (durée  0.026647  s.) 
+  # Mémoire (Mo) :   683.55 /   675.73 /    44.91 /    23.29 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0001   user+syst:        0.04s (syst:        0.03s, elaps:        0.04s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_cmd0:1
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0002            Concept de type : fonction_sdaster
+  # ------------------------------------------------------------------------------------------
+  f0 = DEFI_FONCTION(VALE=(1.0, 1.0),
+                     NOM_PARA='INST',
+                     INFO=1,
+                     PROL_DROITE='EXCLU',
+                     VERIF='CROISSANT',
+                     PROL_GAUCHE='EXCLU',
+                     NOM_RESU='TOUTRESU',
+                     INTERPOL=('LIN', ),)
+
+   
+   !---------------------------------------------------------------------------!
+   ! <A> <UTILITAI2_71>                                                        !
+   !                                                                           !
+   ! La fonction a des valeurs négatives. Ce n'est pas compatible avec une     !
+   ! interpolation "LOG".                                                      !
+   !                                                                           !
+   ! Conseil :                                                                 !
+   !     Vous pouvez forcer le type d'interpolation de la fonction produite    !
+   !     avec le mot-clé INTERPOL (ou INTERPOL_FONC quand il s'agit de nappe). !
+   !                                                                           !
+   !                                                                           !
+   ! Ceci est une alarme. Si vous ne comprenez pas le sens de cette            !
+   ! alarme, vous pouvez obtenir des résultats inattendus !                    !
+   !---------------------------------------------------------------------------!
+   
+  # Mémoire (Mo) :   683.55 /   675.73 /    44.91 /    23.29 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0002   user+syst:        0.00s (syst:        0.00s, elaps:        0.01s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_cmd0:2
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0003            Concept de type : fonction_sdaster
+  # ------------------------------------------------------------------------------------------
+  fx = DEFI_FONCTION(VALE=(0.0, 0.0, 1.0, 1.0),
+                     NOM_PARA='X',
+                     INFO=1,
+                     PROL_DROITE='EXCLU',
+                     VERIF='CROISSANT',
+                     PROL_GAUCHE='EXCLU',
+                     NOM_RESU='TOUTRESU',
+                     INTERPOL=('LIN', ),)
+
+   
+   !---------------------------------------------------------------------------!
+   ! <A> <UTILITAI2_71>                                                        !
+   !                                                                           !
+   ! La fonction a des valeurs négatives. Ce n'est pas compatible avec une     !
+   ! interpolation "LOG".                                                      !
+   !                                                                           !
+   ! Conseil :                                                                 !
+   !     Vous pouvez forcer le type d'interpolation de la fonction produite    !
+   !     avec le mot-clé INTERPOL (ou INTERPOL_FONC quand il s'agit de nappe). !
+   !                                                                           !
+   !                                                                           !
+   ! Ceci est une alarme. Si vous ne comprenez pas le sens de cette            !
+   ! alarme, vous pouvez obtenir des résultats inattendus !                    !
+   !---------------------------------------------------------------------------!
+   
+  # Mémoire (Mo) :   683.55 /   675.73 /    44.91 /    23.29 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0003   user+syst:        0.00s (syst:        0.00s, elaps:        0.00s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_cmd1:2
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0004            Concept de type : fonction_sdaster
+  # ------------------------------------------------------------------------------------------
+  fy = DEFI_FONCTION(VALE=(0.0, 0.0),
+                     NOM_PARA='Y',
+                     INFO=1,
+                     PROL_DROITE='EXCLU',
+                     VERIF='CROISSANT',
+                     PROL_GAUCHE='EXCLU',
+                     NOM_RESU='TOUTRESU',
+                     INTERPOL=('LIN', ),)
+
+   
+   !---------------------------------------------------------------------------!
+   ! <A> <UTILITAI2_71>                                                        !
+   !                                                                           !
+   ! La fonction a des valeurs négatives. Ce n'est pas compatible avec une     !
+   ! interpolation "LOG".                                                      !
+   !                                                                           !
+   ! Conseil :                                                                 !
+   !     Vous pouvez forcer le type d'interpolation de la fonction produite    !
+   !     avec le mot-clé INTERPOL (ou INTERPOL_FONC quand il s'agit de nappe). !
+   !                                                                           !
+   !                                                                           !
+   ! Ceci est une alarme. Si vous ne comprenez pas le sens de cette            !
+   ! alarme, vous pouvez obtenir des résultats inattendus !                    !
+   !---------------------------------------------------------------------------!
+   
+  # Mémoire (Mo) :   683.55 /   675.73 /    44.91 /    23.29 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0004   user+syst:        0.01s (syst:        0.00s, elaps:        0.00s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_txt16
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0005            Concept de type : -
+  # ------------------------------------------------------------------------------------------
+  FIN(RETASSAGE='NON',
+      INFO_RESU='OUI',
+      FORMAT_HDF='NON',
+      PROC0='OUI',
+      )
+
+   
+   !-------------------------------------------------------------------------!
+   ! <I> <CATAMESS_89>                                                       !
+   !                                                                         !
+   !     Liste des alarmes émises lors de l'exécution du calcul.             !
+   !                                                                         !
+   !     Les alarmes que vous avez choisies d'ignorer sont précédées de (*). !
+   !     Nombre d'occurrences pour chacune des alarmes :                     !
+   !            UTILITAI2_71         émise    3 fois                         !
+   !-------------------------------------------------------------------------!
+   
+ ---------------------------------------------------------------------------
+ Concepts de la base: G
+    Nom       Type                 Taille (Mo)         Nombre      Nombre de
+                                                     d'objets       segments
+    TOTAL                                27.78             57            118
+  
+    f0         FONCTION_SDASTER           0.00              4              4
+    fx         FONCTION_SDASTER           0.00              4              4
+    fy         FONCTION_SDASTER           0.00              4              4
+    &FOZERO                               0.00              2              2
+    &&_NUM_C                              0.00              1              1
+    &CATA.AC                              0.00              2              4
+    &CATA.CL                              0.87              1              3
+    &CATA.GD                              0.14              4             11
+    &CATA.ME                              0.20              2              4
+    &CATA.OP                              0.32              4             19
+    &CATA.PH                              0.00              1              1
+    &CATA.PR                              0.00              2              4
+    &CATA.TE                             26.22             17             42
+    &CATA.TH                              0.01              2              4
+    &CATA.TM                              0.01              7             11
+ ---------------------------------------------------------------------------
+
+
+     Nom de la base                          :  GLOBALE
+     Nombre d'enregistrements utilisés       :  47
+     Nombre d'enregistrements maximum        :  62914
+     Longueur d'enregistrement (octets)      :  819200
+     Nombre total d'accès en lecture         :  7
+     Volume des accès en lecture             :          5.47 Mo.
+     Nombre total d'accès en écriture        :  63
+     Volume des accès en écriture            :         49.22 Mo.
+     Nombre d'identificateurs utilisés       :  138
+     Taille maximum du répertoire            :  2000
+     Pourcentage d'utilisation du répertoire :  6 %
+
+
+     Nom de la base                          :  VOLATILE
+     Nombre d'enregistrements utilisés       :  3
+     Nombre d'enregistrements maximum        :  62914
+     Longueur d'enregistrement (octets)      :  819200
+     Nombre total d'accès en lecture         :  0
+     Volume des accès en lecture             :          0.00 Mo.
+     Nombre total d'accès en écriture        :  6
+     Volume des accès en écriture            :          4.69 Mo.
+     Nombre d'identificateurs utilisés       :  31
+     Taille maximum du répertoire            :  2000
+     Pourcentage d'utilisation du répertoire :  1 %
+
+ <FIN> Arrêt normal dans "FIN".
+ <I> <FIN> ARRET NORMAL DANS "FIN" PAR APPEL A "JEFINI".
+
+ La mémoire demandée au lancement est surestimée, elle est de 2048.00 Mo.
+ Le pic mémoire utilisée est de 683.55 Mo.
+
+
+
+     Nom de la base                          :  ELEMBASE
+     Nombre d'enregistrements utilisés       :  44
+     Nombre d'enregistrements maximum        :  512
+     Longueur d'enregistrement (octets)      :  819200
+     Nombre total d'accès en lecture         :  62
+     Volume des accès en lecture             :         48.44 Mo.
+     Nombre total d'accès en écriture        :  0
+     Volume des accès en écriture            :          0.00 Mo.
+     Nombre d'identificateurs utilisés       :  123
+     Taille maximum du répertoire            :  300
+     Pourcentage d'utilisation du répertoire :  41 %
+  
+ <I> <FIN> MEMOIRE JEVEUX MINIMALE REQUISE POUR L'EXECUTION :                      23.29 Mo
+ <I> <FIN> MEMOIRE JEVEUX OPTIMALE REQUISE POUR L'EXECUTION :                      44.91 Mo
+ <I> <FIN> MAXIMUM DE MEMOIRE UTILISEE PAR LE PROCESSUS LORS DE L'EXECUTION :     683.55 Mo
+  
+ <I>       FERMETURE DES BASES EFFECTUEE
+  
+   STATISTIQUES CONCERNANT L'ALLOCATION DYNAMIQUE :
+     TAILLE CUMULEE MAXIMUM            :                   45  Mo.
+     TAILLE CUMULEE LIBEREE            :                    5  Mo.
+     NOMBRE TOTAL D'ALLOCATIONS        :                  462
+     NOMBRE TOTAL DE LIBERATIONS       :                  442
+     APPELS AU MECANISME DE LIBERATION :                    0
+     TAILLE MEMOIRE CUMULEE RECUPEREE  :                    0  Mo.
+     VOLUME DES LECTURES               :                    0  Mo.
+     VOLUME DES ECRITURES              :                    0  Mo.
+  
+   MEMOIRE JEVEUX MINIMALE REQUISE POUR L'EXECUTION :      23.29 Mo
+     - IMPOSE DE NOMBREUX ACCES DISQUE
+     - RALENTIT LA VITESSE D'EXECUTION
+   MEMOIRE JEVEUX OPTIMALE REQUISE POUR L'EXECUTION :      44.91 Mo
+     - LIMITE LES ACCES DISQUE
+     - AMELIORE LA VITESSE D'EXECUTION
+   MAXIMUM DE MEMOIRE UTILISEE PAR LE PROCESSUS     :     683.55 Mo
+     - COMPREND LA MEMOIRE CONSOMMEE PAR  JEVEUX, 
+       LE SUPERVISEUR PYTHON, LES LIBRAIRIES EXTERNES
+  
+ <I>       FIN D'EXECUTION LE : VE-22-JUIN-2018 10:26:43
+
+ ********************************************************************************
+ * COMMAND                  :       USER :     SYSTEM :   USER+SYS :    ELAPSED *
+ ********************************************************************************
+ * init (jdc)               :       0.38 :       0.06 :       0.44 :       0.44 *
+ *  . compile               :       0.00 :       0.00 :       0.00 :       0.00 *
+ *  . exec_compile          :       0.02 :       0.00 :       0.02 :       0.03 *
+ *  . report                :       0.00 :       0.00 :       0.00 :       0.00 *
+ *  . build                 :       0.00 :       0.00 :       0.00 :       0.00 *
+ * DEBUT                    :       0.01 :       0.03 :       0.04 :       0.04 *
+ * DEFI_FONCTION            :       0.00 :       0.00 :       0.00 :       0.01 *
+ * DEFI_FONCTION            :       0.00 :       0.00 :       0.00 :       0.00 *
+ * DEFI_FONCTION            :       0.01 :       0.00 :       0.01 :       0.00 *
+ * FIN                      :       0.01 :       0.02 :       0.03 :       0.03 *
+ *  . part Superviseur      :       0.40 :       0.09 :       0.49 :       0.49 *
+ *  . part Fortran          :       0.02 :       0.02 :       0.04 :       0.04 *
+ ********************************************************************************
+ * TOTAL_JOB                :       0.42 :       0.11 :       0.53 :       0.53 *
+ ********************************************************************************
+
+
+
+  <I> Informations sur les temps d'exécution
+      Temps cpu user total                    0.42 s
+      Temps cpu systeme total                 0.11 s
+      Temps elapsed total                     0.53 s
+      Temps restant                         809.47 s
+
+
+  La signature de la base sauvegardée est (à l'adresse 0) :
+    4f98b56749b9f4ea8250a80041f3d12b974e62f4
+
+ ********************************************************************************
+ * COMMAND                  :       USER :     SYSTEM :   USER+SYS :    ELAPSED *
+ ********************************************************************************
+ * init (jdc)               :       0.38 :       0.06 :       0.44 :       0.44 *
+ *  . compile               :       0.00 :       0.00 :       0.00 :       0.00 *
+ *  . exec_compile          :       0.02 :       0.00 :       0.02 :       0.03 *
+ *  . report                :       0.00 :       0.00 :       0.00 :       0.00 *
+ *  . build                 :       0.00 :       0.00 :       0.00 :       0.00 *
+ * DEBUT                    :       0.01 :       0.03 :       0.04 :       0.04 *
+ * DEFI_FONCTION            :       0.00 :       0.00 :       0.00 :       0.01 *
+ * DEFI_FONCTION            :       0.00 :       0.00 :       0.00 :       0.00 *
+ * DEFI_FONCTION            :       0.01 :       0.00 :       0.01 :       0.00 *
+ * FIN                      :       0.01 :       0.02 :       0.03 :       0.03 *
+ *  . part Superviseur      :       0.40 :       0.09 :       0.49 :       0.49 *
+ *  . part Fortran          :       0.02 :       0.02 :       0.04 :       0.04 *
+ ********************************************************************************
+ * TOTAL_JOB                :       0.42 :       0.11 :       0.53 :       0.53 *
+ ********************************************************************************
+
+EXECUTION_CODE_ASTER_EXIT_26305-0001-dsp0837509=0
+<INFO> Exécution Code_Aster terminée, diagnostic : <A>_ALARM
+
+--------------------------------------------------------------------------------
+ Contenu de /local00/tmp/G79848-dsp0837509-interactif_26305-0001-dsp0837509 après l'exécution
+
+.:
+total 44180
+drwx------  3 G79848 rdusers     4096 juin  22 10:26 .
+drwxrwxrwt 19 root   root       65536 juin  22 10:26 ..
+-rw-r--r--  1 G79848 rdusers      668 juin  22 10:26 26305-0001-dsp0837509.export
+-rw-r--r--  1 G79848 rdusers     2962 juin  22 10:26 config.txt
+-rw-r--r--  1 G79848 rdusers      361 juin  22 10:26 fort.1
+-rw-r--r--  1 G79848 rdusers      361 juin  22 10:26 fort.1.1
+-rw-r--r--  1 G79848 rdusers        0 juin  22 10:26 fort.15
+-rw-r--r--  1 G79848 rdusers    21845 juin  22 10:26 fort.6
+-rw-r--r--  1 G79848 rdusers        0 juin  22 10:26 fort.8
+-rw-r--r--  1 G79848 rdusers        0 juin  22 10:26 fort.9
+-rw-r--r--  1 G79848 rdusers 38502408 juin  22 10:26 glob.1
+-rw-r--r--  1 G79848 rdusers       44 juin  22 10:26 info_cpu
+-rw-r--r--  1 G79848 rdusers  4961945 juin  22 10:26 pick.1
+drwxr-xr-x  2 G79848 rdusers     4096 juin  22 10:26 REPE_OUT
+-rw-r--r--  1 G79848 rdusers  2457608 juin  22 10:26 vola.1
+
+REPE_OUT:
+total 8
+drwxr-xr-x 2 G79848 rdusers 4096 juin  22 10:26 .
+drwx------ 3 G79848 rdusers 4096 juin  22 10:26 ..
+
+
+--------------------------------------------------------------------------------
+ Taille des bases
+
+<INFO> taille de vola.1 :      2457608 octets
+<INFO> taille de glob.1 :     38502408 octets
+<INFO> taille de pick.1 :      4961945 octets
+
+--------------------------------------------------------------------------------
+ Copie des résultats
+
+copie de .../fort.6...                                                  [  OK  ]
+compression de glob.1                                                   [  OK  ]
+compression de pick.1                                                   [  OK  ]
+copie de .../glob.1.gz...                                               [  OK  ]
+copie de .../pick.1.gz...                                               [  OK  ]
+
+<A>_ALARM          Exécution de Code_Aster terminée
+
+
+ 
+ ---------------------------------------------------------------------------------
+                                            cpu    système    cpu+sys     écoulé
+ ---------------------------------------------------------------------------------
+   Préparation de l'environnement          0.00       0.00       0.00       0.00
+   Copie des données                       0.00       0.00       0.00       0.02
+   Exécution de Code_Aster                 1.42       0.47       1.89       1.61
+   Copie des résultats                     0.83       0.01       0.84       0.86
+ ---------------------------------------------------------------------------------
+   Total                                   2.33       0.53       2.86       2.68
+ ---------------------------------------------------------------------------------
+
+as_run 2017.0
+
+------------------------------------------------------------
+--- DIAGNOSTIC JOB : <A>_ALARM
+------------------------------------------------------------
+
+
+EXIT_CODE=0

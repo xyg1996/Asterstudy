@@ -1,0 +1,97 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+# person_in_charge: david.haboussa at edf.fr
+# ELASTOPLASTICITE  ECROUISSAGE MIXTE Loi de CHABOCHE
+#......................................................................
+
+
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),);
+
+
+# donnee materiau et fonction
+
+#parametres elastiques
+YOUNG = 200000.0;
+POISSON = 0.3;
+# parametres loi de chaboche
+SY = 437.0;
+Rinf = 758.0;
+b = 2.3;
+C1inf = 63767.0/2.0
+C2inf = 63767.0/2.0
+Gam1 = 341.0
+Gam2 = 341.0
+# def des materiaux
+ACIER = [None]*2
+#unite en Pa
+C_Pa = 1.e+6
+YOUNG_Pa = YOUNG * C_Pa
+SY_Pa = SY * C_Pa;
+Rinf_Pa = Rinf * C_Pa;
+C1inf_Pa = C1inf * C_Pa;
+C2inf_Pa = C2inf * C_Pa;
+ACIER[0]=DEFI_MATERIAU(ELAS=_F(E=YOUNG_Pa,
+                               NU=POISSON,
+                               ALPHA=11.8e-6),
+                    CIN2_CHAB=_F(R_I = Rinf_Pa,
+                                 R_0 = SY_Pa,
+                                 B  = b,
+                                 C1_I  = C1inf_Pa,
+                                 C2_I  = C2inf_Pa,
+                                 G1_0  = Gam1,
+                                 G2_0  = Gam2,
+                                        ),
+                                 );
+#unite en MPa
+ACIER[1]=DEFI_MATERIAU(ELAS=_F(E=YOUNG,
+                               NU=POISSON,
+                               ALPHA=11.8e-6),
+                       CIN2_CHAB=_F(R_I = Rinf,
+                                 R_0 = SY,
+                                 B  = b,
+                                 C1_I  = C1inf,
+                                 C2_I  = C2inf,
+                                 G1_0  = Gam1,
+                                 G2_0  = Gam2,
+                                        ),
+                                 );
+
+
+
+
+compor='VMIS_CIN2_CHAB'
+
+listprec=4*[1.E-10] + [1.E-1] + 2*[3.E-2] + [4.E-2]
+
+tabresu=TEST_COMPOR(OPTION='MECA',
+
+              COMPORTEMENT=_F(RELATION=compor,),
+              NEWTON=_F(REAC_ITER=1),
+              LIST_MATER=ACIER,
+              LIST_NPAS=4*[1] + [1, 5, 25],
+              VARI_TEST=('V1','VMIS','TRACE'),
+              LIST_TOLE=listprec,
+              YOUNG=YOUNG,POISSON=POISSON,
+              )
+
+IMPR_TABLE(TABLE=tabresu)
+
+
+FIN()

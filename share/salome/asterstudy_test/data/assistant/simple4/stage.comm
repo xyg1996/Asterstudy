@@ -1,0 +1,7 @@
+DEBUT()
+mesh = 20
+input_file = 21
+group_ma = "ma_group"
+group_no = "no_group"
+output_file = 80
+FIN()

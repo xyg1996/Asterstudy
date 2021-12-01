@@ -1,0 +1,6 @@
+DEBUT()
+%CHOICE=CHOICE_1{var = %PARAM1%}%
+%CHOICE=CHOICE_2{var = %PARAM2%}%
+%CHOICE=CHOICE_3{var = %PARAM3%}%
+%CHOICE=CHOICE_4{var = "hardcoded"}%
+FIN()

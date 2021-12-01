@@ -1,0 +1,261 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="fr">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Cas et étapes &#8212; AsterStudy v0.11 Documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Recherche" href="../search.html" />
+    <link rel="next" title="Gestion des commandes" href="commands.html" />
+    <link rel="prev" title="Gestion de l’étude" href="study.html" />
+<script type="text/javascript" src="../_static/switchers.js"></script>
+ 
+
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="Index général"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="commands.html" title="Gestion des commandes"
+             accesskey="N">suivant</a> |</li>
+        <li class="right" >
+          <a href="study.html" title="Gestion de l’étude"
+             accesskey="P">précédent</a> |</li>
+  <span class="language_switcher_placeholder">fr</span>
+  
+        <li class="nav-item nav-item-0"><a href="../index.html">AsterStudy v0.11 Documentation</a> &#187;</li>
+
+          <li class="nav-item nav-item-1"><a href="userguide.html" accesskey="U">Manuel utilisateur</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="case-and-stages">
+<span id="userguide-case-stages"></span><h1>Cas et étapes<a class="headerlink" href="#case-and-stages" title="Lien permanent vers ce titre">¶</a></h1>
+<p>Selon les termes de <strong>Code_Aster</strong>, un cas d’étude est décrit comme une séquence de commandes. Cette séquence est transmise au code de calcul via un ou plusieurs fichiers de commandes (normalement avec des extensions de la forme «&nbsp;<em>.com</em>&nbsp;», par exemple aaa.comm, aaa.com1, aaa.com2…).</p>
+<p>Dans l’application <em>AsterStudy</em>, un cas d’étude est représenté comme une liste d’étapes, pour chaque étape un fichier de commande séparé sera créé.</p>
+<div class="section" id="case">
+<h2>Cas<a class="headerlink" href="#case" title="Lien permanent vers ce titre">¶</a></h2>
+<p>Lorsqu’une étude est créée, un <strong>cas</strong> vide est automatiquement ajouté. Le <em>cas</em> représente une étude <em>Aster</em> dans l’application.</p>
+<p>Le contenu du cas est complété selon les besoins par diverses opérations. En plus du <strong>Cas courant</strong> qui représente le cas en cours d’édition par l’utilisateur, d’autres types de cas existent :</p>
+<ul class="simple">
+<li><strong>Cas exécutés</strong> : les cas contenant des résultats d’un calcul <strong>Code_Aster</strong>,</li>
+<li><strong>Cas sauvegardés</strong> : copies de sauvegarde du <em>Cas courant</em>.</li>
+</ul>
+<p>Pour plus de détails sur les fonctionnalités des cas, voir le chapitre <a class="reference internal" href="case_management.html#userguide-case-management"><span class="std std-ref">Gestion des cas</span></a>.</p>
+</div>
+<div class="section" id="stages">
+<h2>Étapes<a class="headerlink" href="#stages" title="Lien permanent vers ce titre">¶</a></h2>
+<p>Un cas est composé d”<strong>étapes</strong> représentant les différentes phases du calcul <em>Aster</em>.</p>
+<div class="section" id="graphical-mode-and-text-mode-of-the-stages">
+<h3>Mode graphique et mode texte des étapes<a class="headerlink" href="#graphical-mode-and-text-mode-of-the-stages" title="Lien permanent vers ce titre">¶</a></h3>
+<p>Les étapes peuvent être gérées soit en mode <em>graphique</em> soit en mode <em>texte</em>.</p>
+<p>Le mode <strong>graphique</strong> permet de gérer les étapes en renseignant les étapes via des panneaux de saisie dans l’interface de l’application.</p>
+<p>Le mode <strong>texte</strong> laisse l’utilisateur saisir les commandes <em>Aster</em>. Ce mode peut, par exemple, être utilisé pour utiliser des fonctionnalités de <strong>Code_Aster</strong>.</p>
+<p>Les étapes en mode <em>graphique</em> sont représentées dans l’onglet <em>Données</em> par l’icône <img alt="stage_graphical" src="../_images/stage_graphical.png" />, et celles en mode <em>texte</em> par l’icône <img alt="stage_text" src="../_images/stage_text.png" />.</p>
+<div class="admonition important">
+<p class="first admonition-title">Important</p>
+<p class="last"><em>Par défaut</em> les étapes sont créées en mode <em>graphique</em>.</p>
+</div>
+<p>Il est possible de changer le mode d’une étape via le menu contextuel ou le menu <em>Opérations</em>.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Avertissement</p>
+<p class="last">Un message d’avertissement sera affiché si l’application ne peut pas convertir une étape du mode <em>texte</em> vers le mode <em>graphique</em>.</p>
+</div>
+</div>
+<div class="section" id="add-stage">
+<h3>Ajouter une étape<a class="headerlink" href="#add-stage" title="Lien permanent vers ce titre">¶</a></h3>
+<p>Pour ajouter une étape, placer vous dans la vue cas au choix :</p>
+<ul class="simple">
+<li>cliquer sur le bouton <a class="reference internal" href="../_images/stage_new.png"><img alt="stage_new" src="../_images/stage_new.png" style="height: 24px;" /></a> <em>Ajouter une étape</em> de la barre d’outil,</li>
+<li>utiliser le menu <em>Opérations &gt; Ajouter une étape</em>,</li>
+<li>le menu contextuel <em>Ajouter une étape</em> sur le cas dans l’onglet <em>Données</em>,</li>
+<li>utiliser le raccourci clavier <em>Ctrl+Maj+N</em>.</li>
+</ul>
+<p>Les nouvelles étapes sont nommées automatiquement par l’application. Il est possible de renommer une étape en la sélectionnant dans l’onglet <em>Données</em> et en utilisant le menu contextuel <em>Renommer</em>, ou en pressant le raccourcis <em>F2</em>.</p>
+</div>
+<div class="section" id="import-stage">
+<h3>Importer une étape<a class="headerlink" href="#import-stage" title="Lien permanent vers ce titre">¶</a></h3>
+<p>Il est possible d’importer un fichier de commandes <em>Aster</em> en tant qu’étape du cas.</p>
+<p>Pour cela, vous pouvez soit :</p>
+<ul class="simple">
+<li>cliquer l’icône <a class="reference internal" href="../_images/stage_import.png"><img alt="stage_import" src="../_images/stage_import.png" style="height: 24px;" /></a> <em>Ajoute une étape à partir d’un fichier</em> de la barre d’outil,</li>
+<li>utiliser le menu <em>Opérations &gt; Ajoute une étape à partir d’un fichier</em>,</li>
+<li>utiliser le menu contextuel <em>Ajouter une étape à partir d’un fichier</em> sur le cas dans l’onglet <em>Données</em>,</li>
+<li>utiliser le raccourci clavier <em>Ctrl+Maj+I</em>.</li>
+</ul>
+<div class="admonition important">
+<p class="first admonition-title">Important</p>
+<p class="last">L’application analyse le fichier de commandes et crée une étape en mode <em>graphique</em> à partir du contenu du fichier. Si le fichier contient des commandes ne pouvant être interprétées par l’application l’étape sera créée en mode <em>texte</em> avec le contenu du fichier.</p>
+</div>
+<p>Il est également possible d’importer un fichier de commandes <em>Aster</em> en tant qu’étape en mode texte, c’est-à-dire sans la convertir en mode <em>graphique</em>. Pour cela :</p>
+<ul class="simple">
+<li>utiliser le menu <em>Opérations &gt; Ajoute une étape texte à partir d’un fichier</em>,</li>
+<li>utiliser le menu contextuel <em>Ajouter une étape à partir d’un fichier</em> sur le cas dans l’onglet <em>Données</em>.</li>
+</ul>
+</div>
+<div class="section" id="import-stage-from-template">
+<h3>Importer une étape depuis un modèle<a class="headerlink" href="#import-stage-from-template" title="Lien permanent vers ce titre">¶</a></h3>
+<p>Il est possible de créer une étape en important un modèle prédéfini de commandes <em>Aster</em>. Les modèles peuvent être créées par les utilisateurs dans le répertoire <code class="docutils literal notranslate"><span class="pre">~/.config/salome/asterstudy_templates</span></code>. Ces fichiers apparaitront dans :</p>
+<ul class="simple">
+<li>les menus <em>Opérations &gt; Ajouter une étape depuis un modèle</em> et <em>Opération &gt; Ajouter une étape texte depuis un modèle</em>,</li>
+<li>les sous-menus <em>Ajouter étape depuis un modèle</em> et <em>Ajouter étape texte depuis un modèle</em> du menu contextuel sur le cas dans l’onglet <em>Données</em>.</li>
+</ul>
+<div class="admonition important">
+<p class="first admonition-title">Important</p>
+<p class="last">Des templates prédéfinis peuvent-être fournis avec l’application <em>AsterStudy</em>.</p>
+</div>
+</div>
+<div class="section" id="add-stage-with-assistant">
+<h3>Ajouter une étape avec un assistant<a class="headerlink" href="#add-stage-with-assistant" title="Lien permanent vers ce titre">¶</a></h3>
+<p>Une autre façon d’ajouter une étape au cas d’étude consiste à utiliser un <em>assistant de calcul</em>.</p>
+<p>Un <em>assistant de calcul</em> est une étude paramétrée prédéfinie, disposant d’une interface utilisateur, permettant à l’utilisateur de saisir les paramètres et de pouvoir rapidement créé un cas de calcul.</p>
+<p>Plusieurs assistants de calcul sont fournis avec l’application <em>AsterStudy</em>. Les assistants personnalisés de l’utilisateur sont localisés dans le répertoire <code class="docutils literal notranslate"><span class="pre">~/.config/salome/asterstudy_assistants</span></code>. Ces assistants apparaissent dans :</p>
+<ul class="simple">
+<li>le menu <em>Opérations &gt; Ajouter une étape avec un assistant</em>,</li>
+<li>les sous-menus <em>Ajouter étape avec un assistant</em> du menu contextuel sur le cas dans l’onglet <em>Données</em>.</li>
+</ul>
+<p>Pour en savoir plus sur les <em>assistants de calcul</em> (en particulier, comment créer vos propres assistants), consulter <a class="reference internal" href="../assistant/assistant.html#assistant"><span class="std std-ref">Guide de l’assistant de calcul</span></a></p>
+</div>
+<div class="section" id="export-stage">
+<h3>Exporter une étape<a class="headerlink" href="#export-stage" title="Lien permanent vers ce titre">¶</a></h3>
+<p>De la même façon, il est possible d’exporter une étape vers un fichier de commandes <em>Aster</em> :</p>
+<ul class="simple">
+<li>cliquer l’icône <a class="reference internal" href="../_images/stage_export.png"><img alt="stage_export" src="../_images/stage_export.png" style="height: 24px;" /></a> <em>Exporter le fichier de commandes</em> de la barre d’outils,</li>
+<li>utiliser le menu <em>Opération &gt; Exporter le fichier de commandes</em>,</li>
+<li>utiliser le menu contextuel <em>Exporter le fichier de commandes</em> sur l’étape à exporter dans l’onglet <em>Données</em>,</li>
+<li>utiliser le raccourci clavier <em>Ctrl+Maj+E</em>.</li>
+</ul>
+<p>Si l’étape est en mode <em>graphique</em>, le fichier de commande est générée à partir des commandes définies dans l’étape, dans le cas d’une étape en mode <em>texte</em>, le contenu de l’étape est directement exporté vers le fichier.</p>
+</div>
+<div class="section" id="rename-stage">
+<h3>Renommer l’étape<a class="headerlink" href="#rename-stage" title="Lien permanent vers ce titre">¶</a></h3>
+<p>Les étapes sont ajoutées à l’étude avec un nom par défaut. Pour renommer une étape, sélectionner la dans l’onglet <em>Données</em> et :</p>
+<ul class="simple">
+<li>Utiliser le menu principal <em>Edition &gt; Renommer</em>,</li>
+<li>Utiliser le menu contextuel <em>Renommer</em>,</li>
+<li>Presser la touche <em>F2</em>.</li>
+</ul>
+</div>
+<div class="section" id="delete-stage">
+<h3>Supprimer une étape<a class="headerlink" href="#delete-stage" title="Lien permanent vers ce titre">¶</a></h3>
+<p>Une étape peut être supprimée du cas en utilisant le bouton de la barre d’outils <a class="reference internal" href="../_images/delete.png"><img alt="stage_delete" src="../_images/delete.png" style="height: 24px;" /></a>, le menu principal, ou le raccourci (<em>Del</em>).</p>
+<div class="admonition warning">
+<p class="first admonition-title">Avertissement</p>
+<p class="last">La suppression d’une étape, supprimera automatiquement toutes les étapes suivantes.</p>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+
+<div id="searchbox" style="display: none" role="search">
+  <h3>Recherche rapide</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+<p/>
+  <h3><a href="../index.html">Table des Matières</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Cas et étapes</a><ul>
+<li><a class="reference internal" href="#case">Cas</a></li>
+<li><a class="reference internal" href="#stages">Étapes</a><ul>
+<li><a class="reference internal" href="#graphical-mode-and-text-mode-of-the-stages">Mode graphique et mode texte des étapes</a></li>
+<li><a class="reference internal" href="#add-stage">Ajouter une étape</a></li>
+<li><a class="reference internal" href="#import-stage">Importer une étape</a></li>
+<li><a class="reference internal" href="#import-stage-from-template">Importer une étape depuis un modèle</a></li>
+<li><a class="reference internal" href="#add-stage-with-assistant">Ajouter une étape avec un assistant</a></li>
+<li><a class="reference internal" href="#export-stage">Exporter une étape</a></li>
+<li><a class="reference internal" href="#rename-stage">Renommer l’étape</a></li>
+<li><a class="reference internal" href="#delete-stage">Supprimer une étape</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Sujet précédent</h4>
+  <p class="topless"><a href="study.html"
+                        title="Chapitre précédent">Gestion de l’étude</a></p>
+  <h4>Sujet suivant</h4>
+  <p class="topless"><a href="commands.html"
+                        title="Chapitre suivant">Gestion des commandes</a></p>
+  <div role="note" aria-label="source link">
+    <h3>Cette page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/userguide/case_stages.rst.txt"
+            rel="nofollow">Montrer le code source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Recherche rapide</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="Index général"
+             >index</a></li>
+        <li class="right" >
+          <a href="commands.html" title="Gestion des commandes"
+             >suivant</a> |</li>
+        <li class="right" >
+          <a href="study.html" title="Gestion de l’étude"
+             >précédent</a> |</li>
+  <span class="language_switcher_placeholder">fr</span>
+  
+        <li class="nav-item nav-item-0"><a href="../index.html">AsterStudy v0.11 Documentation</a> &#187;</li>
+
+          <li class="nav-item nav-item-1"><a href="userguide.html" >Manuel utilisateur</a> &#187;</li> 
+      </ul>
+    </div>
+ 
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2016-2019 EDF R&amp;D.
+      Créé avec <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.6.
+    </div>
+  </body>
+</html>

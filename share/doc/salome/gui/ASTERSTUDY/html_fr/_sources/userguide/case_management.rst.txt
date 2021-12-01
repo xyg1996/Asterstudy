@@ -1,0 +1,84 @@
+.. _userguide-case_management:
+
+***************
+Case Management
+***************
+
+Backup case
+===========
+
+It is possible to save a case without executing it in order to keep intermediate
+versions of the case and to be able to resume them later.
+
+This can be done, either in the *History View* or the *Case View*, by selecting
+*Operation > Back Up* menu or the *Back Up* entry in the context menu of a case.
+
+.. figure:: /images/backup_case.png
+    :alt: Backup case
+    :align: center
+
+    **Backup case**
+
+Saved cases are shown in a separate subfolder in the *History View*.
+
+.. figure:: /images/cases_tree.png
+    :alt: Cases tree in History View
+    :align: center
+
+    **Cases tree in History View**
+
+Remove execution
+================
+
+It is possible to delete the results of an execution (provided that its results
+are not used by other executions).
+
+To do this, select the run case to delete, then the *Delete* button on the
+toolbar, the *Edit > Delete* menu, or the *Delete* entry in the context menu.
+
+Examine calculation
+===================
+
+The user can see the contents of an executed case. To do this, select the case
+in the *History View*, then the *View Case* entry of the context menu. The case
+details can then be viewed *in read-only mode* in the *Case View*.
+
+.. figure:: /images/readonly_case.png
+    :alt: Read-only view
+    :align: center
+
+    **Read-only view**
+
+This feature is useful because it allows viewing the details of the commands
+that make up the stages of given run case. Indeed, between two calculations
+the user has the possibility to modify the parameters of the commands, to add
+or to delete commands on the stages. The commands executed during a calculation
+can thus be different from those of the current case.
+
+Add description
+===============
+
+The user is able to add a description to each *Run case* or *Backup case*. This
+can be done with the *Edit Description* item in the *Operations* main menu or
+context menu.
+
+Create case
+===========
+
+The initial empty case is automatically added to a study when it is created.
+However, it is possible to remove all contents of the *Current Case* and create
+new empty case. This can be done with *New Case* operation.
+
+Export case
+===========
+
+The content of the study case can be exported to the files with the *Export Case*
+operation which is available in *Operations* main menu and in context menu.
+This operation creates an *.export* file and puts stages as properly named
+*.com?* files near it. Input data files are put near the *.export* file.
+
+Import case
+===========
+
+The content of the study can be imported from the *.export* file.
+Use *Import Case* item in *Operations* main menu to do this.

@@ -1,0 +1,136 @@
+.. _assistant-translation:
+
+************************************
+Translation of calculation assistant
+************************************
+
+As soon as the calculation assistant's implementation is finished, it is time to translate it to other languages.
+
+In order to supply translation of the calculation assistant to other languages than default one, the following procedure has to be applied.
+
+Pre-requisites
+==============
+
+.. table::
+
+    ====================== ===================================================================
+    **Tool**               **Description**
+    ====================== ===================================================================
+    *asterstudy_assistant* This script is a part of the *AsterStudy* application.
+
+                           It is used to generate Python module for the calculation assistant
+                           from the declaration file.
+
+    *pylupdate*            This script is a part of the *AsterStudy* application: if you work
+                           from the source tree of *AsterStudy*, it can be found in the
+                           *cmake* sub-directory; otherwise find it in the bin sub-directory
+                           of the install tree.
+
+                           This script is used to extract translation resources from the
+                           Python source code in the form suitable for Qt *lupdate* tool.
+
+    *lupdate*              This executable is a part of *Qt*. Use *lupdate* supplied with the
+                           SALOME distribution.
+
+                           The *lupdate* tool is used to generate / update translation source
+                           file, with ``.ts`` extension.
+
+    *linguist*             This executable is a part of *Qt*. Use *linguist* supplied with the
+                           SALOME distribution.
+
+                           This program can be used to translate source resource file to the
+                           target language.
+
+    *lrelease*             This executable is a part of *Qt*. Use *lrelease* supplied with the
+                           SALOME distribution.
+
+                           The *lrelease* tool is used to compile translation source file to
+                           the binary form (with ``.qm`` extension), which can be loaded by
+                           the application.
+    ====================== ===================================================================
+
+Translation procedure
+=====================
+
+1. Generate wizard file
+-----------------------
+
+The following command will generate a Python module for the calculation assistant from the declaration file.
+More details about command line tool can be found :ref:`here <assistant-cmd-line-tool>`.
+
+.. code-block:: bash
+
+    asterstudy_assistant generate /path/to/assistant/directory
+
+**Note**: resulting Python module is only needed to extract the translation resources. It can be removed then since *AsterStudy* allows automatic generation of calculation assistant in runtime from the description file (which is mandatory in this case). However, generated wizard module can be kept - in this case it will be loaded by *AsterStudy* automatically. Also, keeping wizard module can be needed if it contains some customization added manually.
+
+2. Extract translations
+-----------------------
+
+To extract translation resources from the wizard file use ``pylupdate`` script:
+
+.. code-block:: bash
+
+    pylupdate -e py -o /tmp/translation.py /path/to/assistant/directory
+
+**Note**: the output file is used only temporarily (see next step), so arbitrary file path can be used. However, the file should have .py extension, otherwise *lupdate* tool will fail.
+
+3. Update translation file
+--------------------------
+
+Use *Qt* ``lupdate`` tool to generate / update source translation file:
+
+.. code-block:: bash
+
+    lupdate -extensions py -locations none -no-obsolete /tmp/translation.py -ts /path/to/assistant/directory/wizard_msg_fr.ts
+
+**Note**: The target language is automatically computed by lupdate from the name of the translation file, when it is first time launched. In above example, the source language will be *English* (default) and target language will be *French*.
+Type ``lupdate -h`` to learn more about available options.
+
+4. Translate calculation assistant
+----------------------------------
+
+Use *Qt* ``linguist`` tool to translate the source ``.ts`` file to the target language. The translations are written to the same ``.ts`` file.
+
+5. Compile translation file
+---------------------------
+
+Compile source translation file to the binary form with the *Qt* ``lrelease`` tool:
+
+.. code-block:: bash
+
+    lrelease /path/to/assistant/directory/wizard_msg_fr.ts -qm /path/to/assistant/directory/wizard_msg_fr.qm
+
+6. Deploy translation file
+--------------------------
+
+Deploy resulting translation file with your calculation assistant.
+It will be automatically picked up by the *AsterStudy* application when the calculation assistant is launched.
+
+Notes for developers of AsterStudy application
+----------------------------------------------
+
+When developing *standard* calculation assistants which are deployed with the *AsterStudy* application, use the following procedure in order to create translations:
+
+a) Create a dedicated sub-directory in the ``resources/assistants`` folder and put new assistant there.
+
+b) Perform steps 1-4 of above written procedure. Use a unique name for the source translation file (better using some significant name describing the nature of the assistant, e.g. ``IsotropicLineaElasticity_msg_fr.ts``).
+
+c) Do not compile/deploy translation file as it will be done automatically by install procedure of *AsterStudy* application.
+
+d) Add new translation to the ``resources`` section of ``resources/SalomeApp.xml.in`` file, e.g.:
+
+.. code-block:: xml
+
+    <section name="resources">
+        <parameter name="IsotropicLineaElasticity" value="%ASTERSTUDY_ROOT_DIR%/share/salome/resources/asterstudy" />
+    </section>
+
+In this was the resource file will be automatically loaded on the *ASTERSTUDY* module activation in SALOME.
+
+e) Small trick: in order to have translated name of the calculation wizard in the menu of *AsterStudy* application, add ``translator`` option to the wizard's :ref:`configuration file <assistant-cfg>`:
+
+.. code-block:: ini
+
+    [General]
+    translator = IsotropicLinearElasticity

@@ -1,0 +1,125 @@
+.. _userguide-files_tab:
+
+**********
+Data Files
+**********
+
+Description
+===========
+
+The *Data Files* panel of the *Case View* allows managing input and output files
+used by a case.
+
+.. figure:: /images/files_tab.png
+    :alt: Data Files panel
+    :align: center
+
+    **Data Files panel**
+
+The user can view / edit data files when selecting a case, stage or command item
+in the *Data Settings* panel. In each case the *Data Files* panel displays all
+data files referenced by selected item.
+
+The *Unit* column displays an internal unique identifier of the data file within
+the study.
+
+The *Mode* column shows type of the data file: *in*, *out* or *inout*.
+
+The *Exists* column indicates whether the file exists on the disk or not.
+
+The *Embedded* column indicates whether the file is embedded into the study or not.
+
+In *graphical* mode files are automatically added by the application. For each
+file, the *Data Files* panel shows the commands which refer to this file, as child
+items (see image above).
+
+In *text* mode the user must manually add the files he declares when describing
+the commands. For this purpose, the *Add file* and *Remove file* buttons
+in the *Data Files* panel's toolbar can be used.
+
+In the Gnome environment (``Gio`` and ``GLib`` Python modules are required for
+this feature), the file browser allows selecting files on a remote server.
+By default, the remote servers are not automatically connected at startup.
+The user can change this behavior in *File > Preferences*.
+To manually connect the remote servers, use
+*Operations > Connect remote servers* menu.
+The remote filesystems are automatically unmounted when the Study is closed.
+The remote servers are declared in the resources of the SALOME *JobManager*
+module.
+
+.. _edit-file:
+
+Edit file
+=========
+
+.. |edit_file| image:: /images/edit_file.png
+    :height: 24px
+
+It is possible to edit the file's properties by selecting it in the
+*Data Files* panel, and then clicking on the |edit_file| button.
+
+.. figure:: /images/edit_file_dlg.png
+    :alt: Edit file properties
+    :align: center
+
+    **Edit file properties**
+
+Embedded files
+==============
+
+The data files can be embedded into the SALOME study file (HDF format). This
+has the advantage of being able to move the study file from one location to
+another without worrying about having to move other files.
+
+Embed file
+----------
+
+To embed a file, the user selects the file in the *Data Files* panel, and then
+checks the *Embedded* box in the context menu.
+
+.. figure:: /images/embed_file.png
+    :alt: Embed file from context menu
+    :align: center
+
+    **Embed file from context menu**
+
+This action can also be performed in the :ref:`file edition panel <edit-file>`.
+
+.. figure:: /images/embed_file_panel.png
+    :alt: Embed file from edit panel
+    :align: center
+
+    **Embed file from edit panel**
+
+Detach file
+-----------
+
+To detach a file from the study, the user must proceed in the same way to uncheck
+*Embedded* box from context menu. The user will be prompted where he wants to put
+the detached file.
+
+Open With
+=========
+
+The user can open the data file for viewing or editing in the AsterStudy or in an
+external application with the following operations:
+
+* *Open In Editor* opens selected file for editing in an internal or external
+  editor, depending on the preferences option,
+* *Open In ParaVis* opens selected MED file in SALOME ParaVis module,
+* *Open With* submenu allows opening selected file in any program by user's
+  choice.
+
+Summary
+=======
+
+The summary on the data files used within the study case can be viewed in the
+*Data Files Summary* panel of the *History View*.
+Here user can see all used data files and, if necessary, quickly modify
+a path for each data file.
+
+.. figure:: /images/files_summary.png
+    :alt: Data Files Summary
+    :align: center
+
+    **Data Files Summary panel**

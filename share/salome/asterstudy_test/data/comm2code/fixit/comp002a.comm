@@ -1,0 +1,70 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+# person_in_charge: david.haboussa at edf.fr
+#       UNITES : NEWTON , MILLIMETRE , SECONDE (N,MM,S,->MPA)
+#----------------------------------------------------------------------
+
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),DEBUG=_F(SDVERI='OUI'));
+
+
+
+#parmetres elastiques
+YOUNG = 200000.0;
+POISSON = 0.3;
+#parametres viscosite
+M = 5.6
+Minv = 1.0/M
+Kinv= 3.2841e-4
+N = 11
+# def des materiaux
+ACIER = [None]*2
+#unite en Pa
+C_Pa = 1.e+6
+YOUNG_Pa = YOUNG * C_Pa
+Kinv_Pa = Kinv / C_Pa;
+
+ACIER[0]=DEFI_MATERIAU(ELAS=_F(E=YOUNG_Pa,
+                               NU=POISSON,
+                               ALPHA=11.8e-6),
+                        LEMAITRE=_F( N = N,UN_SUR_K = Kinv_Pa ,UN_SUR_M = Minv),
+                                 );
+#unite en MPa
+ACIER[1]=DEFI_MATERIAU(ELAS=_F(E=YOUNG,
+                               NU=POISSON,
+                               ALPHA=11.8e-6),
+                        LEMAITRE=_F( N = N,UN_SUR_K = Kinv ,UN_SUR_M = Minv),
+                                 );
+
+compor='LEMAITRE'
+
+tabresu=TEST_COMPOR(OPTION='MECA',
+              COMPORTEMENT=_F(RELATION=compor,ITER_INTE_MAXI=100),
+              NEWTON=_F(REAC_ITER=1),
+              LIST_MATER=ACIER,
+              LIST_NPAS=4*[1] + [1, 5, 25],
+              VARI_TEST=('V1','VMIS','TRACE'),
+              LIST_TOLE=4*[1.E-9] + [1.2E-1] + 2*[5.E-2] + [4.E-2],
+              YOUNG=YOUNG,POISSON=POISSON,
+              )
+
+IMPR_TABLE(TABLE=tabresu)
+
+
+FIN()

@@ -1,0 +1,27 @@
+{
+  "history": {
+    "cases": [
+      {
+        "name": "Case_1",
+        "stages": [
+          1
+        ]
+      }
+    ],
+    "stages": [
+      {
+        "name": ":1:",
+        "text": "vitesse = 1.e-5\n\nt_0 = 5.e-2 / (8.0 * vitesse)",
+        "result": {
+          "job": {},
+          "resstate": 1
+        },
+        "uid": 1
+      }
+    ],
+    "aster": "stable",
+    "versionMajor": 14,
+    "versionMinor": 4
+  },
+  "minor": 10
+}

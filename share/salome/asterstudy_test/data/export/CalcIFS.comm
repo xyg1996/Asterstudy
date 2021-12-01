@@ -1,0 +1,76 @@
+DEBUT()
+
+mesh = LIRE_MAILLAGE(UNITE=2)
+
+model = AFFE_MODELE(
+    AFFE=(
+        _F(GROUP_MA=('Coque', ), MODELISATION=('DKT', ), PHENOMENE='MECANIQUE'),
+        _F(
+            GROUP_MA=('Fluide', ),
+            MODELISATION=('3D_FLUIDE', ),
+            PHENOMENE='MECANIQUE'
+        ), _F(
+            GROUP_MA=('Inter', ),
+            MODELISATION=('FLUI_STRU', ),
+            PHENOMENE='MECANIQUE'
+        ), _F(
+            GROUP_MA=('Surface', ),
+            MODELISATION=('2D_FLUI_PESA', ),
+            PHENOMENE='MECANIQUE'
+        )
+    ),
+    MAILLAGE=mesh
+)
+
+elemprop = AFFE_CARA_ELEM(
+    COQUE=_F(EPAIS=0.000254, GROUP_MA=('Coque', )), MODELE=model
+)
+
+eau = DEFI_MATERIAU(FLUIDE=_F(CELE_R=1400.0, PESA_Z=9.81, RHO=1000.0))
+
+acier = DEFI_MATERIAU(ELAS=_F(E=2.06e+11, NU=0.3, RHO=7850.0))
+
+fieldmat = AFFE_MATERIAU(
+    AFFE=(
+        _F(GROUP_MA=('Fluide', 'Inter', 'Surface'), MATER=(eau, )),
+        _F(GROUP_MA=('Coque', ), MATER=(acier, ))
+    ),
+    MAILLAGE=mesh
+)
+
+blocage = AFFE_CHAR_MECA(
+    DDL_IMPO=(
+        _F(GROUP_MA=('Bas', ), LIAISON='ENCASTRE'), _F(
+            DRX=0.0, DRZ=0.0, DY=0.0, GROUP_MA=('SymeY', )
+        ), _F(DRY=0.0, DRZ=0.0, DX=0.0, GROUP_MA=('SymeX', ))
+    ),
+    MODELE=model
+)
+
+k_elem = CALC_MATR_ELEM(
+    CARA_ELEM=elemprop,
+    CHAM_MATER=fieldmat,
+    CHARGE=(blocage, ),
+    MODELE=model,
+    OPTION='RIGI_MECA'
+)
+
+m_elem = CALC_MATR_ELEM(
+    CARA_ELEM=elemprop, CHAM_MATER=fieldmat, MODELE=model, OPTION='MASS_MECA'
+)
+
+numedd = NUME_DDL(MATR_RIGI=(k_elem, ))
+
+k_asse = ASSE_MATRICE(MATR_ELEM=k_elem, NUME_DDL=numedd)
+
+m_asse = ASSE_MATRICE(MATR_ELEM=m_elem, NUME_DDL=numedd)
+
+km_asse = COMB_MATR_ASSE(
+    COMB_R=(_F(COEF_R=1.0, MATR_ASSE=m_asse), _F(COEF_R=1.0, MATR_ASSE=k_asse))
+)
+
+modes = CALC_MODES(MATR_MASS=m_asse, MATR_RIGI=k_asse)
+
+IMPR_RESU(FORMAT='MED', RESU=_F(RESULTAT=modes), UNITE=80)
+
+FIN()

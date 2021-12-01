@@ -1,0 +1,6 @@
+F comm zoom01.comm D  1
+F comm zoom02.comm D  1
+F libr rccm01b.mmed D  20
+F libr output_file R  10
+F nom filename1 D 0
+F nom filename2 D 0

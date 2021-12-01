@@ -1,0 +1,54 @@
+{
+  "title": "Test calculation assistant",
+  "format": "2.1",
+  "pages": [
+    {
+      "title": "Page 1",
+      "parameters": [
+        {
+          "name": "PARAM1",
+          "title": "Integer QComboBox",
+          "description": "Description of PARAM1",
+          "typ": "int",
+          "into": [11, 22],
+          "default": 22
+        }
+      ]
+    },
+    {
+      "title": "Page 2",
+      "parameters": [
+        {
+          "title": "Group of parameters",
+          "parameters": [
+            {
+              "name": "PARAM2",
+              "title": "Integer QLineEdit",
+              "description": "Description of PARAM2",
+              "typ": "int",
+              "val_min": 1,
+              "val_max": 100,
+              "default": 10
+            },
+            {
+              "name": "PARAM3",
+              "title": "Float QLineEdit",
+              "description": "Description of PARAM3",
+              "typ": "float",
+              "val_max": 1e6,
+              "default": 1.234e4
+            },
+            {
+              "name": "PARAM4",
+              "title": "String QLineEdit",
+              "description": "Description of PARAM4",
+              "typ": "string",
+              "regex": "[a-zA-Z]\\w{1,7}",
+              "default": "test"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

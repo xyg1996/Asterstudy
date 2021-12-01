@@ -1,0 +1,128 @@
+{
+  "history": {
+    "cases": [
+      {
+        "name": "rc1",
+        "stages": [
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "name": "rc2",
+        "stages": [
+          1,
+          2,
+          4
+        ]
+      },
+      {
+        "name": "rc3",
+        "stages": [
+          1,
+          5,
+          6
+        ]
+      },
+      {
+        "name": "rc4",
+        "stages": [
+          1,
+          5,
+          7
+        ]
+      },
+      {
+        "name": "c1",
+        "stages": [
+          8,
+          9
+        ]
+      },
+      {
+        "name": "c3",
+        "stages": [
+          1,
+          2
+        ]
+      }
+    ],
+    "stages": [
+      {
+        "name": "s1",
+        "result": {
+          "job": {},
+          "resstate": 16
+        },
+        "uid": 1
+      },
+      {
+        "name": "s2",
+        "result": {
+          "job": {},
+          "resstate": 16
+        },
+        "uid": 2
+      },
+      {
+        "name": "s3",
+        "result": {
+          "job": {},
+          "resstate": 16
+        },
+        "uid": 3
+      },
+      {
+        "name": "s3",
+        "result": {
+          "job": {},
+          "resstate": 16
+        },
+        "uid": 4
+      },
+      {
+        "name": "s2",
+        "result": {
+          "job": {},
+          "resstate": 16
+        },
+        "uid": 5
+      },
+      {
+        "name": "s3",
+        "result": {
+          "job": {},
+          "resstate": 16
+        },
+        "uid": 6
+      },
+      {
+        "name": "s3",
+        "result": {
+          "job": {},
+          "resstate": 16
+        },
+        "uid": 7
+      },
+      {
+        "name": "s1",
+        "result": {
+          "job": {}
+        },
+        "uid": 8
+      },
+      {
+        "name": "s2",
+        "result": {
+          "job": {}
+        },
+        "uid": 9
+      }
+    ],
+    "aster": "stable",
+    "versionMajor": 14,
+    "versionMinor": 4
+  },
+  "minor": 10
+}

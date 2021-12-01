@@ -1,0 +1,170 @@
+.. _userguide-known-issues:
+
+************
+Known issues
+************
+
+This section lists the known issues that are not yet fixed at the time of
+delivery of this version.
+
+In the management of the study
+==============================
+
+Use of special characters in filenames
+--------------------------------------
+
+It is advised not to use special characters (blanks, accentuated characters,
+non ASCII characters, such as @, !, /, #, %, $ etc...) in filenames, be it for the name of the study (*.hdf* file)
+or the input and output files.
+This may indeed lead to difficulties in:
+
+- launching of calculations (blanks);
+- saving of the study (accents);
+- opening of results in the *ParaViS* module (accents).
+
+The application emits a warning if you select an incorrectly named file.
+
+Loading a study
+---------------
+
+When one reloads a study (*File > Open*, with a *.hdf* file), the interface does
+not switch immediately to *AsterStudy*.
+One just needs to click on the *AsterStudy* icon.
+
+In the data settings
+====================
+
+``POST_RELEVE_T`` command
+-------------------------
+
+During the edition of the ``POST_RELEVE_T`` command, the link with the mesh is not
+activated until the modifications of the ``ACTION`` factor keyword or the whole command
+are validated.
+
+``INCLUDE_MATERIAU`` command
+----------------------------
+
+The ``FICHIER`` keyword accepts a filename to be included as a string.
+The application can not know anything about this file.
+
+**Workaround**: Insert a *Stage* in text mode above the *Stage* that uses the
+``INCLUDE_MATERIAU`` command and declare the file as input, choose a free
+logical unit number. Then modify the value of ``FICHIER`` by ``fort.NN`` with
+the choosen unit number.
+
+Commands data settings
+----------------------
+
+For a better user experience (especially for mesh interaction), it is necessary
+to make sure that all compulsory keywords of the first level of edition are filled
+before editing a keyword with a second level of edition.
+
+Beware that mandatory keywords may sometimes be located at the bottom of the edition panel
+(for instance the keyword ``MODELE`` in ``AFFE_CHAR_MECA`` command).
+
+Performance of mesh view
+------------------------
+
+Mesh-related commands display a mesh and selected groups in the central area of
+the application window. For large mesh files, with big number of groups, the
+visualization of mesh data can be quite time-consuming.
+
+**Workaround**: it is possible to disable visualization operations by switching
+mesh view off. This can be done by unpressing *Show Mesh View* button in the
+toolbar.
+
+In the management of data files
+===============================
+
+Adding files in *Data Files* panel
+----------------------------------
+
+When manually adding a file in text mode, it is necessary to validate the
+right panel with the **OK** button after selecting the file in the dialog box.
+
+Adding files host on remote server
+----------------------------------
+
+For EDF users, the cluster EOLE and ATHOS are automatically mounted when opening the *AsterStudy* module.
+When specifying a remote file, the sidebar of the file explorer opens the root directory "/".
+After selecting the wanted cluster, the user must enter "home/NNI" or "scratch/NNI" in the text field
+at the top to access directly his usual directories.
+
+In the management of calculations
+=================================
+
+Parametric studies and uncertainties
+------------------------------------
+
+To be exported to *OpenTurns* a case must define some Python variables for the inputs
+and a table in the *numpy* format for the outputs. A such table is created by
+``IMPR_TABLE/FORMAT='NUMPY'``. It must contains exactly one line and the outputs
+parameters are named using ``NOM_PARA``.
+
+An *AsterStudy* study is exported as a YACS schema. The Python can be edited in *OpenTurns*
+interface, execution parameters define the version used, time limit, etc.
+
+QuickStart for *OpenTurns*:
+
+- *Block size*: number of executions submitted in a job.
+- *Parallel executions*: number of calculations executed in parallel in a job.
+- *Number of processors/nodes*: resources used by a job, shared by the parallel executions.
+
+.. note::
+    Please note that the *OpenTurns* module can not start several MPI executions
+    in parallel in this release.
+
+.. note::
+    In the *OpenTurns* run panel, when the server is changed, the parameters are
+    automatically reset to default values. Especially the wckey is reset to an
+    invalid one.
+
+
+See OpenTurns documentation for more details about the jobs submission.
+
+
+Other issues
+============
+
+.. _userguide-known-issues-recovery-mode:
+
+In case of error in the application - Recovery Mode
+---------------------------------------------------
+
+If an error occurs in the application, a dialog box opens with the message
+*Unexpected error*. The study may not be saved properly (in the *.hdf* file)
+following that. So, in a such case, prefer use *File > Save As* not to erase
+the previous content.
+
+When the study is subsequently reloaded, it may be empty in *AsterStudy*.
+
+**Recovery mode**: If the study cannot be restored from the *.hdf* file,
+one will automatically try to use the *recovery mode* to restore
+the **Current Case** with its **Stages**.
+
+Each time the Study is saved, an additional file is written in the ``xxx_Files``
+directory of the Study named ``data.ajs``. If the *.hdf* file is corrupted,
+you can use the **Recovery Mode** manually from the *Operations > Recovery Mode*
+menu entry. Just select the ``data.ajs`` file to recover.
+
+**Another workaround**: in the *History view*, navigate in the menus to
+*Operations > Import Case*, and select the file named *backup.export* in the
+*Personal folder* (``$HOME``), then ``.asterstudy/backup``.
+This folder always contains the data at the time of the last saving; the
+folder ``backup.1`` those at the previous one and so on.
+The study must therefore have been saved regularly to retrieve this state.
+By default, the directories starting with a dot are hidden. In this case,
+just type *.asterstudy* in the text area (if the text area is not visible,
+type *Ctrl+L* to show it).
+
+Possible hang up of the lock screen
+-----------------------------------
+
+For EDF users, changing network while salome_meca is running may result in
+difficulties to log back in. Please be sure to close salome_meca before
+changing networks.
+
+**Workaround**: if the user encounters a locking of the log screen, he may
+circumvent the problem by killing the process `gvfsd`. This may be done by
+logging in a TTY (CTRL+ALT+F1) and then killing the process manually
+(`pkill gvfsd`).

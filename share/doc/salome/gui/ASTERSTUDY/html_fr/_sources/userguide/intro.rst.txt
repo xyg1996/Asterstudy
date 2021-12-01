@@ -1,0 +1,118 @@
+.. _userguide-intro:
+
+**************************
+Introduction to AsterStudy
+**************************
+
+The *AsterStudy* application allows setting up case studies
+for the `Code_Aster <http://www.code-aster.org>`__.
+It also allows starting the calculations, tracking the progress
+of these calculations and accessing the results.
+
+.. _Launching:
+
+Launching
+=========
+
+.. |asterstudy| image:: /images/asterstudy.png
+    :height: 16px
+
+The *AsterStudy* application is a *SALOME* module; it can be activated by
+clicking the |asterstudy| icon in the *Modules* toolbar, or by selecting
+*AsterStudy* item in the drop-down list of modules.
+
+User interface
+==============
+
+.. figure:: /images/asterstudy_mainwindow.png
+   :width: 800px
+   :alt: Main window
+   :align: center
+
+   **Main window**
+
+The graphical user interface (GUI) of *AsterStudy* application is composed of:
+
+* `Main menu`_ (1),
+* `Toolbars`_ (2),
+* And two main views in the central area (3):
+
+  * The `History View`_ that allows tracking a history of a study case (3.1),
+  * The `Case View`_ that allows viewing and editing a study case (3.2).
+
+You can select the view you want to use by selecting the corresponding
+tab on the left.
+
+.. note::
+    Tabs are shown in the left of the main window by default; their position can
+    be changed in the *Preferences* dialog.
+
+.. _Main menu:
+
+Main menu
+---------
+
+*AsterStudy* application provides the following menus:
+
+* *File*: general operations *New*, *Open*, *Save*, *Preferences*
+  (these are standard SALOME operations),
+* *Edit*: *Edit*, *Delete*, *Rename* and other operations (depending on the
+  selected item),
+* *Operations*: operations on cases, stages, commands ...,
+* *Commands*: list of commands grouped by categories,
+* *Help*: access to the online help.
+
+.. _Toolbars:
+
+Toolbars
+--------
+
+A lot of operations are available via the context-sensitive toolbars.
+The buttons in the toolbars duplicate the corresponding items
+in the main menu and/or context menus of other GUI elements.
+
+.. _Case View:
+
+Case View
+---------
+
+.. figure:: /images/asterstudy_caseview.png
+   :width: 800px
+   :alt: Case View
+   :align: center
+
+   **Case View**
+
+The *Case View* is composed of the following elements:
+
+* *Data Settings* panel displays case details, list of stages and
+  commands (1),
+* *Data Files* panel displays input and output files used by the
+  selected element (case, stage, command) (2),
+* *Information* panel displays useful information about selected
+  element (command, ...) (3),
+* Viewing area in the center displays selected mesh and groups (4),
+* Edition panel in the right is used to view/edit study data (5).
+
+.. _History View:
+
+History View
+------------
+
+.. figure:: /images/asterstudy_history.png
+   :width: 800px
+   :alt: History View
+   :align: center
+
+   **History View**
+
+The *History View* is composed of the following elements:
+
+* *Cases* panel displays a list of cases (1),
+* *Data Files Summary* panel display files used by selected case (2),
+* *Run Parameters* panel allows viewing/editing calculation parameters for
+  selected case (3),
+* *Dashboard* panel in the center displays execution history of the study
+  case (4),
+* *Messages* panel in the bottom displays information on the execution of
+  selected run case (trace, logs, messages, results ...)  (5).

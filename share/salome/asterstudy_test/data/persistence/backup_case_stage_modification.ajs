@@ -1,0 +1,70 @@
+{
+  "history": {
+    "cases": [
+      {
+        "name": "BackupCase_1",
+        "stages": [
+          1,
+          2,
+          3
+        ],
+        "isBackup": true
+      },
+      {
+        "name": "Case_1",
+        "stages": [
+          1,
+          4,
+          5
+        ]
+      }
+    ],
+    "stages": [
+      {
+        "name": "s1",
+        "result": {
+          "job": {},
+          "resstate": 1
+        },
+        "uid": 1
+      },
+      {
+        "name": "s2",
+        "result": {
+          "job": {},
+          "resstate": 1
+        },
+        "uid": 2
+      },
+      {
+        "name": "s3",
+        "result": {
+          "job": {},
+          "resstate": 1
+        },
+        "uid": 3
+      },
+      {
+        "name": "s2",
+        "text": "FIN()",
+        "result": {
+          "job": {},
+          "resstate": 1
+        },
+        "uid": 4
+      },
+      {
+        "name": "s3",
+        "result": {
+          "job": {},
+          "resstate": 1
+        },
+        "uid": 5
+      }
+    ],
+    "aster": "stable",
+    "versionMajor": 14,
+    "versionMinor": 4
+  },
+  "minor": 10
+}

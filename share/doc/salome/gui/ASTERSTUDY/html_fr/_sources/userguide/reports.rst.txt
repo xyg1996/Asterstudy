@@ -1,0 +1,148 @@
+.. _userguide-reports:
+
+****************
+Advanced reports
+****************
+
+Unused concepts
+===============
+
+In order to quickly detect concepts which are not used in the current study
+(i.e. which are redundant), it is necessary to:
+
+* Select *Current Case* in the *Data Settings* panel,
+* Invoke *Operations > Unused Concepts* menu item.
+
+This menu item opens a dialog which lists all concepts which are not referenced
+by any other concept. The user then can select some or all of these concepts and
+press *Delete* button to clean-up the study.
+
+.. figure:: /images/unused_concepts.png
+    :alt: Unused concepts
+    :align: center
+
+    **Unused concepts**
+
+.. warning::
+    Last concept in the study is always *unused* by definition.
+
+Validity report
+===============
+
+The user can control the validity of the stage being created directly in the
+*Data Settings* panel: each command which is invalid from some aspect, is displayed
+in red color. The stage is considered invalid if any enclosed concept is invalid.
+
+The object can be invalid due to the following reasons:
+
+* Object is syntaxically invalid (e.g. command misses any mandatory keyword),
+* Broken dependency (this can happen if, for instance, some concept referenced by
+  other one has been deleted),
+* Name conflict (duplicated names are used).
+
+The user can see the validity of selected stage, or a whole case, by invoking 
+*Operations > Validity Report* menu.
+
+This menu item opens a dialog that displays validity status for each enclosed
+concept, in form of a table. In addition, the user can see if each given concept
+is used (referenced by other concepts) or not.
+
+.. figure:: /images/validity_report.png
+    :alt: Validity report
+    :align: center
+
+    **Validity report**
+
+.. _involved_groups:
+
+Involved groups
+===============
+
+.. |summary| image:: /images/summary.png
+    :height: 24px
+
+Mesh groups used by some concept can be viewed in the following way:
+
+* Select a concept in the *Data Settings* panel,
+* Invoke *Groups Involved* item in context menu, or
+* Press |summary| button in the *Information* panel.
+
+This opens a *Summary* panel in the lower part of application window.
+The panel lists all mesh groups used within the concept, in a form of a table,
+where each cell corresponds to some *usage* within the command, with the unique
+color assigned to it. A *usage* is a context within the concept in which
+particular mesh groups (one separate group, or a list of groups) are used.
+
+In the example below, the concept *bc* produced by **AFFE_CHAR_MECA** command
+declares two *usages*:
+
+* *DDL_IMPO / 0*, that uses mesh groups *Cont_mast*, *Cont_slav*, and
+* *DDL_IMPO / 1*, that uses mesh groups *Sym_x*, *Sym_y*.
+
+.. code-block:: python
+
+  bc = AFFE_CHAR_MECA(
+          DDL_IMPO=(_F(DX=1.0,DY=1.0,DZ=1.0, 
+                       GROUP_MA=('Cont_mast', 'Cont_slav')),
+                    _F(DX=2.0,DY=2.0,DZ=2.0,
+                       GROUP_MA=('Sym_x', 'Sym_y'))), 
+          MODELE=model)
+
+For performance reasons *usages* are displayed in the *Summary* panel by chunks;
+the chunk size is configured via :ref:`userguide-preferences`. The user can
+browse between chunks by pressing *Previous* and *Next* buttons.
+
+.. |show_groups| image:: /images/show_groups.png
+    :height: 24px
+.. |hide_groups| image:: /images/hide_groups.png
+    :height: 24px
+
+User can display selected *usages* in the mesh view by:
+
+* Pressing |show_groups| icon displayed over the *usage*'s legend item in the panel,
+* Choosing *Show groups* context menu item,
+* Pressing |show_groups| icon in the toolbar.
+
+Similarly, user can erase selected *usages* from the mesh view by:
+
+* Pressing |hide_groups| icon displayed over the *usage*'s legend item in the panel,
+* Choosing *Hide groups* context menu item,
+* Pressing |hide_groups| icon in the toolbar.
+
+When *usage* is displayed, the mesh groups involved to it are colored in the mesh
+view in accordance to the color assigned to the *usage* in the panel; this allows
+distinguishing different usages in a view.
+
+.. warning::
+    The same mesh group can be assigned to different *usages*; in the mesh view,
+    a group will be colored with only one color (most likely that one which is
+    assigned to the *lower usage* in the panel; the user will be warned about
+    this situation by the corresponding message.
+
+.. figure:: /images/involved_groups.png
+    :alt: Involved groups panel
+    :align: center
+
+    **Involved groups panel**
+
+Analysis summary
+================
+
+For the commands belonging to the *Analysis* category, the menu operation
+*Groups Involved* is not available. Instead, user can open *Summary* panel
+either by invoking *Analysis Summary* context menu item, or by pressing
+|summary| button in the *Information* panel.
+
+For these commands, *Summary* panel displays all the mesh groups involved
+in all the commands which selected command of *Analysis* category depends on,
+directly or indirectly.
+
+.. figure:: /images/analysis_summary.png
+    :alt: Analysis summary panel
+    :align: center
+
+    **Analysis summary panel**
+
+In this mode, *Summary* panel groups all *usages* by categories; the user can
+filter out only *usages* from a particular category by choosing the corresponding
+item in the combo box in the panel's toolbar.

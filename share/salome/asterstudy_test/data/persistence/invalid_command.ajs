@@ -1,0 +1,32 @@
+{
+  "history": {
+    "cases": [
+      {
+        "name": "Case_1",
+        "stages": [
+          1
+        ]
+      }
+    ],
+    "stages": [
+      {
+        "name": "Stage_1",
+        "text": "read_a_mesh = LIRE_MAILLAGE(UNITE=20)",
+        "files": [
+          {
+            "handle": 20,
+            "attr": 1
+          }
+        ],
+        "result": {
+          "job": {}
+        },
+        "uid": 1
+      }
+    ],
+    "aster": "stable",
+    "versionMajor": 14,
+    "versionMinor": 4
+  },
+  "minor": 10
+}

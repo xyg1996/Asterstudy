@@ -1,0 +1,82 @@
+mesh=LIRE_MAILLAGE(FORMAT='MED', UNITE=%INPUT%)
+
+mater=DEFI_MATERIAU(ELAS=_F(ALPHA=%ALPHA%,
+                            E=%E%,
+                            NU=%NU%
+                          ),
+                    THER=_F(LAMBDA=%LAMBDA%,
+                            RHO_CP=%RHO_CP%),)
+
+modelth=AFFE_MODELE(MAILLAGE=mesh,
+                    AFFE=_F(TOUT='OUI',
+                            PHENOMENE='THERMIQUE',
+                            MODELISATION=%MODELISATIONTH%,),)
+
+matth=AFFE_MATERIAU(MAILLAGE=mesh,
+                    AFFE=_F(TOUT='OUI',
+                            MATER=mater,),)
+
+linst = DEFI_LIST_REEL(VALE=%VALE%)
+
+%COND_STREAM=YES_STREAM{
+loadst=AFFE_CHAR_THER(MODELE=modelth,
+			                FLUX_REP=%FLUX_REP1%,
+			                TEMP_IMPO=%BCTH%,)
+}%
+
+%COND_STREAM=NO_STREAM{
+loadst=AFFE_CHAR_THER(MODELE=modelth,
+			                TEMP_IMPO=%BCTH%,)
+}%
+
+%COND_SOURCE=YES_SOURCE{
+loadso=AFFE_CHAR_THER(MODELE=modelth,
+			SOURCE=%SOURCE%,)
+
+resuth=THER_LINEAIRE(MODELE=modelth,
+                     CHAM_MATER=matth,
+		                 ETAT_INIT=_F(VALE=%INIT%),
+		                 INCREMENT=_F(LIST_INST=linst),
+                     EXCIT=(_F(CHARGE=loadst,),
+                            _F(CHARGE=loadso)),)
+}%
+
+%COND_SOURCE=NO_SOURCE{
+resuth=THER_LINEAIRE(MODELE=modelth,
+                     CHAM_MATER=matth,
+		                 ETAT_INIT=_F(VALE=%INIT%),
+		                 INCREMENT=_F(LIST_INST=linst),
+                     EXCIT=_F(CHARGE=loadst,),)
+}%
+
+modmeca = AFFE_MODELE(AFFE=_F(MODELISATION=%MODELISATIONMECA%,
+                              PHENOMENE='MECANIQUE',
+                              TOUT='OUI'),
+                      MAILLAGE=mesh)
+
+
+matmeca = AFFE_MATERIAU(AFFE=_F(MATER=mater,
+    		                        TOUT='OUI'),
+  	                    AFFE_VARC=_F(EVOL=resuth,
+                                     NOM_VARC='TEMP',
+                                     TOUT='OUI',
+                                     VALE_REF=%INIT%),
+                        MAILLAGE=mesh,
+                        MODELE=modmeca)
+
+mecabc = AFFE_CHAR_MECA(DDL_IMPO=%BC_MECH%,
+                        MODELE=modmeca)
+
+mecach = AFFE_CHAR_MECA(MODELE=modmeca,
+                        PRES_REP=%LOAD%)
+
+resumeca = MECA_STATIQUE(CHAM_MATER=matmeca,
+                         EXCIT=(_F(CHARGE=mecabc),
+                                _F(CHARGE=mecach)),
+			                   LIST_INST=linst,
+                         MODELE=modmeca)
+
+IMPR_RESU(FORMAT='MED',
+          RESU=(_F(RESULTAT=resuth),
+                _F(RESULTAT=resumeca)),
+          UNITE=%OUTPUT%)

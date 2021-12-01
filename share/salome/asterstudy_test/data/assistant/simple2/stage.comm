@@ -1,0 +1,5 @@
+DEBUT()
+var1 = 22
+var2 = 10 * 12340.0
+var3 = "test"
+FIN()

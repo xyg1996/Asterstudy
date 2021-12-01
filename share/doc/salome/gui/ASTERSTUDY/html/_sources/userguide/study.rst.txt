@@ -1,0 +1,39 @@
+.. _userguide-study:
+
+****************
+Study management
+****************
+
+.. |study_new| image:: /images/study_new.png
+.. |study_open| image:: /images/study_open.png
+.. |study_save| image:: /images/study_save.png
+
+Study management is performed via the *File* main menu; this functionality is
+inherited from SALOME. The term *study* means a document in SALOME platform.
+
+The user is able to:
+
+* Create new study, by
+
+    * Clicking |study_new| *New document* icon in the toolbar,
+    * Using *File > New* main menu,
+    * Pressing *Ctrl+N* keyboard shortcut.
+
+* Open existing study, by
+
+    * Clicking |study_open| *Open document* icon in the toolbar,
+    * Using *File > Open...* main menu,
+    * Pressing *Ctrl+O* keyboard shortcut.
+
+* Saving study to a file, by
+
+    * Clicking |study_save| *Save document* icon in the toolbar,
+    * Using *File > Save* or *File > Save As...* main menu,
+    * Pressing *Ctrl+S* or *Ctrl+Shift+S* keyboard shortcut.
+
+The main file of the *study* has *.hdf* extension.
+Next to this *.hdf* file a directory with the same name and ending with the
+*_Files* suffix is created by *AsterStudy* to save additional data. This
+directory also contains a text file named ``data.ajs`` that can be used in case
+of problem, with the **Recovery Mode** operation (for more details, see
+:ref:`userguide-known-issues-recovery-mode`).

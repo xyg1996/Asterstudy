@@ -1,0 +1,95 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+# person_in_charge: david.haboussa at edf.fr
+#......................................................................
+
+
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),IMPR_MACRO='OUI');
+
+
+
+#parmetres elastiques
+YOUNG = 200000.0
+POISSON = 0.3
+
+#parametres viscosite
+
+S=0.0
+N=12.0
+UN_SUR_M=(1.0/9.0)
+UN_SUR_K= (1.0/2110.0)
+
+#parametres endommagement
+
+R_D=6.3
+A_D=3191.0
+
+
+# def des materiaux
+ACIER = [None]*2
+#unite en Pa
+C_Pa = 1.e+6
+YOUNG_Pa = YOUNG * C_Pa
+UN_SUR_K_Pa = UN_SUR_K * (1.0/C_Pa);
+A_D_Pa  = A_D*C_Pa
+
+ACIER[0]=DEFI_MATERIAU(ELAS=_F(E=YOUNG_Pa,
+                               NU=POISSON,
+                                              ALPHA=11.8e-6),
+                    LEMAITRE=_F( N  = N,
+                                 UN_SUR_M  = UN_SUR_M,
+                                 UN_SUR_K  = UN_SUR_K_Pa,
+                    ),
+                    VISC_ENDO=_F(SY  = S,
+                                 R_D   = R_D,
+                                 A_D   = A_D_Pa,
+                                 ),);
+
+#unite en MPa
+ACIER[1]=DEFI_MATERIAU(ELAS=_F(E=YOUNG,
+                               NU=POISSON,
+                                              ALPHA=11.8e-6),
+                    LEMAITRE=_F( N  = N,
+                                 UN_SUR_M  = UN_SUR_M,
+                                 UN_SUR_K  = UN_SUR_K,
+                    ),
+                    VISC_ENDO=_F(SY  = S,
+                                 R_D   = R_D,
+                                 A_D   = A_D,
+                                 ),);
+
+
+compor='VISC_ENDO_LEMA'
+
+tabresu=TEST_COMPOR(OPTION='MECA',
+              COMPORTEMENT=_F(RELATION=compor,ITER_INTE_MAXI=100,ALGO_INTE='SECANTE'),
+              NEWTON=_F(REAC_ITER=3),
+              LIST_MATER=ACIER,
+              LIST_NPAS=4*[1] + [1, 5, 25],
+              VARI_TEST=('V7','VMIS','TRACE'),
+              LIST_TOLE=4*[1.E-6] + [1.E-1] + 2*[3.E-2] + [8.E-2],
+              PREC_ZERO=[1.E-10, 0.01, 0.01],
+              YOUNG=YOUNG,POISSON=POISSON,
+              )
+
+IMPR_TABLE(TABLE=tabresu)
+
+
+FIN()

@@ -1,0 +1,11 @@
+table = POST_RELEVE_T(ACTION=_F(GROUP_NO=('ForNod', ),
+                                INTITULE='Fleche',
+                                NOM_CHAM='DEPL',
+                                NOM_CMP=('DZ', ),
+                                OPERATION=('EXTRACTION', ),
+                                RESULTAT=reslin))
+
+IMPR_TABLE(TABLE=table,
+           NOM_PARA=["COOR_X", "COOR_Y", "DZ"],
+           FORMAT='NUMPY',
+           UNITE=10)

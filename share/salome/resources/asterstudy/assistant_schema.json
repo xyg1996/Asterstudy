@@ -1,0 +1,433 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Calculation assistant declaration file schema",
+  "definitions": {
+    "parameter_attributes": {
+      "type": "object",
+      "oneOf": [
+        {
+          "//comment//": "single number or list of numbers",
+          "additionalProperties": false,
+          "required": [
+            "name",
+            "typ"
+          ],
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "title": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "typ": {
+              "type": "string",
+              "enum": [
+                "int",
+                "float"
+              ]
+            },
+            "default": {
+              "type": "number"
+            },
+            "into": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              }
+            },
+            "val_min": {
+              "type": "number"
+            },
+            "val_max": {
+              "type": "number"
+            },
+            "mandatory": {
+              "type": "boolean",
+              "default": true
+            }
+          }
+        },
+        {
+          "//comment//": "single string or list of string",
+          "additionalProperties": false,
+          "required": [
+            "name"
+          ],
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "title": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "typ": {
+              "type": "string",
+              "const": "string"
+            },
+            "default": {
+              "type": "string"
+            },
+            "into": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "regex": {
+              "type": "string"
+            },
+            "length": {
+              "type": "number"
+            },
+            "len_min": {
+              "type": "number"
+            },
+            "len_max": {
+              "type": "number"
+            },
+            "mandatory": {
+              "type": "boolean",
+              "default": true
+            }
+          }
+        },
+        {
+          "//comment//": "boolean",
+          "additionalProperties": false,
+          "required": [
+            "name",
+            "typ"
+          ],
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "title": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "typ": {
+              "type": "string",
+              "const": "bool"
+            },
+            "default": {
+              "type": "boolean"
+            },
+            "mandatory": {
+              "type": "boolean",
+              "default": true
+            }
+          }
+        },
+        {
+          "//comment//": "table",
+          "additionalProperties": false,
+          "required": [
+            "name",
+            "typ"
+          ],
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "title": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "typ": {
+              "type": "string",
+              "const": "table"
+            },
+            "columns": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/parameter_attributes"
+              }
+            },
+            "rule": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "//comment//": "file",
+          "additionalProperties": false,
+          "required": [
+            "name",
+            "typ"
+          ],
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "title": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "typ": {
+              "type": "string",
+              "const": "file"
+            },
+            "default": {
+              "type": "string"
+            },
+            "unit": {
+              "type": "number"
+            },
+            "mode": {
+              "type": "string",
+              "enum": [
+                "in",
+                "out"
+              ],
+              "default": "in"
+            },
+            "filters": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "//comment//": "mesh",
+          "additionalProperties": false,
+          "required": [
+            "name",
+            "typ"
+          ],
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "title": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "typ": {
+              "type": "string",
+              "const": "mesh"
+            },
+            "default": {
+              "type": "string"
+            },
+            "unit": {
+              "type": "number"
+            }
+          }
+        },
+        {
+          "//comment//": "single group of nodes or elements",
+          "additionalProperties": false,
+          "required": [
+            "name",
+            "typ"
+          ],
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "title": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "typ": {
+              "type": "string",
+              "enum": [
+                "group_ma",
+                "group_no"
+              ]
+            },
+            "default": {
+              "type": "string"
+            },
+            "mesh": {
+              "type": "string"
+            },
+            "mandatory": {
+              "type": "boolean",
+              "default": true
+            }
+          }
+        },
+        {
+          "//comment//": "list of mesh groups (nodes or elements)",
+          "additionalProperties": false,
+          "required": [
+            "name",
+            "typ"
+          ],
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "title": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "typ": {
+              "type": "string",
+              "enum": [
+                "groups_ma",
+                "groups_no"
+              ]
+            },
+            "default": {
+              "type": "string"
+            },
+            "mesh": {
+              "type": "string"
+            },
+            "mandatory": {
+              "type": "boolean",
+              "default": true
+            }
+          }
+        },
+        {
+          "//comment//": "choice",
+          "additionalProperties": false,
+          "required": [
+            "name",
+            "typ"
+          ],
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "title": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "typ": {
+              "type": "string",
+              "const": "choice"
+            },
+            "choices": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/choices_attributes"
+              }
+            },
+            "default": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    },
+    "group_attributes": {
+      "//comment//": "group of parameters (can be nested)",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "parameters"
+      ],
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "parameters": {
+          "type": "array",
+          "oneOf": [
+            {
+              "items": {
+                "$ref": "#/definitions/group_attributes"
+              }
+            },
+            {
+              "items": {
+                "$ref": "#/definitions/parameter_attributes"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "choices_attributes": {
+      "//comment//": "group of choices",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "parameters": {
+          "type": "array",
+          "oneOf": [
+            {
+              "items": {
+                "$ref": "#/definitions/group_attributes"
+              }
+            },
+            {
+              "items": {
+                "$ref": "#/definitions/parameter_attributes"
+              }
+            }
+          ]
+        }
+      }
+    }
+  },
+  "//comment//": "wizard",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "title",
+    "format",
+    "pages"
+  ],
+  "properties": {
+    "title": {
+      "type": "string"
+    },
+    "format": {
+      "type": "string",
+      "const": "2.1"
+    },
+    "class": {
+      "type": "string",
+      "default": "Wizard"
+    },
+    "description": {
+      "type": "string"
+    },
+    "pages": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/group_attributes"
+      }
+    }
+  }
+}

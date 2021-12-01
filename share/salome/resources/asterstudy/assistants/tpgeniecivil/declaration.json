@@ -1,0 +1,312 @@
+{
+  "title": "Reinforced concrete beam",
+  "class": "TPGenieCivil",
+  "description": "Reinforced concrete beam case study",
+  "format": "2.1",
+  "pages": [
+    {
+      "title": "",
+      "description": "",
+      "parameters": [
+        {
+          "name": "INTRO",
+          "title": "Introduction",
+          "text": [
+            "This wizard will create an analysis using reinforced concrete beams.",
+            "",
+            "Boundary conditions are:",
+            "- blocked displacements,",
+            "- and imposed displacements.",
+            "",
+            "Requirements:",
+            "- a MED file of the 1D beam elements containing the groups of nodes to apply the boundary conditions,",
+            "- and a MED file of the section of the beams."
+          ],
+          "typ": "text"
+        }
+      ]
+    },
+    {
+      "title": "Beam mesh selection",
+      "parameters": [
+        {
+          "name": "INPUTPOU",
+          "title": "Specify input mesh",
+          "description": "Enter a path to the MED file or select an existing Mesh object from the list",
+          "typ": "mesh",
+          "unit": 20
+        }
+      ]
+    },
+    {
+      "title": "Beam definition",
+      "parameters": [
+        {
+          "name": "GROUP_BEAM",
+          "title": "Select the group that defines the beam",
+          "typ": "group_ma",
+          "mesh": "INPUTPOU"
+        }
+      ]
+    },
+    {
+      "title": "Cross-section mesh selection",
+      "parameters": [
+        {
+          "name": "INPUTSEC",
+          "title": "Specify input mesh",
+          "description": "Enter a path to the MED file or select an existing Mesh object from the list",
+          "typ": "mesh",
+          "unit": 22
+        }
+      ]
+    },
+    {
+      "title": "Material properties",
+      "parameters": [
+        {
+          "name": "CBETON",
+          "title": "Concrete type",
+          "description": "Choose concrete type amongst the list",
+          "typ": "string",
+          "into": [
+            "C30/37",
+            "C60/75",
+            "C70/85",
+            "C80/95",
+            "C90/105"
+          ],
+          "default": "C30/37"
+        },
+        {
+          "name": "SIGY_ACIER",
+          "title": "Steel yield stress",
+          "description": "Enter value",
+          "typ": "float"
+        }
+      ]
+    },
+    {
+      "title": "Steel reinforcement location",
+      "parameters": [
+        {
+          "name": "VALE_TRIPLET",
+          "title": "Steel reinforcement location and diameter",
+          "description": "Enter the positions and section of the steel bars",
+          "typ": "matrix",
+          "columns": [
+            {
+              "name": "X_STEEL",
+              "title": "x",
+              "typ": "float"
+            },
+            {
+              "name": "Y_STEEL",
+              "title": "y",
+              "typ": "float"
+            },
+            {
+              "name": "DIAM_STEEL",
+              "title": "Diameter",
+              "typ": "float"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Result",
+      "parameters": [
+        {
+          "name": "OUTPUTFIBSEC",
+          "title": "Specify output result file for beam cross-section mesh",
+          "description": "Enter a path to the MED result file",
+          "typ": "file",
+          "mode": "out",
+          "unit": 80
+        },
+        {
+          "name": "OUTPUTREPLOC",
+          "title": "Specify output result file for local coordinate systems",
+          "description": "Enter a path to the MED result file",
+          "typ": "file",
+          "mode": "out",
+          "unit": 81
+        },
+        {
+          "name": "OUTPUTFIBPOS",
+          "title": "Specify output result file for reinforcement beams location",
+          "description": "Enter a path to the MED result file",
+          "typ": "file",
+          "mode": "out",
+          "unit": 82
+        }
+      ]
+    },
+    {
+      "title": "Boundary conditions (1/2)",
+      "parameters": [
+        {
+          "name": "BC",
+          "title": "Blocked degrees of freedom on groups",
+          "description": "Select groups and apply degrees of freedom on them",
+          "typ": "table",
+          "mesh": "INPUTPOU",
+          "columns": [
+            {
+              "name": "GROUP_NO",
+              "title": "Group",
+              "typ": "groups_no"
+            },
+            {
+              "name": "DX",
+              "typ": "float",
+              "mandatory": false
+            },
+            {
+              "name": "DY",
+              "typ": "float",
+              "mandatory": false
+            },
+            {
+              "name": "DZ",
+              "typ": "float",
+              "mandatory": false
+            },
+            {
+              "name": "DRX",
+              "typ": "float",
+              "mandatory": false
+            },
+            {
+              "name": "DRY",
+              "typ": "float",
+              "mandatory": false
+            },
+            {
+              "name": "DRZ",
+              "typ": "float",
+              "mandatory": false
+            }
+          ],
+          "rule": "{GROUP_NO!r} is not None and set([{DX}, {DY}, {DZ}, {DRX}, {DRY}, {DRZ}]).difference([None])"
+        }
+      ]
+    },
+    {
+      "title": "Boundary conditions (2/2)",
+      "parameters": [
+        {
+          "name": "LOAD",
+          "title": "Imposed degrees of freedom on groups",
+          "description": "Select groups and apply apply degrees of freedom on them",
+          "typ": "table",
+          "mesh": "INPUTPOU",
+          "columns": [
+            {
+              "name": "GROUP_NO",
+              "title": "Group",
+              "typ": "groups_no"
+            },
+            {
+              "name": "DX",
+              "typ": "float",
+              "mandatory": false
+            },
+            {
+              "name": "DY",
+              "typ": "float",
+              "mandatory": false
+            },
+            {
+              "name": "DZ",
+              "typ": "float",
+              "mandatory": false
+            }
+          ],
+          "rule": "{GROUP_NO!r} is not None and set([{DX}, {DY}, {DZ}]).difference([None])"
+        }
+      ]
+    },
+    {
+      "title": "Time discretisation",
+      "parameters": [
+        {
+          "name": "TIME",
+          "title": "Time steps (0. is already included with a nul load coefficient)",
+          "description": "Enter a list of times",
+          "typ": "table",
+          "columns": [
+            {
+              "name": "JUSQU_A",
+              "title": "Up until...",
+              "typ": "float"
+            },
+            {
+              "name": "NOMBRE",
+              "title": "number of substeps",
+              "typ": "int",
+              "default": 1
+            },
+            {
+              "name": "COEF",
+              "title": "load coefficient",
+              "typ": "float"
+            }
+          ]
+        },
+        {
+          "name": "SUBD",
+          "title": "Do you want to add a subdivision?",
+          "typ": "choice",
+          "choices": [
+            {
+              "name": "YES_SUBD",
+              "title": "Yes",
+              "parameters": [
+                {
+                  "name": "SUBD_PAS1",
+                  "title": "Subdivision step",
+                  "description": "Subdivision step",
+                  "typ": "int",
+                  "default": 10
+                },
+                {
+                  "name": "SUBD_NIVEAU1",
+                  "title": "Subdivision level",
+                  "description": "Enter level",
+                  "typ": "int",
+                  "default": 10
+                }
+              ]
+            },
+            {
+              "name": "NO_SUBD",
+              "title": "No",
+              "parameters": [
+                {
+                  "name": "SUPPRIMER2",
+                  "title": "A supprimer",
+                  "typ": "hidden"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Results",
+      "parameters": [
+        {
+          "name": "OUTPUT",
+          "title": "Specify output result file",
+          "description": "Enter a path to the MED result file",
+          "typ": "file",
+          "mode": "out",
+          "unit": 90
+        }
+      ]
+    }
+  ]
+}

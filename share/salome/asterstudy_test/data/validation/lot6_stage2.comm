@@ -1,0 +1,27 @@
+MODMECA=AFFE_MODELE(MAILLAGE=MAIL,
+                    AFFE=_F(TOUT='OUI',
+                            PHENOMENE='MECANIQUE',
+                            MODELISATION='3D',),);
+
+CHMECATH=AFFE_MATERIAU(MAILLAGE=MAIL,
+                       MODELE=MODMECA,
+                       AFFE=_F(TOUT='OUI',
+                               MATER=MATER,),
+                       AFFE_VARC=_F(TOUT='OUI',
+                                    NOM_VARC='TEMP',
+                                    EVOL=TEMPE,
+                                    VALE_REF=20,),);
+
+CHMECA=AFFE_CHAR_MECA(MODELE=MODMECA,
+                      DDL_IMPO=(_F(GROUP_MA=('EFOND','BASE',),
+                                   LIAISON='ENCASTRE',),
+                                _F(GROUP_MA='SYMETRIE',
+                                   DZ=0,),),
+                      PRES_REP=_F(GROUP_MA='SURFINT',
+                                  PRES=15000000.0,),);
+
+RESU=MECA_STATIQUE(MODELE=MODMECA,
+                   CHAM_MATER=CHMECATH,
+                   EXCIT=_F(CHARGE=CHMECA,),
+                   LIST_INST=LINST,);
+

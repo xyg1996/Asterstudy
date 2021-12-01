@@ -1,0 +1,375 @@
+{
+  "title": "Fracture mechanics",
+  "class": "Fracture",
+  "description": "Fracture mechanics case study",
+  "format": "2.1",
+  "pages": [
+    {
+      "title": "",
+      "description": "",
+      "parameters": [
+        {
+          "name": "INTRO",
+          "title": "Introduction",
+          "text": [
+            "This wizard will create a fracture analysis.",
+            "",
+            "Boundary conditions are:",
+            "- blocked displacements,",
+            "- and pressures.",
+            "",
+            "Requirements:",
+            "- MED file containing a 2D or 3D mesh.",
+            "- The mesh must have a group of nodes (2D) or a group of elements (3D) defining the crack front.",
+            "- Applying a pressure needs a surface with consistent oriented normals."
+          ],
+          "typ": "text"
+        }
+      ]
+    },
+    {
+      "title": "Mesh selection",
+      "parameters": [
+        {
+          "name": "INPUT",
+          "title": "Specify input mesh",
+          "description": "Enter a path to the MED file or select an existing Mesh object from the list",
+          "typ": "mesh",
+          "unit": 20
+        }
+      ]
+    },
+    {
+      "title": "Model and crack definition",
+      "parameters": [
+        {
+          "name": "MODELISATION",
+          "title": "Model type",
+          "description": "Choose model type from the list",
+          "typ": "choice",
+          "choices":[
+              {
+              "name": "3DSYM",
+              "title": "3D model - symmetrical crack",
+              "parameters": [
+                    {
+                        "name": "FISS3DSYM",
+                        "title": "Crack definition",
+                        "description": "Select the mesh group that defines the crack",
+                        "typ": "table",
+                        "columns": [
+                                     {
+                                        "name": "GROUP_MA",
+                                        "title": "Crack mesh group",
+                                        "typ": "group_ma"
+                                      }
+                                      ]
+                     },
+                     {
+                         "name": "LEVRE3D",
+                         "title":"Crack upper lip definition",
+                         "description": "Select crack upper lip mesh group",
+                         "typ": "table",
+                         "columns": [
+                                      {
+                                        "name": "GROUP_MA",
+                                        "title": "Crack upper lip mesh group",
+                                        "typ": "group_ma"
+                                       }
+                                     ]
+                     }
+                     ]
+             },
+             {
+              "name": "3DNOSYM",
+              "title": "3D model - non symmetrical crack",
+              "parameters": [
+                    {
+                        "name": "FISS3DNOSYM",
+                        "title": "Crack definition",
+                        "description": "Select mesh group that defines the crack",
+                        "typ": "table",
+                        "columns": [
+                                     {
+                                        "name": "GROUP_MA",
+                                        "title": "Crack mesh group",
+                                        "typ": "group_ma"
+                                      }
+                                      ]
+                     },
+                     {
+                      "name": "LEV_INF3D",
+                      "title":"Crack lower lip definition",
+                      "typ": "table",
+                      "columns": [
+                          {
+                            "name": "GROUP_MA",
+                            "title": "Crack lower lip mesh group",
+                            "typ": "group_ma"
+                          }
+                          ]
+                     },
+                     {
+                      "name": "LEV_SUP3D",
+                      "title":"Crack upper lip definition",
+                      "typ": "table",
+                      "columns": [
+                          {
+                            "name": "GROUP_MA",
+                            "title": "Crack upper lip mesh group",
+                            "typ": "group_ma"
+                          }
+                          ]
+                     }
+                     ]
+             },
+             {
+              "name": "2DSYM",
+              "title": "2D model - symmetrical crack",
+              "parameters": [
+                     {
+                        "name": "MODEL2DSYM",
+                        "title":"What kinf of model do you want to work on?",
+                        "typ": "string",
+                        "into": ["C_PLAN", "D_PLAN", "AXIS"],
+                        "default": "C_PLAN"
+                     },
+                     {
+                        "name": "FISS2DSYM",
+                        "title": "Crack definition",
+                        "description": "Select mesh group that defines the crack",
+                        "typ": "table",
+                        "columns": [
+                                     {
+                                        "name": "GROUP_NO",
+                                        "title": "Crack mesh group",
+                                        "typ": "group_no"
+                                      }
+                                      ]
+                     },
+                     {
+                         "name": "LEVRE2D",
+                         "title":"Crack upper lip definition",
+                         "description": "Select crack upper lip mesh group",
+                         "typ": "table",
+                         "columns": [
+                                      {
+                                        "name": "GROUP_MA",
+                                        "title": "Crack upper lip mesh group",
+                                        "typ": "group_ma"
+                                       }
+                                     ]
+                     }
+                     ]
+             },
+             {
+              "name": "2DNOSYM",
+              "title": "2D model - non symmetrical crack",
+              "parameters": [
+                    {
+                        "name": "MODEL2DNOSYM",
+                        "title":"What kinf of model do you want to work on?",
+                        "typ": "string",
+                        "into": ["C_PLAN", "D_PLAN", "AXIS"],
+                        "default": "C_PLAN"
+                    },
+                    {
+                        "name": "FISS2DNOSYM",
+                        "title": "Crack definition",
+                        "description": "Select mesh group that defines the crack",
+                        "typ": "table",
+                        "columns": [
+                                     {
+                                        "name": "GROUP_NO",
+                                        "title": "Crack mesh group",
+                                        "typ": "group_no"
+                                      }
+                                      ]
+                     },
+                     {
+                      "name": "LEV_INF2D",
+                      "title":"Crack lower lip definition",
+                      "typ": "table",
+                      "columns": [
+                          {
+                            "name": "GROUP_MA",
+                            "title": "Crack lower lip mesh group",
+                            "typ": "group_ma"
+                          }
+                          ]
+                     },
+                     {
+                      "name": "LEV_SUP2D",
+                      "title":"Crack upper lip definition",
+                      "typ": "table",
+                      "columns": [
+                          {
+                            "name": "GROUP_MA",
+                            "title": "Crack upper lip mesh group",
+                            "typ": "group_ma"
+                          }
+                          ]
+                     }
+                     ]
+             }
+            ]
+        }
+      ]
+    },
+     {
+      "title": "G Theta integration boundaries",
+      "parameters": [
+        {
+          "name": "RINF",
+          "title": "Specify R_INF lower radius for G Theta integration",
+          "description": "Enter Rinf",
+          "typ": "float"
+        },
+        {
+          "name": "RSUP",
+          "title": "Specify R_SUP upper radius for G Theta integration",
+          "description": "Enter Rsup",
+          "typ": "float"
+        }
+      ]
+    },
+    {
+      "title": "Material properties",
+      "parameters": [
+        {
+          "name": "E",
+          "title": "Young's modulus (E)",
+          "description": "Enter value >= {val_min}",
+          "typ": "float",
+          "val_min": 0,
+          "default": 2.1e11
+        },
+        {
+          "name": "NU",
+          "title": "Poisson's ratio (v)",
+          "description": "Enter value between {val_min} and {val_max}",
+          "typ": "float",
+          "val_min": -1,
+          "val_max": 0.5,
+          "default": 0.3
+        }
+      ]
+    },
+    {
+      "title": "Boundary conditions (1/2)",
+      "parameters": [
+        {
+          "name": "BC",
+          "title": "Imposed degrees of freedom on groups",
+          "description": "Select mesh groups and apply degrees of freedom on them",
+          "typ": "table",
+          "columns": [
+            {
+              "name": "GROUP_MA",
+              "title": "Group",
+              "typ": "groups_ma"
+            },
+            {
+              "name": "DX",
+              "typ": "float",
+              "mandatory": false
+            },
+            {
+              "name": "DY",
+              "typ": "float",
+              "mandatory": false
+            },
+            {
+              "name": "DZ",
+              "typ": "float",
+              "mandatory": false
+            }
+          ],
+          "rule": "{GROUP_MA!r} is not None and ({DX!r} is not None or {DY!r} is not None or {DZ!r} is not None)"
+        }
+      ]
+    },
+ {
+      "title": "Boundary conditions (2/2)",
+      "parameters": [
+        {
+          "name": "LOAD",
+          "title": "Pressure on mesh groups",
+          "description": "Select mesh groups and apply pressure on them",
+          "typ": "table",
+          "columns": [
+            {
+              "name": "GROUP_MA",
+              "title": "Group",
+              "typ": "groups_ma"
+            },
+            {
+              "name": "PRES",
+              "title": "Pressure",
+              "typ": "float",
+              "default": 0
+            }
+          ]
+        }
+      ]
+    },
+        {
+      "title": "Result",
+      "parameters": [
+        {
+          "name": "OUTPUTRES",
+          "title": "Specify output result file for mesh calculation result (.rmed file)",
+          "description": "Enter a path to the MED result file",
+          "typ": "file",
+          "mode": "out",
+          "unit": 80
+        },
+        {
+          "name": "OUTPUTG",
+          "title": "Specify output result file for G table (.resu file)",
+          "description": "Enter a path to the MED result file",
+          "typ": "file",
+          "mode": "out",
+          "unit": 81
+        }
+      ]
+    },
+    {
+      "title": "Post K1-K2-K3",
+      "parameters": [
+        {
+          "name": "POSTK",
+          "title": "Do you want to add a post-treatment POST K1-K2-K3?",
+          "description": "Choose yes or no",
+          "typ": "choice",
+          "choices":[
+                    {
+                       "name":"YES_POSTK",
+                       "title":"Yes",
+                       "parameters":[
+                                     {
+                                      "name":"ABSC_CURV_MAXI",
+                                      "title":"Maximal curvi-linear abscissa",
+                                      "description":"Enter maximal curvi-linear abscissa",
+                                      "typ":"float"
+                                     },
+                                     {
+                                      "name": "OUTPUTPOSTK",
+                                      "title": "Specify output result file for POSTK1K2K3 table (.resu file)",
+                                      "description": "Enter a path to the MED result file",
+                                      "typ": "file",
+                                      "mode": "out",
+                                      "unit": 83
+                                     }
+                                    ]
+                    },
+                    {
+                       "name":"NO_POSTK",
+                       "title":"No"
+                    }
+                    ]
+        }
+      ]
+    }
+  ]
+}

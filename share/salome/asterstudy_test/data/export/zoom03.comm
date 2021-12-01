@@ -1,0 +1,8 @@
+meshside = CREA_MAILLAGE(MAILLAGE=mesh, RESTREINT=_F(GROUP_MA=('side', )))
+
+mod_side = AFFE_MODELE(
+    AFFE=_F(MODELISATION=('3D', ), PHENOMENE='MECANIQUE', TOUT='OUI'),
+    MAILLAGE=meshside
+)
+
+res_side = EXTR_RESU(RESTREINT=_F(MODELE=mod_side), RESULTAT=result)

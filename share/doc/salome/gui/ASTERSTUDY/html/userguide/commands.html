@@ -1,0 +1,488 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Commands management &#8212; AsterStudy v0.11 Documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Data Files" href="files_tab.html" />
+    <link rel="prev" title="Case and stages" href="case_stages.html" />
+<script type="text/javascript" src="../_static/switchers.js"></script>
+ 
+
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="files_tab.html" title="Data Files"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="case_stages.html" title="Case and stages"
+             accesskey="P">previous</a> |</li>
+  <span class="language_switcher_placeholder">en</span>
+  
+        <li class="nav-item nav-item-0"><a href="../index.html">AsterStudy v0.11 Documentation</a> &#187;</li>
+
+          <li class="nav-item nav-item-1"><a href="userguide.html" accesskey="U">User’s Guide</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="commands-management">
+<span id="userguide-commands"></span><h1>Commands management<a class="headerlink" href="#commands-management" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="commands-and-concepts">
+<h2>Commands and concepts<a class="headerlink" href="#commands-and-concepts" title="Permalink to this headline">¶</a></h2>
+<p>A result of <strong>Code_Aster</strong> command represents a <em>concept</em>; in other words,
+concept is a physical entity which is described by the <em>command</em> as a
+set of named parameters, where each parameter is assigned a specific value.</p>
+<p>In below example <em>mesh</em> is a concept produced by <strong>LIRE_MAILLAGE</strong> command.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span class="n">mesh</span> <span class="o">=</span> <span class="n">LIRE_MAILLAGE</span><span class="p">(</span><span class="n">UNITE</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Concepts link different commands together - one command can refer to other
+by assigning it as a value to some keyword:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span class="n">mesh</span> <span class="o">=</span> <span class="n">LIRE_MAILLAGE</span><span class="p">(</span><span class="n">UNITE</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">FORMAT</span><span class="o">=</span><span class="s">&#39;MED&#39;</span><span class="p">)</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">AFFE_MODELE</span><span class="p">(</span><span class="n">MAILLAGE</span><span class="o">=</span><span class="n">mesh</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>In terms of GUI, <em>concept</em> can be considered as a synonym of <em>command</em>;
+user creates concepts in the study case by adding and configuring commands.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Not all <strong>Code_Aster</strong> commands produce concepts; on the other hand,
+<strong>Code_Aster</strong> command can produce more than one concept.</p>
+</div>
+</div>
+<div class="section" id="add-commands-to-stage-graphical-mode">
+<h2>Add commands to stage (graphical mode)<a class="headerlink" href="#add-commands-to-stage-graphical-mode" title="Permalink to this headline">¶</a></h2>
+<p>In <em>graphical</em> mode the addition of a command can be done in several ways:</p>
+<ul class="simple">
+<li>Via the dedicated drop-down list in toolbar,</li>
+<li>Via the <em>Commands</em> main menu,</li>
+<li>Via the context menu on the stage,</li>
+<li>Via the search dialog for commands (see below).</li>
+</ul>
+<p>The commands are sorted by <em>category</em> (<em>Mesh</em>, <em>Material</em> …).</p>
+<p>When a command is added to the stage, the commands are <strong>automatically</strong> sorted
+by <em>category</em> and taking into account the dependencies between them. It is not
+possible to change the order of the commands in the <em>Data Settings</em> panel.
+If dependencies between commands are added or removed, the order of commands
+is automatically recalculated.</p>
+<div class="figure align-center" id="id1">
+<img alt="Data Settings panel" src="../_images/data_settings.png" />
+<p class="caption"><span class="caption-text"><strong>Data Settings panel</strong></span></p>
+</div>
+<div class="section" id="search-command">
+<span id="search-panel"></span><h3>Search command<a class="headerlink" href="#search-command" title="Permalink to this headline">¶</a></h3>
+<p>The search panel is accessible via the <a class="reference internal" href="../_images/see_all.png"><img alt="see_all" src="../_images/see_all.png" style="height: 24px;" /></a> <em>Show All</em> item in the
+<em>Commands</em> menu.</p>
+<p>The search panel shows all the commands grouped by <em>category</em>.
+The <em>search</em> field is used to filter out the commands.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Depending on the version of <strong>Code_Aster</strong> being used, the <em>categories</em> can
+be additionally split to the <em>sub-categories</em>, which appear as enclosed
+groups in the search panel.</p>
+</div>
+<p>You can then add a command to the selected <em>graphical</em> stage by double-clicking
+on the command name, or by pressing <em>OK</em> or <em>Apply</em> button.</p>
+<div class="figure align-center" id="id2">
+<img alt="Show All dialog" src="../_images/search_command.png" />
+<p class="caption"><span class="caption-text"><strong>Show All dialog</strong></span></p>
+</div>
+</div>
+<div class="section" id="favorites-category">
+<h3>Favorites category<a class="headerlink" href="#favorites-category" title="Permalink to this headline">¶</a></h3>
+<p>The user is able to put most oftenly used commands to the <strong>Favorites</strong>
+category.</p>
+<p>To add a command to the <em>Favorites</em> category:</p>
+<ul class="simple">
+<li>Open the <a class="reference internal" href="#search-panel"><span class="std std-ref">search panel</span></a>,</li>
+<li>Select a command,</li>
+<li>Use <em>Add to Favorites</em> context menu item.</li>
+</ul>
+<p>The <em>Favorites</em> category is available as:</p>
+<ul class="simple">
+<li>Main menu <em>Commands &gt; Favorites</em>,</li>
+<li>Dedicated drop-down list in the <em>Commands</em> toolbar,</li>
+<li>A group in the search panel (which appears on a very first place),</li>
+<li>An item in the context menu for the stage in the <em>Data Settings</em> panel.</li>
+</ul>
+<p>To remove a command from the <em>Favorites</em> category:</p>
+<ul class="simple">
+<li>Open the <a class="reference internal" href="#search-panel"><span class="std std-ref">search panel</span></a>,</li>
+<li>Select a command,</li>
+<li>Use <em>Remove from Favorites</em> context menu item.</li>
+</ul>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">If <em>Favorites</em> category is empty, it is not shown in the toolbar, main menu
+and search panel.</p>
+</div>
+</div>
+<div class="section" id="rename-command">
+<h3>Rename command<a class="headerlink" href="#rename-command" title="Permalink to this headline">¶</a></h3>
+<p>Commands are added to a study with the default name.
+You can rename command by editing it or by selecting it in the <em>Data Settings</em>
+panel and then pressing <em>F2</em> key or invoking <em>Rename</em> item from the context menu.</p>
+</div>
+<div class="section" id="edit-command">
+<h3>Edit command<a class="headerlink" href="#edit-command" title="Permalink to this headline">¶</a></h3>
+<p>To edit a command, double-click the item in the <em>Data Settings</em> panel, or select
+a command and press <em>F4</em>, click <a class="reference internal" href="../_images/edit.png"><img alt="edit" src="../_images/edit.png" style="height: 24px;" /></a> toolbar button or invoke <em>Edit</em> item from
+the context menu.</p>
+<div class="figure align-center" id="id3">
+<img alt="Edit command" src="../_images/edit_command.png" />
+<p class="caption"><span class="caption-text"><strong>Edit command</strong></span></p>
+</div>
+<p>The <em>Name</em> field is used to rename the command.</p>
+<p>The <a class="reference internal" href="../_images/command_help.png"><img alt="command_help" src="../_images/command_help.png" style="height: 24px;" /></a> button opens a documentation on the command. This operation
+is also available in the <em>Edit</em> main menu and in context menu in <em>Data Settings</em>
+panel.</p>
+<p>The <a class="reference internal" href="../_images/eye_off.png"><img alt="hide_unused" src="../_images/eye_off.png" style="height: 24px;" /></a> button allows to display only selected parameters.</p>
+<p>The <a class="reference internal" href="../_images/edit_comment.png"><img alt="edit_comment" src="../_images/edit_comment.png" style="height: 24px;" /></a> button allows
+<a class="reference internal" href="#edit-comment"><span class="std std-ref">adding comment to a command</span></a>.</p>
+<p>The <a class="reference internal" href="../_images/use_translations.png"><img alt="use_translations" src="../_images/use_translations.png" style="height: 24px;" /></a> button switches ON/OFF
+<a class="reference internal" href="#business-translations"><span class="std std-ref">business-oriented translations</span></a>.</p>
+<p>The <a class="reference internal" href="../_images/show_mesh_view.png"><img alt="show_mesh_view" src="../_images/show_mesh_view.png" style="height: 24px;" /></a> button allows switching mesh view ON/OFF. Switching
+mesh view OFF can be useful when working with the mesh containing big number
+of groups, to have reasonable performance (as groups visualization is quite
+time-consuming).</p>
+<p>The <a class="reference internal" href="../_images/summary.png"><img alt="summary" src="../_images/summary.png" style="height: 24px;" /></a> button opens <a class="reference internal" href="reports.html#involved-groups"><span class="std std-ref">Involved groups</span></a> panel that allows viewing mesh
+groups used by the command being edited.</p>
+<p>The <a class="reference internal" href="../_images/whats_this.png"><img alt="whats_this" src="../_images/whats_this.png" style="height: 24px;" /></a> button displays a description of selected keyword:</p>
+<div class="figure align-center" id="id4">
+<img alt="What's This" src="../_images/show_whats_this.png" />
+<p class="caption"><span class="caption-text"><strong>What’s This</strong></span></p>
+</div>
+<p>The user can then enter the parameters of the command by checking the box of
+the parameter to be filled in and then specifying its value.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Mandatory parameters are followed by a red asterisk.</p>
+</div>
+<p>The parameter value can be given via either a text or numeric field, a drop-down
+list or, for more complex parameters, an <em>Edit</em> button to access a subscreen for
+editing this parameter.</p>
+<p>The following screen shows the editing of the <cite>Timestepping</cite> parameter.</p>
+<div class="figure align-center" id="id5">
+<img alt="Edition of parameter" src="../_images/edit_command_sub.png" />
+<p class="caption"><span class="caption-text"><strong>Edition of parameter</strong></span></p>
+</div>
+<div class="admonition hint">
+<p class="first admonition-title">Hint</p>
+<p class="last">The second line (<cite>Linear thermal analysis &gt; Timestepping</cite>) allows you to
+find your way through the sequence of screens.</p>
+</div>
+</div>
+<div class="section" id="delete-or-copy-command">
+<h3>Delete or copy command<a class="headerlink" href="#delete-or-copy-command" title="Permalink to this headline">¶</a></h3>
+<p>The command can be deleted or duplicated via the corresponding toolbar
+button, menu, or keyboard shortcut (<em>Del</em> and <em>Ctrl+D</em> respectively).</p>
+<div class="admonition important">
+<p class="first admonition-title">Important</p>
+<p class="last">The order of the commands and the validation are carried out during the
+suppression of a command to check that the integrity of the stage is
+respected.</p>
+</div>
+</div>
+<div class="section" id="activate-deactivate-command">
+<h3>Activate / deactivate command<a class="headerlink" href="#activate-deactivate-command" title="Permalink to this headline">¶</a></h3>
+<p>A command can be temporarily removed from the stage by using <em>Deactivate</em>
+operation. Deactivated commands are shown grayed in the <em>Data Settings</em> panel.</p>
+<div class="figure align-center" id="id6">
+<img alt="Deactivated command" src="../_images/deactivated_command.png" />
+<p class="caption"><span class="caption-text"><strong>Deactivated command</strong></span></p>
+</div>
+<p>All usual operations are allowed for deactivated commands; however, they are
+not shown in the drop-down selectors when editing other commands. In addition,
+when stage is converted to the <em>text</em> mode or exported to a command file,
+deactivated commands appear as comment blocks.</p>
+<p>Deactivated command can be re-activated via the <em>Activate</em> operation.</p>
+<p><em>Deactivate</em> and <em>Activate</em> operations are available in:</p>
+<ul class="simple">
+<li><em>Edit</em> main menu,</li>
+<li>Context menu of a command in <em>Data Settings</em> panel.</li>
+</ul>
+</div>
+<div class="section" id="add-comment">
+<span id="edit-comment"></span><h3>Add comment<a class="headerlink" href="#add-comment" title="Permalink to this headline">¶</a></h3>
+<p>The button <a class="reference internal" href="../_images/edit_comment.png"><img alt="edit_comment" src="../_images/edit_comment.png" style="height: 24px;" /></a> edits the comment associated with the command.
+This button is available in the <em>Commands</em> toolbar, in the command editing
+panel, in main menu and in the context menu.</p>
+<div class="figure align-center" id="id7">
+<img alt="Edit comment" src="../_images/comment_command.png" />
+<p class="caption"><span class="caption-text"><strong>Edit comment</strong></span></p>
+</div>
+</div>
+<div class="section" id="variables">
+<h3>Variables<a class="headerlink" href="#variables" title="Permalink to this headline">¶</a></h3>
+<p>The button <a class="reference internal" href="../_images/add_variable.png"><img alt="add_variable" src="../_images/add_variable.png" style="height: 24px;" /></a> adds a variable to the stage. This button is available
+in the <em>Commands</em> toolbar, in main menu and in the context menu.</p>
+<p>You can then edit the variable by entering its value.
+The value of the variable can be defined by an expression.</p>
+<div class="figure align-center" id="id8">
+<img alt="Create variable" src="../_images/define_variable.png" />
+<p class="caption"><span class="caption-text"><strong>Create variable</strong></span></p>
+</div>
+<p>Variables can then be used for commands definition.
+When editing a control field, choose the <a class="reference internal" href="../_images/choose_variable.png"><img alt="choose_variable" src="../_images/choose_variable.png" style="height: 16px;" /></a> icon to the right of
+the input field. The input field is then replaced by a drop-down list in which
+you can select the variable to use.</p>
+<div class="figure align-center" id="id9">
+<img alt="Use variable" src="../_images/use_variable.png" />
+<p class="caption"><span class="caption-text"><strong>Use variable</strong></span></p>
+</div>
+</div>
+<div class="section" id="use-translation-of-the-code-aster-terms">
+<span id="business-translations"></span><h3>Use translation of the <strong>Code_Aster</strong> terms<a class="headerlink" href="#use-translation-of-the-code-aster-terms" title="Permalink to this headline">¶</a></h3>
+<p>The icon <a class="reference internal" href="../_images/use_translations.png"><img alt="use_translations" src="../_images/use_translations.png" style="height: 24px;" /></a> allows switching ON/OFF business-oriented
+translations of the <strong>Code_Aster</strong> terms.</p>
+<div class="figure align-center" id="id10">
+<img alt="Use of business-oriented translations" src="../_images/business_translations.png" />
+<p class="caption"><span class="caption-text"><strong>Use of business-oriented translations</strong></span></p>
+</div>
+</div>
+</div>
+<div class="section" id="clipboard-operations">
+<h2>Clipboard operations<a class="headerlink" href="#clipboard-operations" title="Permalink to this headline">¶</a></h2>
+<p>Standard clipboard operations <em>Copy</em>, <em>Cut</em> and <em>Paste</em> are applicable to the
+commands:</p>
+<ul class="simple">
+<li><a class="reference internal" href="../_images/copy.png"><img alt="copy" src="../_images/copy.png" style="height: 24px;" /></a> <em>Copy</em> (<em>Ctrl+C</em>): copies selected command to the clipboard,</li>
+<li><a class="reference internal" href="../_images/cut.png"><img alt="cut" src="../_images/cut.png" style="height: 24px;" /></a> <em>Cut</em> (<em>Ctrl+X</em>): removes selected command from the stage and puts it to the
+clipboard,</li>
+<li><a class="reference internal" href="../_images/paste.png"><img alt="paste" src="../_images/paste.png" style="height: 24px;" /></a> <em>Paste</em> (<em>Ctrl+P</em>): inserts a command from the clipboard to the selected
+stage.</li>
+</ul>
+<p>These operations are also available in the <em>Edit</em> main menu and context menu.</p>
+</div>
+<div class="section" id="find">
+<span id="userguide-edit-text-stage"></span><h2>Find<a class="headerlink" href="#find" title="Permalink to this headline">¶</a></h2>
+<p>It is possible to search the study tree. To do this, select the <em>Data Settings</em>
+panel and press <em>Ctrl+F</em>, use <em>Find</em> context menu or <em>Edit &gt; Find</em> main menu.</p>
+<p>The search box appears at the bottom of the study tree.</p>
+<p>It is possible to search on the following criteria:</p>
+<ul>
+<li><dl class="first docutils">
+<dt><em>Command</em>: search by Aster command names.</dt>
+<dd><ul class="first last simple">
+<li>Example: if the user types <cite>DEF</cite>, items created by commands like
+<cite>DEFI_MATERIAU</cite> are highlighted.</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><em>Concept</em>: search by the names of existing concepts.</dt>
+<dd><ul class="first last simple">
+<li>Example: if the user types <cite>MAT</cite>, the item corresponding to the command
+<cite>MATE = AFFE_MATERIAU (…)</cite> is highlighted.</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><em>Keyword</em>: search by the keywords of the commands.</dt>
+<dd><ul class="first last simple">
+<li>Example: <cite>COMMAND (GROUP_MA=ALPHA)</cite> is highlighted, if user types
+<cite>GROUP</cite>.</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><em>Group</em>: search on the names of groups of mesh nodes or elements.</dt>
+<dd><ul class="first last simple">
+<li>Example: <cite>COMMAND (GROUP_MA=BETA)</cite> is highlighted, if the user types
+<cite>BET</cite>.</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><em>Value</em>: search is performed within keyword values.</dt>
+<dd><ul class="first last simple">
+<li>Example: <cite>COMMAND (ARGUMENT=123)</cite> is highlighted, if the user types
+<cite>123</cite>. Note that <em>Group</em> search type is a particular case of <em>Value</em>.</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p class="first"><em>All</em>: search contains results from all other modes. This is the default
+search mode.</p>
+</li>
+</ul>
+<div class="admonition important">
+<p class="first admonition-title">Important</p>
+<p>In <em>Concept</em> mode, the search tool finds concepts recursively, i.e. if one
+concept refers to another one which name suits the search criterion, this
+first concept is also included into the search result.</p>
+<ul class="last simple">
+<li>Example: if the user types <cite>MESH</cite>, the item corresponding to the command
+<cite>MODEL = AFFE_MODELE(MAILLAGE=MESH)</cite> is also highlighted, in addition to
+the <cite>MESH</cite> item itself.</li>
+</ul>
+</div>
+<p>The nodes of the study corresponding to the search criterion entered by the user
+are then highlighted in yellow background, and it is possible to navigate
+between them by clicking <em>&lt;</em> (previous result) and <em>&gt;</em> (next result) buttons
+or pressing <em>F3</em>, <em>Shift+F3</em> shortcuts.</p>
+<p>The search is case insensitive and is performed on the words <strong>containing</strong>
+the value entered by the user.</p>
+<div class="figure align-center" id="id11">
+<img alt="Search in the study tree" src="../_images/search.png" />
+<p class="caption"><span class="caption-text"><strong>Search in the study tree</strong></span></p>
+</div>
+</div>
+<div class="section" id="edition-in-text-mode">
+<h2>Edition in text mode<a class="headerlink" href="#edition-in-text-mode" title="Permalink to this headline">¶</a></h2>
+<p>In <em>text</em> mode, the stage is managed as a whole and the commands that compose
+it are not displayed in the <em>Data Settings</em> panel under the stage item.</p>
+<p>To edit the commands for a stage in <em>text</em> mode, double-click on the stage item
+in the <em>Data Settings</em> panel, press <em>F4</em>, use <em>Edit</em> context menu command to
+open the text editor or click <a class="reference internal" href="../_images/edit.png"><img alt="edit" src="../_images/edit.png" style="height: 24px;" /></a> toolbar button.</p>
+<div class="figure align-center" id="id12">
+<img alt="Edit stage in text mode" src="../_images/text_mode.png" />
+<p class="caption"><span class="caption-text"><strong>Edit stage in text mode</strong></span></p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">It is possible to use either an internal editor or an external editor
+program (see <a class="reference internal" href="preferences.html#userguide-preferences"><span class="std std-ref">Application preferences</span></a>).</p>
+</div>
+<p>In addition to editing command file representing the stage in <em>text</em> mode, the
+user is able to declare the concepts which are created in the study by this
+stage (right part of the dialog on above picture). The concepts entered here
+will be available for the selection in the following <em>graphical</em> stages.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Application cannot check that concepts declared by the user are actually
+created by the stage. This is the responsibility of the user to provide
+correct information.</p>
+</div>
+<div class="admonition important">
+<p class="first admonition-title">Important</p>
+<p class="last">User can also declare concepts created in the <em>text</em> stage with the
+<em>Edit concepts</em> operation which is available in <em>Edit</em> main menu and in
+the context menu for the stage in the <em>Data Settings</em> panel.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+<p/>
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Commands management</a><ul>
+<li><a class="reference internal" href="#commands-and-concepts">Commands and concepts</a></li>
+<li><a class="reference internal" href="#add-commands-to-stage-graphical-mode">Add commands to stage (graphical mode)</a><ul>
+<li><a class="reference internal" href="#search-command">Search command</a></li>
+<li><a class="reference internal" href="#favorites-category">Favorites category</a></li>
+<li><a class="reference internal" href="#rename-command">Rename command</a></li>
+<li><a class="reference internal" href="#edit-command">Edit command</a></li>
+<li><a class="reference internal" href="#delete-or-copy-command">Delete or copy command</a></li>
+<li><a class="reference internal" href="#activate-deactivate-command">Activate / deactivate command</a></li>
+<li><a class="reference internal" href="#add-comment">Add comment</a></li>
+<li><a class="reference internal" href="#variables">Variables</a></li>
+<li><a class="reference internal" href="#use-translation-of-the-code-aster-terms">Use translation of the <strong>Code_Aster</strong> terms</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#clipboard-operations">Clipboard operations</a></li>
+<li><a class="reference internal" href="#find">Find</a></li>
+<li><a class="reference internal" href="#edition-in-text-mode">Edition in text mode</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="case_stages.html"
+                        title="previous chapter">Case and stages</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="files_tab.html"
+                        title="next chapter">Data Files</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/userguide/commands.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="files_tab.html" title="Data Files"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="case_stages.html" title="Case and stages"
+             >previous</a> |</li>
+  <span class="language_switcher_placeholder">en</span>
+  
+        <li class="nav-item nav-item-0"><a href="../index.html">AsterStudy v0.11 Documentation</a> &#187;</li>
+
+          <li class="nav-item nav-item-1"><a href="userguide.html" >User’s Guide</a> &#187;</li> 
+      </ul>
+    </div>
+ 
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2016-2019 EDF R&amp;D.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.6.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,327 @@
+{
+  "title": "Thermo-mechanical",
+  "class": "ThermoMechanical",
+  "description": "Thermo-mechanical analysis case study",
+  "format": "2.1",
+  "pages": [
+    {
+      "title": "",
+      "description": "",
+      "parameters": [
+        {
+          "name": "INTRO",
+          "title": "Introduction",
+          "text": [
+            "This wizard will create a minimal thermo-mechanical analysis.",
+            "",
+            "Thermal boundary conditions are:",
+            "- imposed temperatures,",
+            "- normal streams,",
+            "- and volumic sources.",
+            "",
+            "Mechanical boundary conditions are:",
+            "- blocked displacements,",
+            "- and pressures.",
+            "",
+            "Requirements:",
+            "- MED file containing a 2D or 3D mesh.",
+            "- Applying a pressure needs a surface with consistent oriented normals."
+          ],
+          "typ": "text"
+        }
+      ]
+    },
+    {
+      "title": "Mesh selection",
+      "parameters": [
+        {
+          "name": "INPUT",
+          "title": "Specify input mesh",
+          "description": "Enter a path to the MED file or select an existing Mesh object from the list",
+          "typ": "mesh",
+          "unit": 20
+        }
+      ]
+    },
+    {
+      "title": "Thermal model definition",
+      "parameters": [
+        {
+          "name": "MODELISATIONTH",
+          "title": "What kind of model do you want to work on?",
+          "description": "Choose model type from the list",
+          "typ": "string",
+          "into": ["3D", "PLAN"],
+          "default": "3D"
+        }
+      ]
+    },
+    {
+      "title": "Material properties",
+      "parameters": [
+        {
+          "name": "LAMBDA",
+          "title": "Thermal conductivity (l)",
+          "description": "Enter value > {val_min}",
+          "typ": "float",
+          "val_min": 0,
+          "default": 0.54
+        },
+	  {
+          "name": "E",
+          "title": "Young's modulus (E)",
+          "description": "Enter real number",
+          "typ": "float",
+          "val_min": 0,
+          "default": 2.1e11
+        },
+	  {
+          "name": "NU",
+          "title": "Poisson's ratio (v)",
+          "description": "Enter value between {val_min} and {val_max}",
+          "typ": "float",
+          "val_min": -1,
+          "val_max": 0.5,
+          "default": 0.3
+    },
+	  {
+          "name": "ALPHA",
+          "title": "Thermal expansion coeficient",
+          "description": "Enter real number",
+          "typ": "float"
+        },
+	  {
+          "name": "RHO_CP",
+          "title": "Volumic heat capacity",
+          "description": "Enter real number",
+          "typ": "float"
+        }
+      ]
+    },
+    {
+      "title": "Thermal conditions (1/3)",
+      "parameters": [
+        {
+          "name": "BCTH",
+          "title": "Imposed temperatures on groups",
+          "description": "Select mesh groups and impose temperatures on them",
+          "typ": "table",
+          "columns": [
+            {
+              "name": "GROUP_MA",
+              "title": "Group",
+              "typ": "groups_ma"
+            },
+            {
+              "name": "TEMP",
+              "typ": "float",
+              "mandatory": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Thermal conditions (2/3)",
+      "parameters": [
+        {
+          "name": "COND_STREAM",
+          "title": "Do you want to add streams normal to a face?",
+          "description": "Choose yes or no from the list",
+          "typ": "choice",
+          "choices": [
+            {
+              "name": "YES_STREAM",
+              "title": "Yes",
+              "parameters": [
+                {
+                  "name": "FLUX_REP1",
+                  "title": "Adding streams normal to a face ",
+                  "description": "Select mesh groups and add streams",
+                  "typ": "table",
+          	  "columns": [
+            			{
+              			"name": "GROUP_MA",
+              			"title": "Group",
+              			"typ": "groups_ma"
+           			 },
+           			 {
+            			"name": "FLUN",
+              			"title": "Stream",
+              			"typ": "float",
+              			"default": 0
+           			 }
+          			]
+                }
+              ]
+            },
+            { "name": "NO_STREAM",
+              "title": "No",
+              "parameters": [
+                {
+                  "name": "SUPPRIMER",
+                  "title": "A supprimer",
+                  "typ": "hidden"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Thermal conditions (3/3)",
+      "parameters": [
+        {
+          "name": "COND_SOURCE",
+          "title": "Do you want to add volumic sources?",
+          "description": "Choose yes or no from the list",
+          "typ": "choice",
+          "choices": [
+            {
+              "name": "YES_SOURCE",
+              "title": "Yes",
+              "parameters": [
+                {
+                  "name": "SOURCE",
+                  "title": "Adding volumic sources ",
+                  "description": "Select mesh groups",
+                  "typ": "table",
+          	  "columns": [
+            			{
+              			"name": "GROUP_MA",
+              			"title": "Group",
+              			"typ": "groups_ma"
+           			 },
+           			 {
+            			"name": "SOUR",
+              			"title": "Source",
+              			"typ": "float",
+              			"default": 0
+           			 }
+          			]
+                }
+              ]
+            },
+            { "name": "NO_SOURCE",
+              "title": "No",
+              "parameters": [
+                {
+                  "name": "SUPPRIMER2",
+                  "title": "A supprimer",
+                  "typ": "hidden"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+	  {
+      "title": "Initialisation",
+      "parameters": [
+        {
+          "name": "INIT",
+          "title": "Initial temperature",
+          "description": "Enter the temperature of the initial state",
+          "typ": "float"
+        }
+      ]
+    },
+	  {
+      "title": "Time discretisation",
+      "parameters": [
+        {
+          "name": "VALE",
+          "title": "Enter time steps",
+          "description": "Choose the moments for which the temperature should be computed",
+          "typ": "list"
+        }
+      ]
+    },
+    {
+      "title": "Mechanical model definition",
+      "parameters": [
+        {
+          "name": "MODELISATIONMECA",
+          "title": "What kind of model do you want to work on?",
+          "description": "Choose model type from the list",
+          "typ": "string",
+          "into": ["3D", "C_PLAN"],
+          "default": "3D"
+        }
+      ]
+    },
+    {
+      "title": "Mechanical conditions (1/2)",
+      "parameters": [
+        {
+          "name": "BC_MECH",
+          "title": "Imposed degrees of freedom on groups",
+          "description": "Select mesh groups and apply degrees of freedom on them",
+          "typ": "table",
+          "columns": [
+            {
+              "name": "GROUP_MA",
+              "title": "Group",
+              "typ": "groups_ma"
+            },
+            {
+              "name": "DX",
+              "typ": "float",
+              "mandatory": false
+            },
+            {
+              "name": "DY",
+              "typ": "float",
+              "mandatory": false
+            },
+            {
+              "name": "DZ",
+              "typ": "float",
+              "mandatory": false
+            }
+          ],
+          "rule": "{GROUP_MA!r} is not None and ({DX!r} is not None or {DY!r} is not None or {DZ!r} is not None)"
+        }
+      ]
+    },
+    {
+      "title": "Mechanical conditions (2/2)",
+      "parameters": [
+        {
+          "name": "LOAD",
+          "title": "Pressure on meshes groups",
+          "description": "Select mesh groups and apply pressure on them",
+          "typ": "table",
+          "columns": [
+            {
+              "name": "GROUP_MA",
+              "title": "Group",
+              "typ": "groups_ma"
+            },
+            {
+              "name": "PRES",
+              "title": "Pressure",
+              "typ": "float",
+              "default": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Result",
+      "parameters": [
+        {
+          "name": "OUTPUT",
+          "title": "Specify output result file",
+          "description": "Enter a path to the MED result file",
+          "typ": "file",
+          "mode": "out",
+          "unit": 80
+        }
+      ]
+    }
+  ]
+}

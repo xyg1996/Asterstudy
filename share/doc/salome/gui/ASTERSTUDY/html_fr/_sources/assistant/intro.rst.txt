@@ -1,0 +1,21 @@
+.. _assistant-intro:
+
+************
+Introduction
+************
+
+A *Calculation Assistant* is a predefined study accompanied by a graphical
+interface allowing the user to enter certain parameters, and thus to be able
+to quickly start a calculation.
+
+*Calculation Assistant* can be considered as a *parameterized template* which
+describes some particular study case. In this way, by entering just a minor set
+of parameters, the user can easily set-up such a study case and launch
+calculations.
+
+*AsterStudy* application introduces a possibility to easily implement calculation
+assistants. Several pre-defined assistants are supplied with the application, but the
+user can create own assistants and embed them into *AsterStudy*.
+
+This guide provides a description of a *Calculation Assistant* feature, and
+gives detail instructions about creating and embedding custom assistants.

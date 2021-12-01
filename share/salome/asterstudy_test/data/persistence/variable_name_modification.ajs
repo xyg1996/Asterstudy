@@ -1,0 +1,27 @@
+{
+  "history": {
+    "cases": [
+      {
+        "name": "Case_1",
+        "stages": [
+          1
+        ]
+      }
+    ],
+    "stages": [
+      {
+        "name": ":1:",
+        "text": "a = 1\n\na = a + 1\n\nc = 2 * a",
+        "result": {
+          "job": {},
+          "resstate": 1
+        },
+        "uid": 1
+      }
+    ],
+    "aster": "stable",
+    "versionMajor": 14,
+    "versionMinor": 4
+  },
+  "minor": 10
+}

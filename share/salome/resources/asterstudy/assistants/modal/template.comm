@@ -1,0 +1,53 @@
+mesh = LIRE_MAILLAGE(FORMAT='MED',
+                     UNITE=%INPUT%)
+
+model = AFFE_MODELE(AFFE=_F(MODELISATION=(%MODELISATION%, ),
+                            PHENOMENE='MECANIQUE',
+                            TOUT='OUI'),
+                    MAILLAGE=mesh)
+
+mater = DEFI_MATERIAU(ELAS=_F(E=%E%,
+                              NU=%NU%,
+                              RHO=%RHO%))
+
+materfl = AFFE_MATERIAU(AFFE=_F(MATER=(mater, ),
+                                TOUT='OUI'),
+                        MODELE=model)
+
+mecabc = AFFE_CHAR_MECA(DDL_IMPO=%BC%,
+                        MODELE=model)
+
+ASSEMBLAGE(MODELE=model,
+           CHAM_MATER=materfl,
+           CHARGE=mecabc,
+           NUME_DDL=CO('numeddl'),
+           MATR_ASSE=(_F(MATRICE=CO('rigidite'),
+                         OPTION='RIGI_MECA',),
+                      _F(MATRICE=CO('masse'),
+                         OPTION='MASS_MECA',)))
+%MODES=PETITE{
+result = CALC_MODES(MATR_RIGI=rigidite,
+                    MATR_MASS=masse,
+                    OPTION='PLUS_PETITE',
+                    CALC_FREQ=_F(NMAX_FREQ=%FREQ_PETITE_NMAX%))
+}%
+
+%MODES=BANDE{
+result = CALC_MODES(MATR_RIGI=rigidite,
+                    MATR_MASS=masse,
+                    OPTION='BANDE',
+                    CALC_FREQ=_F(FREQ=(%FREQ_BANDE_LOWER%,
+                                       %FREQ_BANDE_UPPER%)))
+}%
+
+%MODES=CENTRE{
+result = CALC_MODES(MATR_RIGI=rigidite,
+                    MATR_MASS=masse,
+                    OPTION='CENTRE',
+                    CALC_FREQ=_F(FREQ=%FREQ_CENTRE_TARGET%,
+                                 NMAX_FREQ=%FREQ_CENTRE_NMAX%))
+}%
+
+IMPR_RESU(FORMAT='MED',
+          RESU=_F(RESULTAT=result),
+          UNITE=%OUTPUT%)

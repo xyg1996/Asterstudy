@@ -1,0 +1,35 @@
+.. _index:
+
+%%%%%%%%%%%%%%%%%%%%%
+Welcome to AsterStudy
+%%%%%%%%%%%%%%%%%%%%%
+
+*AsterStudy* is a SALOME module that provides a Graphical User Interface (GUI)
+allowing setting up case studies for the `Code_Aster <http://www.code-aster.org>`__.
+
+It also allows starting the calculations, tracking the progress of these calculations
+and accessing the results.
+
+Contents
+========
+
+.. toctree::
+   :maxdepth: 1
+
+   userguide/userguide
+   assistant/assistant
+   devguide/devguide
+
+Indices and tables
+==================
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`
+
+References
+==========
+
+* `SALOME platform <https://www.salome-platform.org>`__
+* `Salome-Meca home <https://www.code-aster.org/V2/spip.php?article303>`__
+* `Code_Aster home <https://www.code-aster.org>`__

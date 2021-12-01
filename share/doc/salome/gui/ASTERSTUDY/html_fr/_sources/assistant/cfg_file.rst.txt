@@ -1,0 +1,42 @@
+.. _assistant-cfg:
+
+******************
+Configuration file
+******************
+
+**Configuration file** is an optional file in *INI* format, describing the
+content of the *Calculation Assistant*, namely:
+
+.. table::
+
+    ============= ============================================================== =================
+    **Option**    **Description**                                                **Default value**
+    ============= ============================================================== =================
+    *declaration* Name of :ref:`declaration file <assistant-declaration>`.       declaration.json
+    *wizard*      Name of :ref:`template file <assistant-template>`.             wizard.py
+    *template*    Name of :ref:`wizard file <assistant-wizard>`.                 template.comm
+    *title*       Calculation assistant's title. This value is shown in          *none*
+                  application's menu.
+    *order*       Order in the application's menu (*int* expected).
+    *translator*  Name of the resource translation context. Normally, this       "Wizard"
+                  value corresponds to the ``class`` attribute of the
+                  wizard in the :ref:`declaration file <assistant-declaration>`.
+    ============= ============================================================== =================
+
+The *configuration file* is not mandatory; it is only needed in case if non-default names of
+assistant's files are used.
+
+Also, in future *configuration file* might be used to allow storing several
+assistants in the same directory.
+
+**Example**:
+
+.. code-block:: ini
+
+    [General]
+    declaration = decl.json
+    wizard = impl.py
+    template = elastic.comm
+    title = Isotropic Linear Elasticity
+    translator = IsotropicLinearElasticity
+    order = 2

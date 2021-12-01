@@ -1,0 +1,325 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+# Copyright 2016-2018 EDF R&D
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License Version 3 as
+# published by the Free Software Foundation.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, you may download a copy of license
+# from https://www.gnu.org/licenses/gpl-3.0.
+
+"""Generator of the calculation assistant wizard."""
+
+import argparse
+import os
+import os.path as osp
+import sys
+import traceback
+
+from PyQt5 import Qt as Q
+
+LIBDIR = ''
+
+# Add libdir to sys.path...
+if LIBDIR != '@' 'LIBDIR' '@':
+    # ... for install tree.
+    if not osp.isabs(LIBDIR):
+        LIBDIR = osp.join(osp.dirname(osp.realpath(__file__)), LIBDIR)
+        LIBDIR = osp.abspath(LIBDIR)
+    sys.path.insert(0, LIBDIR)
+else:
+    # ... for source tree.
+    sys.path.insert(0, osp.dirname(osp.realpath(__file__)))
+
+try:
+    # pragma pylint: disable=wrong-import-position,relative-import
+    from asterstudy.assistant import Runner, Validator, generate_wizard_from_file
+    from asterstudy.common import pack, version
+except ImportError as err:
+    print('abort: could not find astergui libraries in [%s]' % ' '.join(sys.path),
+          file=sys.stderr)
+    print('(check your install and PYTHONPATH)', file=sys.stderr)
+    if int(os.getenv('DEBUG', '0')):
+        print('ERROR: %s' % err, file=sys.stderr)
+        traceback.print_exc()
+    sys.exit(-1)
+
+def _default_declaration_file():
+    return 'declaration.json'
+
+def _default_wizard_file():
+    return 'wizard.py'
+
+def _default_template_file():
+    return 'template.comm'
+
+def _default_output_file():
+    return 'stage.comm'
+
+def main_generate(args):
+    """Generate assistant."""
+    prog = osp.basename(sys.argv[0])
+    description = 'Generate calculation assistant wizard.'
+    formatter = lambda prog: argparse.ArgumentDefaultsHelpFormatter(prog, max_help_position=50,
+                                                                    width=120)
+    parser = argparse.ArgumentParser(formatter_class=formatter, description=description,
+                                     prog='{} generate'.format(prog))
+    parser.add_argument('-d', '--declaration', metavar='FILE',
+                        default=_default_declaration_file(),
+                        help='declaration file')
+    parser.add_argument('-w', '--wizard', metavar='FILE',
+                        default=_default_wizard_file(),
+                        help='wizard file')
+    parser.add_argument('folder', help='directory with the wizard declaration file')
+    args = parser.parse_args(args)
+
+    if not osp.exists(args.folder):
+        print('Directory \'{}\' does not exist.'.format(args.folder), file=sys.stderr)
+        return -1
+
+    if not osp.isdir(args.folder):
+        print('Not a directory: \'{}\'.'.format(args.folder), file=sys.stderr)
+        return -1
+
+    declaration_file = osp.join(args.folder, args.declaration)
+    wizard_file = osp.join(args.folder, args.wizard)
+
+    try:
+        wizard_content = generate_wizard_from_file(declaration_file)
+    except Exception as err: # pragma pylint: disable=broad-except
+        print('Cannot generate wizard: {}'.format(str(err)), file=sys.stderr)
+        return -1
+
+    try:
+        with open(wizard_file, 'w') as wfile:
+            wfile.write(wizard_content)
+    except IOError as err:
+        print('Cannot open wizard file \'{}\': {}'.format(wizard_file, str(err)), file=sys.stderr)
+        return -1
+
+    return 0
+
+def main_run(args):
+    """Run assistant."""
+    prog = osp.basename(sys.argv[0])
+    description = 'Run calculation assistant wizard.'
+    formatter = lambda prog: argparse.ArgumentDefaultsHelpFormatter(prog, max_help_position=50,
+                                                                    width=120)
+    parser = argparse.ArgumentParser(formatter_class=formatter, description=description,
+                                     prog='{} run'.format(prog))
+    help_string = 'declaration file; needed only if wizard file does not exist, ' \
+        'in which case wizard is generated from declaration'
+    parser.add_argument('-d', '--declaration', metavar='FILE',
+                        default=_default_declaration_file(),
+                        help=help_string)
+    parser.add_argument('-w', '--wizard', metavar='FILE',
+                        default=_default_wizard_file(),
+                        help='wizard file')
+    parser.add_argument('-t', '--template', metavar='FILE',
+                        default=_default_template_file(),
+                        help='template file')
+    help_string = 'output comm file; relative path is interpreted ' \
+        'as a sub-path within wizard directory'
+    parser.add_argument('-o', '--output', metavar='FILE',
+                        default=_default_output_file(),
+                        help=help_string)
+    parser.add_argument('folder', help='wizard directory')
+    args = parser.parse_args(args)
+
+    if not osp.exists(args.folder):
+        print('Directory \'{}\' does not exist.'.format(args.folder), file=sys.stderr)
+        return -1
+
+    if not osp.isdir(args.folder):
+        print('Not a directory: \'{}\'.'.format(args.folder), file=sys.stderr)
+        return -1
+
+    declaration_file = osp.join(args.folder, args.declaration)
+    wizard_file = osp.join(args.folder, args.wizard)
+    wizard_content = None
+    if osp.exists(wizard_file):
+        try:
+            with open(wizard_file) as wfile:
+                wizard_content = wfile.read()
+        except IOError as err:
+            print('Cannot open wizard file \'{}\': {}'.format(wizard_file, str(err)),
+                  file=sys.stderr)
+            return -1
+    elif osp.exists(declaration_file):
+        try:
+            wizard_content = generate_wizard_from_file(declaration_file)
+        except Exception as err: # pragma pylint: disable=broad-except
+            print('Cannot open generate wizard: {}'.format(str(err)), file=sys.stderr)
+            return -1
+    else:
+        print('Neither wizard nor declaration file is found', file=sys.stderr)
+        return -1
+    if not wizard_content:
+        print('Cannot run wizard: empty implementation', file=sys.stderr)
+        return -1
+
+    template_file = osp.join(args.folder, args.template)
+    try:
+        with open(template_file) as tfile:
+            template_content = tfile.read()
+    except IOError as err:
+        print('Cannot open template file \'{}\': {}'.format(template_file, str(err)),
+              file=sys.stderr)
+        return -1
+
+    _ = Q.QApplication(['']) # required to create widgets
+
+    runner = Runner()
+    runner.wizard_data = wizard_content
+    runner.template_data = template_content
+
+    if runner.runWizard() == Q.QDialog.Accepted:
+        stage_file = args.output if osp.isabs(args.output) else osp.join(args.folder, args.output)
+        try:
+            with open(stage_file, 'w') as sfile:
+                sfile.write(runner.stage_data)
+        except IOError as err:
+            print('Cannot write stage file \'{}\': {}'.format(stage_file, str(err)),
+                  file=sys.stderr)
+        return -1
+
+    return 0
+
+def main_verify(args): # pragma pylint: disable=unused-argument
+    """Verify assistant."""
+    prog = osp.basename(sys.argv[0])
+    description = 'Verify calculation assistant.'
+    formatter = lambda prog: argparse.ArgumentDefaultsHelpFormatter(prog, max_help_position=50,
+                                                                    width=120)
+    parser = argparse.ArgumentParser(formatter_class=formatter, description=description,
+                                     prog='{} verify'.format(prog))
+    parser.add_argument('-d', '--declaration', metavar='FILE',
+                        default=_default_declaration_file(),
+                        help='declaration file')
+    parser.add_argument('folder', help='directory with the wizard declaration file')
+    args = parser.parse_args(args)
+
+    if not osp.exists(args.folder):
+        print('Directory \'{}\' does not exist.'.format(args.folder), file=sys.stderr)
+        return -1
+
+    if not osp.isdir(args.folder):
+        print('Not a directory: \'{}\'.'.format(args.folder), file=sys.stderr)
+        return -1
+
+    declaration_file = osp.join(args.folder, args.declaration)
+
+    try:
+        validator = Validator()
+        validator.validate(declaration_file)
+    except Exception as err: # pragma pylint: disable=broad-except
+        print(err)
+        return 1
+    print("All is good!")
+
+    return 0
+
+def main_pack(args):
+    """Pack assistant to archive."""
+    prog = osp.basename(sys.argv[0])
+    description = 'Pack calculation assistant wizard to archive.'
+    formatter = lambda prog: argparse.ArgumentDefaultsHelpFormatter(prog, max_help_position=50,
+                                                                    width=120)
+    parser = argparse.ArgumentParser(formatter_class=formatter, description=description,
+                                     prog='{} pack'.format(prog))
+    help_string = 'declaration file'
+    parser.add_argument('-d', '--declaration', metavar='FILE',
+                        default=_default_declaration_file(),
+                        help=help_string)
+    parser.add_argument('-w', '--wizard', metavar='FILE',
+                        default=_default_wizard_file(),
+                        help='wizard file')
+    parser.add_argument('-t', '--template', metavar='FILE',
+                        default=_default_template_file(),
+                        help='template file')
+    help_string = 'output archive file; relative path is interpreted ' \
+        'as a sub-path within wizard directory; if not specified, default file name is used'
+    parser.add_argument('-o', '--output', metavar='FILE',
+                        help=help_string)
+    parser.add_argument('folder', help='wizard directory')
+    args = parser.parse_args(args)
+
+    if not osp.exists(args.folder):
+        print('Directory \'{}\' does not exist.'.format(args.folder), file=sys.stderr)
+        return -1
+
+    if not osp.isdir(args.folder):
+        print('Not a directory: \'{}\'.'.format(args.folder), file=sys.stderr)
+        return -1
+
+    declaration_file = osp.join(args.folder, args.declaration)
+    wizard_file = osp.join(args.folder, args.wizard)
+    template_file = osp.join(args.folder, args.template)
+    if not args.output:
+        archive_file = osp.join(args.folder, osp.basename(args.folder) + '.zip')
+    else:
+        archive_file = args.output if osp.isabs(args.output) else osp.join(args.folder, args.output)
+
+    try:
+        pack(archive_file, declaration_file, wizard_file, template_file, ignore_missing=False)
+    except Exception as err: # pragma pylint: disable=broad-except
+        print('Cannot create archive file \'{}\': {}'.format(archive_file, str(err)),
+              file=sys.stderr)
+
+    print('Wizard archive is created in {}'.format(archive_file))
+
+    return 0
+
+def main():
+    """Main function."""
+    commands = {
+        'generate' : main_generate,
+        'run' : main_run,
+        'verify' : main_verify,
+        'pack' : main_pack,
+        }
+
+    description = 'AsterStudy assistant helper.'
+    usage = '%(prog)s [-h] [-v] command [args]\n\n'
+    epilog = 'Supported commands:\n'
+    format_string = '  {:<%s}{}' % str(max([len(i) for i in commands]) + 4)
+    epilog += '\n'.join([format_string.format(i, commands[i].__doc__) \
+                             for i in sorted(commands)]) + '\n\n'
+    epilog += 'See \'%(prog)s command --help\' to read about a specific command.'
+    formatter = lambda prog: argparse.RawDescriptionHelpFormatter(prog, max_help_position=50,
+                                                                  width=120)
+    parser = argparse.ArgumentParser(formatter_class=formatter, description=description,
+                                     usage=usage, epilog=epilog)
+    parser.add_argument('-v', '--version', action='version',
+                        version='%(prog)s {}'.format(version()))
+
+    opts = []
+    args = []
+    argv = sys.argv[1:]
+    for i, arg in enumerate(argv):
+        if arg.startswith('-'):
+            opts.append(arg)
+        else:
+            args = argv[i:]
+            break
+
+    parser.parse_args(opts)
+
+    if not args:
+        parser.print_help(file=sys.stderr)
+        return -1
+    if args[0] not in commands:
+        print('Unknown command: \'{}\''.format(args[0]), file=sys.stderr)
+        return -1
+    return commands[args[0]](args[1:])
+
+if __name__ == '__main__':
+    sys.exit(main())

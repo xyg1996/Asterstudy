@@ -1,0 +1,63 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+# Copyright 2016 EDF R&D
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License Version 3 as
+# published by the Free Software Foundation.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, you may download a copy of license
+# from https://www.gnu.org/licenses/gpl-3.0.
+
+"""Converts `ast` persistent file into `ajs` one."""
+
+import argparse
+import os.path as osp
+import pickle
+import sys
+
+LIBDIR = ''
+
+# Add libdir to sys.path...
+if LIBDIR != '@' 'LIBDIR' '@':
+    # ... for install tree.
+    if not osp.isabs(LIBDIR):
+        LIBDIR = osp.join(osp.dirname(osp.realpath(__file__)), LIBDIR)
+        LIBDIR = osp.abspath(LIBDIR)
+    sys.path.insert(0, LIBDIR)
+else:
+    # ... for source tree.
+    sys.path.insert(0, osp.dirname(osp.realpath(__file__)))
+
+def main():
+    """Main function."""
+    from asterstudy.common import version
+    from asterstudy.datamodel import serializer
+
+    description = 'Converts `ast` persistent file into `ajs` one.'
+    formatter = lambda prog: argparse.ArgumentDefaultsHelpFormatter(prog, max_help_position=50,
+                                                                    width=120)
+    parser = argparse.ArgumentParser(formatter_class=formatter, description=description)
+    parser.add_argument('-v', '--version', action='version',
+                        version='%(prog)s {}'.format(version()))
+    parser.add_argument('input', help='input `ast` file')
+    parser.add_argument('output', help='output `ajs` file')
+    args = parser.parse_args()
+
+    with open(args.input, 'rb') as i_handle:
+        history = pickle.load(i_handle)
+        js_text = serializer.history2json(history)
+        with open(args.output, 'wt') as o_handle:
+            o_handle.write(js_text)
+
+    return 0
+
+if __name__ == '__main__':
+    sys.exit(main())

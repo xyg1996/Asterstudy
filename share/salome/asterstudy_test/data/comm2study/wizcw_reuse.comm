@@ -1,0 +1,166 @@
+DEBUT(LANG='FR')
+
+
+beammesh = LIRE_MAILLAGE(FORMAT='MED',
+                         UNITE=20)
+
+sectmesh = LIRE_MAILLAGE(FORMAT='MED',
+                         UNITE=22)
+
+fibgrp = DEFI_GEOM_FIBRE(FIBRE=_F(CARA='DIAMETRE',
+                                  COOR_AXE_POUTRE=(0.0, 0.0),
+                                  GROUP_FIBRE='SACIER',
+                                  VALE=(-0.056, -0.206, 0.032, 0.056, -0.206, 0.032, -0.08, 0.218, 0.008, 0.08, 0.218, 0.008)),
+                         INFO=1,
+                         SECTION=_F(COOR_AXE_POUTRE=(0.0, 0.0),
+                                    GROUP_FIBRE='SBETON',
+                                    MAILLAGE_SECT=sectmesh,
+                                    TOUT_SECT='OUI'))
+
+fibmesh = CREA_MAILLAGE(GEOM_FIBRE=fibgrp)
+
+beammod = AFFE_MODELE(AFFE=_F(MODELISATION='POU_D_EM',
+                              PHENOMENE='MECANIQUE',
+                              TOUT='OUI'),
+                      MAILLAGE=beammesh)
+
+beamel = AFFE_CARA_ELEM(GEOM_FIBRE=fibgrp,
+                        INFO=1,
+                        MODELE=beammod,
+                        MULTIFIBRE=_F(GROUP_FIBRE=('SBETON', 'SACIER'),
+                                      GROUP_MA='POUTRE',
+                                      PREC_AIRE=0.02,
+                                      PREC_INERTIE=0.25),
+                        ORIENTATION=_F(CARA='ANGL_VRIL',
+                                       GROUP_MA='POUTRE',
+                                       VALE=-90.0),
+                        POUTRE=_F(CARA=('HY', 'HZ'),
+                                  GROUP_MA='POUTRE',
+                                  SECTION='RECTANGLE',
+                                  VALE=(0.2, 0.5)))
+
+concrete = DEFI_MATER_GC(MAZARS=_F(CLASSE='C30/37',
+                                   CODIFICATION='EC2',
+                                   UNITE_CONTRAINTE='Pa'),
+                         RHO=2400.0)
+
+steel = DEFI_MATER_GC(ACIER=_F(D_SIGM_EPSI=1200000000.0,
+                               E=210000000000.0,
+                               SY=400000000.0),
+                      RHO=7800.0)
+
+mator = DEFI_MATERIAU(ELAS=_F(E=200000000000.0,
+                              NU=0.0,
+                              RHO=7800.0))
+
+fomult = DEFI_FONCTION(NOM_PARA='INST',
+                       PROL_DROITE='EXCLU',
+                       PROL_GAUCHE='EXCLU',
+                       VALE=(0.0, 0.0, 0.1, 0.1, 3.4, 3.4))
+
+linstd = DEFI_LIST_REEL(DEBUT=0.0,
+                        INTERVALLE=(_F(JUSQU_A=0.1,
+                                       NOMBRE=2),
+                                    _F(JUSQU_A=3.4,
+                                       NOMBRE=26)))
+
+linst1 = DEFI_LIST_INST(DEFI_LIST=_F(LIST_INST=linstd),
+                        ECHEC=_F(ACTION='DECOUPE',
+                                 EVENEMENT='ERREUR',
+                                 SUBD_METHODE='MANUEL',
+                                 SUBD_NIVEAU=10,
+                                 SUBD_PAS=10,
+                                 SUBD_PAS_MINI=1e-10),
+                        METHODE='MANUEL')
+
+block = AFFE_CHAR_MECA(DDL_IMPO=(_F(DRX=0.0,
+                                    DRY=0.0,
+                                    DX=0.0,
+                                    DY=0.0,
+                                    DZ=0.0,
+                                    GROUP_NO=('A', )),
+                                 _F(DY=0.0,
+                                    GROUP_NO=('B', ))),
+                       MODELE=beammod)
+
+displ = AFFE_CHAR_MECA(DDL_IMPO=_F(DY=-0.01,
+                                   GROUP_NO=('C', )),
+                       MODELE=beammod)
+
+csief = CREA_CHAMP(AFFE=_F(NOM_CMP=('SIXX', ),
+                           TOUT='OUI',
+                           VALE=(0.0, )),
+                   AFFE_SP=_F(CARA_ELEM=beamel),
+                   MODELE=beammod,
+                   OPERATION='AFFE',
+                   PROL_ZERO='OUI',
+                   TYPE_CHAM='ELGA_SIEF_R')
+
+cresu = CREA_RESU(AFFE=_F(CARA_ELEM=beamel,
+                          CHAM_GD=csief,
+                          INST=0.0,
+                          MODELE=beammod),
+                  NOM_CHAM='SIEF_ELGA',
+                  OPERATION='AFFE',
+                  TYPE_RESU='EVOL_NOLI')
+
+IMPR_RESU(FORMAT='MED',
+          RESU=_F(MAILLAGE=fibmesh),
+          UNITE=80)
+
+IMPR_RESU(FORMAT='MED',
+          RESU=_F(CARA_ELEM=beamel,
+                  NOM_CHAM=('SIEF_ELGA', ),
+                  RESULTAT=cresu),
+          UNITE=82)
+
+IMPR_CONCEPT(CONCEPT=_F(CARA_ELEM=beamel,
+                        MODELE=beammod,
+                        REPERE_LOCAL='ELNO'),
+             FORMAT='MED',
+             UNITE=81)
+
+pmfmazar = DEFI_COMPOR(GEOM_FIBRE=fibgrp,
+                       MATER_SECT=mator,
+                       MULTIFIBRE=(_F(GROUP_FIBRE='SACIER',
+                                      MATER=steel,
+                                      RELATION='VMIS_CINE_GC'),
+                                   _F(GROUP_FIBRE='SBETON',
+                                      MATER=concrete,
+                                      RELATION='MAZARS_GC')))
+
+matmazar = AFFE_MATERIAU(AFFE=_F(GROUP_MA='POUTRE',
+                                 MATER=(steel, concrete, mator)),
+                         AFFE_COMPOR=_F(COMPOR=pmfmazar,
+                                        GROUP_MA='POUTRE'),
+                         MAILLAGE=beammesh)
+
+resumaz = STAT_NON_LINE(CARA_ELEM=beamel,
+                        CHAM_MATER=matmazar,
+                        COMPORTEMENT=_F(RELATION='MULTIFIBRE'),
+                        CONVERGENCE=_F(ITER_GLOB_MAXI=20,
+                                       RESI_GLOB_RELA=1e-05),
+                        EXCIT=(_F(CHARGE=block),
+                               _F(CHARGE=displ,
+                                  FONC_MULT=fomult)),
+                        INCREMENT=_F(INST_FIN=3.4,
+                                     LIST_INST=linst1),
+                        MODELE=beammod,
+                        NEWTON=_F(MATRICE='TANGENTE',
+                                  REAC_ITER=1))
+
+resumaz = CALC_CHAMP(reuse=resumaz,
+                     FORCE='REAC_NODA',
+                     RESULTAT=resumaz)
+
+resumaz = CALC_CHAMP(reuse=resumaz,
+                     DEFORMATION='EPSI_ELGA',
+                     RESULTAT=resumaz)
+
+IMPR_RESU(FORMAT='MED',
+          RESU=_F(CARA_ELEM=beamel,
+                  NOM_CHAM=('SIEF_ELGA', 'EPSI_ELGA', 'VARI_ELGA'),
+                  RESULTAT=resumaz),
+          UNITE=90)
+
+FIN()

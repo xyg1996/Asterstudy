@@ -1,0 +1,147 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+# Copyright 2016 EDF R&D
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License Version 3 as
+# published by the Free Software Foundation.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, you may download a copy of license
+# from https://www.gnu.org/licenses/gpl-3.0.
+
+"""Debug content of `ajs` file."""
+
+import argparse
+import os.path as osp
+import sys
+
+HELP = """
+    %(prog)s [options] FILE
+
+Helper script to load and check the content of a ``data.ajs`` file.
+It prints a summary of the content of the study.
+
+WARNING: This script is designed for developpers!
+
+It can be run under an interactive Python shell::
+
+    python -i {0} /path/to/data.ajs
+    ...
+    Summary
+    ...
+    >>> stage1 = history.cases[0][0]
+    >>>
+
+""".format(sys.argv[0])
+
+LIBDIR = ''
+
+# Add libdir to sys.path...
+if LIBDIR != '@' 'LIBDIR' '@':
+    # ... for install tree.
+    if not osp.isabs(LIBDIR):
+        LIBDIR = osp.abspath(osp.join(osp.dirname(osp.realpath(__file__)), LIBDIR))
+    sys.path.insert(0, LIBDIR)
+else:
+    # ... for source tree.
+    sys.path.insert(0, osp.dirname(osp.realpath(__file__)))
+
+try:
+    from asterstudy.datamodel import History, ConversionLevel
+    from asterstudy.common.utilities import debug_mode
+except ImportError:
+    raise ImportError("You should execute this script under a SALOME "
+                      "environment.\n"
+                      "Try: 'salome shell -- python -i %s'"
+                      % (" ".join(sys.argv)))
+
+def print_history(hist, text):
+    """Print a summary of an History."""
+    print("\nSummary\n-------")
+    print("Version: {0} ({1})"
+          .format(hist.version,
+                  ".".join([str(i) for i in hist.version_number])))
+    print("The study contains {0} cases:".format(hist.nb_cases))
+    uid2idx = {}
+    for idc, case in enumerate(hist.cases):
+        nbcc = 0
+        print("    {1.name:<40} history.cases[{0}]".format(idc, case))
+        for ids, stage in enumerate(case.stages):
+            nbcs = stage.nb_commands
+            nbcc += nbcs
+            cmds = " in text mode"
+            if stage.is_graphical_mode():
+                cmds = " with {0} commands".format(nbcs)
+            print("        {2.name:<36} history.cases[{0}][{1}]    {3}"
+                  .format(idc, ids, stage, cmds))
+            if stage.handle2info:
+                print("            {2:<32} "
+                      "history.cases[{0}][{1}].handle2info[unit]"
+                      .format(idc, ids, "Files"))
+            for unit, info in stage.handle2info.items():
+                print("            {0:3d} {1.filename}".format(unit, info))
+            if text:
+                uid = uid2idx.setdefault(stage.uid, len(uid2idx) + 1)
+                with open(str(uid) + '.comm', 'w') as fobj:
+                    fobj.write(stage.get_text(pretty=False))
+        print("        > {0} commands in stages converted to graphical mode"
+              .format(nbcc))
+
+def debug_ajs(data, text):
+    """Load a `data.ajs` file."""
+    hist = History.load(data, strict=ConversionLevel.NoFail)
+    print_history(hist, text)
+
+    return hist
+
+def debug_jobs(history):
+    """Debug the list of jobs."""
+    # TODO: loop on `result.job` objects and show `dump_string` attribute.
+    for case in history.cases[:-1]:
+        for stage in case.stages:
+            print("{0.name}.{1.name} - job dump string:\n{2}"
+                  .format(case, stage, stage.result.job.dump_string))
+
+def main():
+    """Main function."""
+    # command arguments parser
+    parser = argparse.ArgumentParser(
+        usage=HELP,
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    parser.add_argument("-g", "--debug", action="store_true",
+                        help="Turn on debugging information.")
+    parser.add_argument("--ptvsd", action="store_true",
+                        help="Enable remote debugging with ptvsd.")
+    parser.add_argument("--jobs", action="store_true",
+                        help="Extract XML files of jobs (before/after).")
+    parser.add_argument("--text", action="store_true",
+                        help="Extract and write in the current directory the "
+                             "text of the commands files.")
+    parser.add_argument("filename", metavar='FILE',
+                        help="Path to the 'data.ajs' file.")
+
+    args = parser.parse_args()
+    if args.debug:
+        debug_mode.DEBUG = 1
+    if args.ptvsd:
+        import ptvsd # pragma pylint: disable=import-error
+        print('Waiting for debugger attach on port 3000...')
+        ptvsd.enable_attach(address=('127.0.0.1', 3000))
+        ptvsd.wait_for_attach()
+        ptvsd.break_into_debugger()
+
+    history = debug_ajs(args.filename, args.text)
+    if args.jobs:
+        debug_jobs(history)
+
+    return 0
+
+if __name__ == '__main__':
+    sys.exit(main())

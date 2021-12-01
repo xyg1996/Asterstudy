@@ -1,0 +1,6 @@
+DEBUT()
+var1 = %PARAM1%
+var2 = %PARAM2%
+var3 = %PARAM3%
+var4 = %PARAM4%
+FIN()

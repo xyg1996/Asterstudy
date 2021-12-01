@@ -1,0 +1,410 @@
+.. _userguide-commands:
+
+*******************
+Commands management
+*******************
+
+Commands and concepts
+=====================
+
+A result of **Code_Aster** command represents a *concept*; in other words,
+concept is a physical entity which is described by the *command* as a
+set of named parameters, where each parameter is assigned a specific value.
+
+In below example *mesh* is a concept produced by **LIRE_MAILLAGE** command.
+
+.. code-block:: python
+
+    mesh = LIRE_MAILLAGE(UNITE=20)
+
+Concepts link different commands together - one command can refer to other
+by assigning it as a value to some keyword:
+
+.. code-block:: python
+
+    mesh = LIRE_MAILLAGE(UNITE=20, FORMAT='MED')
+    model = AFFE_MODELE(MAILLAGE=mesh)
+
+In terms of GUI, *concept* can be considered as a synonym of *command*;
+user creates concepts in the study case by adding and configuring commands.
+
+.. note::
+    Not all **Code_Aster** commands produce concepts; on the other hand,
+    **Code_Aster** command can produce more than one concept.
+
+Add commands to stage (graphical mode)
+======================================
+
+In *graphical* mode the addition of a command can be done in several ways:
+
+* Via the dedicated drop-down list in toolbar,
+* Via the *Commands* main menu,
+* Via the context menu on the stage,
+* Via the search dialog for commands (see below).
+
+The commands are sorted by *category* (*Mesh*, *Material* ...).
+
+When a command is added to the stage, the commands are **automatically** sorted
+by *category* and taking into account the dependencies between them. It is not
+possible to change the order of the commands in the *Data Settings* panel.
+If dependencies between commands are added or removed, the order of commands
+is automatically recalculated.
+
+.. figure:: /images/data_settings.png
+    :alt: Data Settings panel
+    :align: center
+
+    **Data Settings panel**
+
+.. _search-panel:
+
+Search command
+--------------
+
+.. |see_all| image:: /images/see_all.png
+    :height: 24px
+
+The search panel is accessible via the |see_all| *Show All* item in the
+*Commands* menu.
+
+The search panel shows all the commands grouped by *category*.
+The *search* field is used to filter out the commands.
+
+.. note::
+    Depending on the version of **Code_Aster** being used, the *categories* can
+    be additionally split to the *sub-categories*, which appear as enclosed
+    groups in the search panel.
+
+You can then add a command to the selected *graphical* stage by double-clicking
+on the command name, or by pressing *OK* or *Apply* button.
+
+.. figure:: /images/search_command.png
+    :alt: Show All dialog
+    :align: center
+
+    **Show All dialog**
+
+Favorites category
+------------------
+
+The user is able to put most oftenly used commands to the **Favorites**
+category.
+
+To add a command to the *Favorites* category:
+
+* Open the :ref:`search panel <search-panel>`,
+* Select a command,
+* Use *Add to Favorites* context menu item.
+
+The *Favorites* category is available as:
+
+* Main menu *Commands > Favorites*,
+* Dedicated drop-down list in the *Commands* toolbar,
+* A group in the search panel (which appears on a very first place),
+* An item in the context menu for the stage in the *Data Settings* panel.
+
+To remove a command from the *Favorites* category:
+
+* Open the :ref:`search panel <search-panel>`,
+* Select a command,
+* Use *Remove from Favorites* context menu item.
+
+.. warning::
+    If *Favorites* category is empty, it is not shown in the toolbar, main menu
+    and search panel.
+
+Rename command
+--------------
+
+Commands are added to a study with the default name.
+You can rename command by editing it or by selecting it in the *Data Settings*
+panel and then pressing *F2* key or invoking *Rename* item from the context menu.
+
+Edit command
+------------
+
+.. |edit| image:: /images/edit.png
+    :height: 24px
+.. |hide_unused| image:: /images/eye_off.png
+    :height: 24px
+.. |command_help| image:: /images/command_help.png
+    :height: 24px
+.. |edit_comment| image:: /images/edit_comment.png
+    :height: 24px
+.. |whats_this| image:: /images/whats_this.png
+    :height: 24px
+.. |use_translations| image:: /images/use_translations.png
+    :height: 24px
+.. |show_mesh_view| image:: /images/show_mesh_view.png
+    :height: 24px
+.. |summary| image:: /images/summary.png
+    :height: 24px
+
+To edit a command, double-click the item in the *Data Settings* panel, or select
+a command and press *F4*, click |edit| toolbar button or invoke *Edit* item from
+the context menu.
+
+.. figure:: /images/edit_command.png
+    :alt: Edit command
+    :align: center
+
+    **Edit command**
+
+The *Name* field is used to rename the command.
+
+The |command_help| button opens a documentation on the command. This operation
+is also available in the *Edit* main menu and in context menu in *Data Settings*
+panel.
+
+The |hide_unused| button allows to display only selected parameters.
+
+The |edit_comment| button allows
+:ref:`adding comment to a command <edit-comment>`.
+
+The |use_translations| button switches ON/OFF
+:ref:`business-oriented translations <business-translations>`.
+
+The |show_mesh_view| button allows switching mesh view ON/OFF. Switching
+mesh view OFF can be useful when working with the mesh containing big number
+of groups, to have reasonable performance (as groups visualization is quite
+time-consuming).
+
+The |summary| button opens :ref:`involved_groups` panel that allows viewing mesh
+groups used by the command being edited.
+
+The |whats_this| button displays a description of selected keyword:
+
+.. figure:: /images/show_whats_this.png
+    :alt: What's This
+    :align: center
+
+    **What's This**
+
+The user can then enter the parameters of the command by checking the box of
+the parameter to be filled in and then specifying its value.
+
+.. note::
+    Mandatory parameters are followed by a red asterisk.
+
+The parameter value can be given via either a text or numeric field, a drop-down
+list or, for more complex parameters, an *Edit* button to access a subscreen for
+editing this parameter.
+
+The following screen shows the editing of the `Timestepping` parameter.
+
+.. figure:: /images/edit_command_sub.png
+    :alt: Edition of parameter
+    :align: center
+
+    **Edition of parameter**
+
+.. hint::
+    The second line (`Linear thermal analysis > Timestepping`) allows you to
+    find your way through the sequence of screens.
+
+Delete or copy command
+----------------------
+
+The command can be deleted or duplicated via the corresponding toolbar
+button, menu, or keyboard shortcut (*Del* and *Ctrl+D* respectively).
+
+.. important::
+    The order of the commands and the validation are carried out during the
+    suppression of a command to check that the integrity of the stage is
+    respected.
+
+Activate / deactivate command
+-----------------------------
+
+A command can be temporarily removed from the stage by using *Deactivate*
+operation. Deactivated commands are shown grayed in the *Data Settings* panel.
+
+.. figure:: /images/deactivated_command.png
+    :alt: Deactivated command
+    :align: center
+
+    **Deactivated command**
+
+All usual operations are allowed for deactivated commands; however, they are
+not shown in the drop-down selectors when editing other commands. In addition,
+when stage is converted to the *text* mode or exported to a command file,
+deactivated commands appear as comment blocks.
+
+Deactivated command can be re-activated via the *Activate* operation.
+
+*Deactivate* and *Activate* operations are available in:
+
+* *Edit* main menu,
+* Context menu of a command in *Data Settings* panel.
+
+.. _edit-comment:
+
+Add comment
+-----------
+
+The button |edit_comment| edits the comment associated with the command.
+This button is available in the *Commands* toolbar, in the command editing
+panel, in main menu and in the context menu.
+
+.. figure:: /images/comment_command.png
+    :alt: Edit comment
+    :align: center
+
+    **Edit comment**
+
+Variables
+---------
+
+.. |add_variable| image:: /images/add_variable.png
+    :height: 24px
+.. |edit_variable| image:: /images/edit_variable.png
+    :height: 24px
+
+The button |add_variable| adds a variable to the stage. This button is available
+in the *Commands* toolbar, in main menu and in the context menu.
+
+You can then edit the variable by entering its value.
+The value of the variable can be defined by an expression.
+
+.. figure:: /images/define_variable.png
+    :alt: Create variable
+    :align: center
+
+    **Create variable**
+
+.. |choose_variable| image:: /images/choose_variable.png
+    :height: 16px
+
+Variables can then be used for commands definition.
+When editing a control field, choose the |choose_variable| icon to the right of
+the input field. The input field is then replaced by a drop-down list in which
+you can select the variable to use.
+
+.. figure:: /images/use_variable.png
+    :alt: Use variable
+    :align: center
+
+    **Use variable**
+
+.. _business-translations:
+
+Use translation of the **Code_Aster** terms
+-------------------------------------------
+
+The icon |use_translations| allows switching ON/OFF business-oriented
+translations of the **Code_Aster** terms.
+
+.. figure:: /images/business_translations.png
+    :alt: Use of business-oriented translations
+    :align: center
+
+    **Use of business-oriented translations**
+
+Clipboard operations
+====================
+
+.. |copy| image:: /images/copy.png
+    :height: 24px
+.. |cut| image:: /images/cut.png
+    :height: 24px
+.. |paste| image:: /images/paste.png
+    :height: 24px
+
+Standard clipboard operations *Copy*, *Cut* and *Paste* are applicable to the
+commands:
+
+* |copy| *Copy* (*Ctrl+C*): copies selected command to the clipboard,
+* |cut| *Cut* (*Ctrl+X*): removes selected command from the stage and puts it to the
+  clipboard,
+* |paste| *Paste* (*Ctrl+P*): inserts a command from the clipboard to the selected
+  stage.
+
+These operations are also available in the *Edit* main menu and context menu.
+
+.. _userguide-edit-text-stage:
+
+Find
+====
+
+It is possible to search the study tree. To do this, select the *Data Settings*
+panel and press *Ctrl+F*, use *Find* context menu or *Edit > Find* main menu.
+
+The search box appears at the bottom of the study tree.
+
+It is possible to search on the following criteria:
+
+* *Command*: search by Aster command names.
+    * Example: if the user types `DEF`, items created by commands like
+      `DEFI_MATERIAU` are highlighted.
+* *Concept*: search by the names of existing concepts.
+    * Example: if the user types `MAT`, the item corresponding to the command
+      `MATE = AFFE_MATERIAU (...)` is highlighted.
+* *Keyword*: search by the keywords of the commands.
+    * Example: `COMMAND (GROUP_MA=ALPHA)` is highlighted, if user types
+      `GROUP`.
+* *Group*: search on the names of groups of mesh nodes or elements.
+    * Example: `COMMAND (GROUP_MA=BETA)` is highlighted, if the user types
+      `BET`.
+* *Value*: search is performed within keyword values.
+    * Example: `COMMAND (ARGUMENT=123)` is highlighted, if the user types
+      `123`. Note that *Group* search type is a particular case of *Value*.
+* *All*: search contains results from all other modes. This is the default
+  search mode.
+
+.. important::
+    In *Concept* mode, the search tool finds concepts recursively, i.e. if one
+    concept refers to another one which name suits the search criterion, this
+    first concept is also included into the search result.
+
+    * Example: if the user types `MESH`, the item corresponding to the command
+      `MODEL = AFFE_MODELE(MAILLAGE=MESH)` is also highlighted, in addition to
+      the `MESH` item itself.
+
+The nodes of the study corresponding to the search criterion entered by the user
+are then highlighted in yellow background, and it is possible to navigate
+between them by clicking *<* (previous result) and *>* (next result) buttons
+or pressing *F3*, *Shift+F3* shortcuts.
+
+The search is case insensitive and is performed on the words **containing**
+the value entered by the user.
+
+.. figure:: /images/search.png
+   :alt: Search in the study tree
+   :align: center
+
+   **Search in the study tree**
+
+Edition in text mode
+====================
+
+In *text* mode, the stage is managed as a whole and the commands that compose
+it are not displayed in the *Data Settings* panel under the stage item.
+
+To edit the commands for a stage in *text* mode, double-click on the stage item
+in the *Data Settings* panel, press *F4*, use *Edit* context menu command to
+open the text editor or click |edit| toolbar button.
+
+.. figure:: /images/text_mode.png
+    :alt: Edit stage in text mode
+    :align: center
+
+    **Edit stage in text mode**
+
+.. note::
+    It is possible to use either an internal editor or an external editor
+    program (see :ref:`userguide-preferences`).
+
+In addition to editing command file representing the stage in *text* mode, the
+user is able to declare the concepts which are created in the study by this
+stage (right part of the dialog on above picture). The concepts entered here
+will be available for the selection in the following *graphical* stages.
+
+.. warning::
+    Application cannot check that concepts declared by the user are actually
+    created by the stage. This is the responsibility of the user to provide
+    correct information.
+
+.. important::
+    User can also declare concepts created in the *text* stage with the
+    *Edit concepts* operation which is available in *Edit* main menu and in
+    the context menu for the stage in the *Data Settings* panel.

@@ -1,0 +1,166 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+# Copyright 2016 EDF R&D
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License Version 3 as
+# published by the Free Software Foundation.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, you may download a copy of license
+# from https://www.gnu.org/licenses/gpl-3.0.
+
+"""Main start-up point of AsterStudy application."""
+
+import argparse
+import os
+import os.path as osp
+import sys
+import traceback
+
+LIBDIR = ''
+
+# Add libdir to sys.path...
+if LIBDIR != '@' 'LIBDIR' '@':
+    # ... for install tree.
+    if not osp.isabs(LIBDIR):
+        LIBDIR = osp.join(osp.dirname(osp.realpath(__file__)), LIBDIR)
+        LIBDIR = osp.abspath(LIBDIR)
+    sys.path.insert(0, LIBDIR)
+else:
+    # ... for source tree.
+    sys.path.insert(0, osp.dirname(osp.realpath(__file__)))
+
+# pragma pylint: disable=too-many-branches,too-many-locals
+def main():
+    """Main function."""
+    try:
+        from asterstudy.common import CFG, debug_mode, enable_except_hook, version
+        from asterstudy.datamodel import init_default_engine, Engine
+        from asterstudy.gui.asterstdgui import AsterStdGui
+    except ImportError as err:
+        print('abort: could not find or load astergui libraries in [%s]' % ' '.join(sys.path),
+              file=sys.stderr)
+        print('(check your install and PYTHONPATH)', file=sys.stderr)
+        if int(os.getenv('DEBUG', '0')):
+            print('ERROR: %s' % err, file=sys.stderr)
+            traceback.print_exc()
+        return -1
+
+    description = 'GUI framework for code_aster.'
+    formatter = lambda prog: argparse.ArgumentDefaultsHelpFormatter(prog, max_help_position=50,
+                                                                    width=120)
+    parser = argparse.ArgumentParser(formatter_class=formatter, description=description)
+    parser.add_argument('-v', '--version', action='version',
+                        version='%(prog)s {}'.format(version()))
+    parser.add_argument('-g', '--debug', action='store_true',
+                        help='run in debug mode')
+    parser.add_argument('-b', '--basicnaming', action='store_true',
+                        help='use basic naming (instead of default/automatic)')
+    parser.add_argument('-n', '--noexhook', action='store_true',
+                        help='switch off custom exception hook')
+    parser.add_argument('-c', '--nativenames', action='store_true',
+                        help='switch off business-oriented translations of code_aster dictionary')
+    parser.add_argument('study', default=None, help='study file', nargs='?')
+    args = parser.parse_args()
+
+    if args.debug:
+        debug_mode.DEBUG = 1
+
+    if not args.noexhook:
+        enable_except_hook(True)
+    else:
+        try:
+            import ptvsd # pragma pylint: disable=import-error
+            ptvsd.enable_attach(address=('127.0.0.1', 3000))
+            # ptvsd.wait_for_attach() # uncomment these lines for debugging
+            # ptvsd.break_into_debugger()
+        except: # pragma pylint: disable=bare-except
+            pass
+
+    if args.basicnaming:
+        os.environ['ASTERSTUDY_NAMING'] = 'basic'
+
+    if args.nativenames:
+        os.environ['ASTERSTUDY_NATIVE_NAMES'] = '1'
+
+    from PyQt5.Qt import QApplication, QLibraryInfo, QTranslator
+
+    # Initialize application and settings
+    app = QApplication(sys.argv)
+    app.setOrganizationName('salome')
+    app.setOrganizationDomain('edf.fr')
+    app.setApplicationName('AsterStudy')
+
+    # Set application language
+    language = AsterStdGui.preferencesMgr().value('language')
+
+    # Load Qt translations
+    qt_translations_dir = QLibraryInfo.location(QLibraryInfo.TranslationsPath)
+    for qt_tr in ['qt', 'qtbase']:
+        translator = QTranslator(app)
+        if translator.load(qt_tr + '_%s' % language, qt_translations_dir):
+            app.installTranslator(translator)
+
+    # Load AsterStudy translations
+    aster_trs = [i for i in os.listdir(CFG.rcdir) if i.endswith('{}.qm'.format(language))]
+    for aster_tr in aster_trs:
+        translator = QTranslator(app)
+        if translator.load(osp.join(CFG.rcdir, aster_tr)):
+            app.installTranslator(translator)
+
+    # Load additional translations
+    try:
+        import PyConsolePy # pragma pylint: disable=unused-import
+        gui_root = os.getenv('GUI_ROOT_DIR')
+        pc_root = os.getenv('PYCONSOLE_ROOT_DIR')
+        translator = QTranslator(app)
+        if pc_root:
+            pc_root = osp.join(pc_root, 'share', 'resources')
+            if translator.load('PyConsole_msg_%s' % language, pc_root):
+                app.installTranslator(translator)
+        elif gui_root:
+            gui_root = osp.join(gui_root, 'share', 'salome', 'resources', 'gui')
+            if translator.load('PyConsole_msg_%s' % language, gui_root):
+                app.installTranslator(translator)
+    except ImportError:
+        pass
+    try:
+        import PyEditorPy # pragma pylint: disable=unused-import
+        gui_root = os.getenv('GUI_ROOT_DIR')
+        pe_root = os.getenv('PYEDITOR_ROOT_DIR')
+        translator = QTranslator(app)
+        if pe_root:
+            pe_root = osp.join(pe_root, 'share', 'resources')
+            if translator.load('PyEditor_msg_%s' % language, pe_root):
+                app.installTranslator(translator)
+        elif gui_root:
+            gui_root = osp.join(gui_root, 'share', 'salome', 'resources', 'gui')
+            if translator.load('PyEditor_msg_%s' % language, gui_root):
+                app.installTranslator(translator)
+    except ImportError:
+        pass
+
+    # initialize engine
+    init_default_engine(Engine.AsRun)
+
+    # Activate GUI and show main window
+    asgui = AsterStdGui()
+    asgui.initialize()
+    if args.study:
+        if not asgui.load(args.study):
+            print('abort: could not load \'%s\'' % args.study, file=sys.stderr)
+            return -1
+    asgui.mainWindow().show()
+
+    # Start event loop
+    return app.exec_()
+
+if __name__ == '__main__':
+    sys.exit(main())

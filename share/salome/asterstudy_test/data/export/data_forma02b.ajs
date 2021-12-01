@@ -1,0 +1,45 @@
+{
+  "minor": 10,
+  "history": {
+    "aster": "stable",
+    "versionMinor": 4,
+    "versionMajor": 14,
+    "cases": [
+      {
+        "stages": [
+          1,
+          2
+        ],
+        "name": "CurrentCase",
+        "in_dir": "/tmp/path/to/repe/in"
+      }
+    ],
+    "stages": [
+      {
+        "files": [
+          {
+            "handle": 20,
+            "attr": 1,
+            "filename": "0:1:2:11"
+          }
+        ],
+        "text": "MAIL = LIRE_MAILLAGE(FORMAT='MED', UNITE=20)\n\nMODELE = AFFE_MODELE(AFFE=_F(MODELISATION='3D', PHENOMENE='MECANIQUE', TOUT='OUI'), MAILLAGE=MAIL)\n\nMAT = DEFI_MATERIAU(ELAS=_F(E=2.04e+11, NU=0.3, RHO=7800.0))\n\nCHMAT = AFFE_MATERIAU(AFFE=_F(MATER=MAT, TOUT='OUI'), MAILLAGE=MAIL)\n\nBLOCAGE = AFFE_CHAR_MECA(DDL_IMPO=_F(DX=0.0, DY=0.0, DZ=0.0, GROUP_MA='BASE'), MODELE=MODELE)\n\nASSEMBLAGE(CHAM_MATER=CHMAT, CHARGE=BLOCAGE, MATR_ASSE=(_F(MATRICE=CO('RIGIDITE'), OPTION='RIGI_MECA'), _F(MATRICE=CO('MASSE'), OPTION='MASS_MECA')), MODELE=MODELE, NUME_DDL=CO('NUMEDDL'))\n\nMODES = CALC_MODES(CALC_FREQ=_F(NMAX_FREQ=10), MATR_MASS=MASSE, MATR_RIGI=RIGIDITE, OPTION='PLUS_PETITE')",
+        "uid": 1,
+        "name": "forma02b",
+        "result": {
+          "resstate": 1,
+          "job": {}
+        }
+      },
+      {
+        "uid": 2,
+        "text": "tfi = 2.0\n\npas = 0.0001\n\nfex = 20.0\n\namF = 10000000.0\n\npavi = 0.01\n\n# coding=utf-8\n# --------------------------------------------------------------------\n# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org\n# This file is part of code_aster.\n# \n# code_aster is free software: you can redistribute it and/or modify\n# it under the terms of the GNU General Public License as published by\n# the Free Software Foundation, either version 3 of the License, or\n# (at your option) any later version.\n# \n# code_aster is distributed in the hope that it will be useful,\n# but WITHOUT ANY WARRANTY; without even the implied warranty of\n# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n# GNU General Public License for more details.\n# \n# You should have received a copy of the GNU General Public License\n# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.\n# --------------------------------------------------------------------\n# \n#        TUYAUTERIE COMPORTANT UN COUDE\n#     MODELISATION PAR DES ELEMENTS HEXAEDRES\n#     ---------------------------------------\nPOURSUITE(CODE='OUI')\n\nfs = FORMULE(NOM_PARA='INST', VALE='amF*sin(2*pi*fex*INST)')\n\nLINS = DEFI_LIST_REEL(DEBUT=0.0, INTERVALLE=_F(JUSQU_A=tfi, PAS=pas))\n\nFSI = CALC_FONC_INTERP(FONCTION=fs, LIST_PARA=LINS, PROL_DROITE='CONSTANT', PROL_GAUCHE='CONSTANT')\n\nLIVI = DEFI_LIST_REEL(DEBUT=0.0, INTERVALLE=_F(JUSQU_A=tfi, PAS=pavi))\n\nLFR = DEFI_LIST_REEL(DEBUT=0, INTERVALLE=_F(JUSQU_A=60, PAS=0.1))\n\nFYC = AFFE_CHAR_MECA(FORCE_FACE=_F(FY=1.0, GROUP_MA='EFOND'), MODELE=MODELE)\n\nFYE = CALC_VECT_ELEM(CHARGE=FYC, OPTION='CHAR_MECA')\n\nFY = ASSE_VECTEUR(NUME_DDL=NUMEDDL, VECT_ELEM=FYE)\n\nPROJ_BASE(BASE=MODES, MATR_ASSE_GENE=(_F(MATRICE=CO('MASPRO'), MATR_ASSE=MASSE), _F(MATRICE=CO('RIPRO'), MATR_ASSE=RIGIDITE)), VECT_ASSE_GENE=_F(VECTEUR=CO('FYPRO'), VECT_ASSE=FY, TYPE_VECT='FORC'))\n\nDTM = DYNA_VIBRA(AMOR_MODAL=_F(AMOR_REDUIT=0.05), BASE_CALCUL='GENE', EXCIT=_F(FONC_MULT=FSI, VECT_ASSE_GENE=FYPRO), INCREMENT=_F(INST_FIN=tfi, PAS=pas), MATR_MASS=MASPRO, MATR_RIGI=RIPRO, SCHEMA_TEMPS=_F(SCHEMA='DIFF_CENTRE'), TYPE_CALCUL='TRAN')\n\nDLH = DYNA_VIBRA(AMOR_MODAL=_F(AMOR_REDUIT=0.05), BASE_CALCUL='GENE', EXCIT=_F(COEF_MULT=amF, VECT_ASSE_GENE=FYPRO), LIST_FREQ=LFR, MATR_MASS=MASPRO, MATR_RIGI=RIPRO, TYPE_CALCUL='HARM')\n\nTRAN = REST_GENE_PHYS(LIST_INST=LIVI, NOM_CHAM='DEPL', RESU_GENE=DTM)\n\nDHB = REST_GENE_PHYS(GROUP_NO='P_EFOND', NOM_CHAM=('DEPL', 'ACCE'), RESU_GENE=DLH)\n\nDEPY_B = RECU_FONCTION(GROUP_NO='P_EFOND', NOM_CHAM='DEPL', NOM_CMP='DY', RESU_GENE=DTM)\n\nDHY_B = RECU_FONCTION(GROUP_NO='P_EFOND', NOM_CHAM='DEPL', NOM_CMP='DY', RESULTAT=DHB)\n\nMDHY_B = CALC_FONCTION(EXTRACTION=_F(FONCTION=DHY_B, PARTIE='MODULE'))",
+        "name": "forma02b_1",
+        "result": {
+          "resstate": 1,
+          "job": {}
+        }
+      }
+    ]
+  }
+}

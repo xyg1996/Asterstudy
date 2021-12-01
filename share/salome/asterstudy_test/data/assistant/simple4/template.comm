@@ -1,0 +1,7 @@
+DEBUT()
+mesh = %MESH%
+input_file = %INPUT_FILE%
+group_ma = %GR_MA%
+group_no = %GR_NO%
+output_file = %OUTPUT_FILE%
+FIN()

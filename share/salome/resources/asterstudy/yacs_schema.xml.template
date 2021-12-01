@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding='iso-8859-1' ?>
+<proc name="Schema">
+   <type name="bool" kind="bool"/>
+   <type name="double" kind="double"/>
+   <objref name="file" id="file"/>
+   <type name="int" kind="int"/>
+   <type name="string" kind="string"/>
+   <container name="DefaultContainer">
+      <property name="container_kind" value="Salome"/>
+      <property name="attached_on_cloning" value="0"/>
+      <property name="container_name" value="FactoryServer"/>
+      <property name="name" value="localhost"/>
+   </container>
+   <container name="Py2YacsContainer">
+      <property name="container_kind" value="Salome"/>
+      <property name="attached_on_cloning" value="0"/>
+   </container>
+   <remote name="{schema}" elementaryWeight="-1">
+      <script><code><![CDATA[
+{code}
+
+{call}
+]]></code></script>
+      <load container="Py2YacsContainer"/>
+{invars:repeat:      <inport name="{{item[0]}}" type="double"/>
+}{outvars:repeat:      <outport name="{{item}}" type="double"/>
+}   </remote>
+{invars:repeat:   <parameter>
+      <tonode>{schema}</tonode><toport>{{item[0]}}</toport>
+      <value><double>{{item[1]}}</double></value>
+   </parameter>
+}</proc>

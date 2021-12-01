@@ -1,0 +1,20 @@
+{
+  "title": "Test calculation assistant",
+  "format": "2.1",
+  "pages": [
+    {
+      "title": "Page 1",
+      "parameters": [
+        {
+          "name": "PARAM1",
+          "title": "Integer QLineEdit",
+          "description": "Description of PARAM1",
+          "typ": "int",
+          "val_min": 1,
+          "val_max": 100,
+          "default": 10
+        }
+      ]
+    }
+  ]
+}

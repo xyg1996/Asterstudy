@@ -1,0 +1,10 @@
+POURSUITE()
+
+table = CALC_TABLE(reuse=table,
+                   ACTION=_F(CRIT_COMP='NE',
+                             NOM_PARA='COOR_X',
+                             OPERATION='FILTRE',
+                             VALE=(0.0, )),
+                   TABLE=table)
+
+FIN()

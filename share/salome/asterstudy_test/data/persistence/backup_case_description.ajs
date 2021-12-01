@@ -1,0 +1,53 @@
+{
+  "history": {
+    "cases": [
+      {
+        "name": "RunCase_1",
+        "stages": [
+          1,
+          2
+        ],
+        "description": "yyy"
+      },
+      {
+        "name": "BackupCase_1",
+        "stages": [
+          1,
+          2
+        ],
+        "description": "zzz",
+        "isBackup": true
+      },
+      {
+        "name": "Case_1",
+        "stages": [
+          1,
+          2
+        ],
+        "description": "xxx"
+      }
+    ],
+    "stages": [
+      {
+        "name": "s1",
+        "result": {
+          "job": {},
+          "resstate": 1
+        },
+        "uid": 1
+      },
+      {
+        "name": "s2",
+        "result": {
+          "job": {},
+          "resstate": 1
+        },
+        "uid": 2
+      }
+    ],
+    "aster": "stable",
+    "versionMajor": 14,
+    "versionMinor": 4
+  },
+  "minor": 10
+}

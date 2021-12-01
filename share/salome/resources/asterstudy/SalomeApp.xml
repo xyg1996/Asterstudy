@@ -1,0 +1,75 @@
+<!DOCTYPE document>
+<document>
+  <section name="ASTERSTUDY">
+    <parameter name="name" value="AsterStudy" />
+    <parameter name="icon" value="asterstudy.png" />
+    <parameter name="version" value="2019.0.1" />
+    <parameter name="library" value="SalomePyQtGUILight" />
+    <parameter name="documentation" value="asterstudy_help"/>
+    <parameter name="code_aster_version" value="ask" />
+    <parameter name="use_external_editor_stage" value="false" />
+    <parameter name="use_external_editor_data_file" value="false" />
+    <parameter name="use_external_editor_msg_file" value="true" />
+    <parameter name="external_editor" value="notepad" />
+    <parameter name="workspace_tab_position" value="west" />
+    <parameter name="workspace_state" value="@ByteArray[#76 #65 #72 #73 #69 #6F #6E #3D #32 #2E #30 #3B #68 #69 #73 #74 #6F #72 #79 #5F #68 #64 #61 #74 #61 #3D #41 #41 #41 #41 #2F #77 #41 #41 #41 #41 #45 #41 #41 #41 #41 #43 #41 #41 #41 #42 #6D #51 #41 #41 #41 #4C #67 #41 #2F #2F #2F #2F #2F #77 #45 #41 #41 #41 #41 #42 #41 #41 #3D #3D #3B #68 #69 #73 #74 #6F #72 #79 #5F #6C #64 #61 #74 #61 #3D #41 #41 #41 #41 #2F #77 #41 #41 #41 #41 #45 #41 #41 #41 #41 #44 #41 #41 #41 #41 #68 #67 #41 #41 #41 #48 #59 #41 #41 #41 #46 #6F #41 #41 #41 #41 #41 #41 #55 #42 #41 #41 #41 #41 #41 #67 #41 #3D #3B #63 #61 #73 #65 #5F #68 #64 #61 #74 #61 #3D #41 #41 #41 #41 #2F #77 #41 #41 #41 #41 #45 #41 #41 #41 #41 #44 #41 #41 #41 #42 #6E #67 #41 #41 #42 #45 #67 #41 #41 #41 #41 #6C #41 #50 #2F #2F #2F #2F #38 #42 #41 #41 #41 #41 #41 #51 #41 #3D #3B #63 #61 #73 #65 #5F #6C #64 #61 #74 #61 #3D #41 #41 #41 #41 #2F #77 #41 #41 #41 #41 #45 #41 #41 #41 #41 #44 #41 #41 #41 #41 #34 #41 #41 #41 #41 #4F #77 #41 #41 #41 #43 #68 #41 #41 #41 #41 #41 #41 #55 #42 #41 #41 #41 #41 #41 #67 #41 #3D #3B #63 #61 #73 #65 #5F #63 #64 #61 #74 #61 #3D #41 #41 #41 #41 #2F #77 #41 #41 #41 #41 #45 #41 #41 #41 #41 #43 #41 #41 #41 #41 #41 #41 #41 #41 #41 #46 #30 #41 #2F #2F #2F #2F #2F #77 #45 #41 #41 #41 #41 #43 #41 #41 #3D #3D]"/>
+    <parameter name="strict_import_mode" value="true" />
+    <parameter name="nblines_limit" value="3000" />
+    <parameter name="msgbox_convert_invalid_graphic_stage" value="true" />
+    <parameter name="msgbox_delete" value="true" />
+    <parameter name="msgbox_delete_case" value="true" />
+    <parameter name="msgbox_delete_stages" value="true" />
+    <parameter name="msgbox_parampanel_abort" value="true" />
+    <parameter name="msgbox_parampanel_close" value="true" />
+    <parameter name="msgbox_undefined_files" value="true" />
+    <parameter name="show_selector_value" value="false" />
+    <parameter name="sort_selector_values" value="true" />
+    <parameter name="allow_delete_cases" value="false" />
+    <parameter name="disable_undo_redo" value="false" />
+    <parameter name="use_business_translations" value="true" />
+    <parameter name="connect_servers_init" value="false" />
+    <parameter name="sort_stages" value="false" />
+    <parameter name="show_related_concepts" value="true" />
+    <parameter name="show_catalogue_name" value="true" />
+    <parameter name="show_comments" value="true" />
+    <parameter name="auto_edit" value="true" />
+    <parameter name="show_readonly_banner" value="true" />
+    <parameter name="doc_base_url" value="http://code-aster.org/doc" />
+    <parameter name="content_mode" value="parameters" />
+    <parameter name="show_catalogue_name_in_selectors" value="true" />
+    <parameter name="external_list" value="false" />
+    <parameter name="auto_hide_search" value="false" />
+    <parameter name="file_size_limit" value="256" />
+    <parameter name="join_similar_files" value="true" />
+    <parameter name="grp_global_cmd" value="true" />
+    <parameter name="show_catalogue_name_data_files" value="true" />
+    <parameter name="doc_language" value="application" />
+    <parameter name="no_type_in_selectors" value="true" />
+    <parameter name="favorites_first" value="true" />
+    <parameter name="workspace_initial_view" value="case_view" />
+    <parameter name="rename_on_copy" value="true" />
+    <parameter name="dashboard_use_logger" value="false" />
+    <parameter name="show_categories" value="true" />
+    <parameter name="auto_expand" value="true" />
+    <parameter name="reuse_buttons" value="true" />
+    <parameter name="summary_chunk" value="10" />
+  </section>
+  <section name="resources">
+    <parameter name="ASTERSTUDY" value="%ASTERSTUDY_ROOT_DIR%/share/salome/resources/asterstudy" />
+    <parameter name="AsterStudy" value="%ASTERSTUDY_ROOT_DIR%/share/salome/resources/asterstudy" />
+    <parameter name="AsterStudyCommands" value="%ASTERSTUDY_ROOT_DIR%/share/salome/resources/asterstudy" />
+    <parameter name="IsotropicLineaElasticity" value="%ASTERSTUDY_ROOT_DIR%/share/salome/resources/asterstudy" />
+  </section>
+  <section name="asterstudy_help">
+    <parameter name="User's Guide/AsterStudy module" value="%ASTERSTUDY_ROOT_DIR%/share/doc/salome/gui/ASTERSTUDY/index.html"/>
+  </section>
+ <section name="windows_geometry">
+  <parameter name="ASTERSTUDY" value="@ByteArray[#00 #00 #00 #FF #00 #00 #00 #00 #FD #00 #00 #00 #02 #00 #00 #00 #00 #00 #00 #01 #00 #00 #00 #03 #A2 #FC #02 #00 #00 #00 #02 #FB #00 #00 #00 #22 #00 #6F #00 #62 #00 #6A #00 #65 #00 #63 #00 #74 #00 #42 #00 #72 #00 #6F #00 #77 #00 #73 #00 #65 #00 #72 #00 #44 #00 #6F #00 #63 #00 #6B #01 #00 #00 #00 #36 #00 #00 #03 #A2 #00 #00 #00 #00 #00 #00 #00 #00 #FB #00 #00 #00 #18 #00 #6E #00 #6F #00 #74 #00 #65 #00 #42 #00 #6F #00 #6F #00 #6B #00 #44 #00 #6F #00 #63 #00 #6B #01 #00 #00 #03 #64 #00 #00 #00 #74 #00 #00 #00 #00 #00 #00 #00 #00 #00 #00 #00 #03 #00 #00 #07 #80 #00 #00 #00 #13 #FC #01 #00 #00 #00 #01 #FB #00 #00 #00 #22 #00 #70 #00 #79 #00 #74 #00 #68 #00 #6F #00 #6E #00 #43 #00 #6F #00 #6E #00 #73 #00 #6F #00 #6C #00 #65 #00 #44 #00 #6F #00 #63 #00 #6B #01 #00 #00 #00 #00 #00 #00 #07 #80 #00 #00 #00 #00 #00 #00 #00 #00 #00 #00 #07 #80 #00 #00 #03 #98 #00 #00 #00 #04 #00 #00 #00 #04 #00 #00 #00 #08 #00 #00 #00 #08 #FC #00 #00 #00 #02 #00 #00 #00 #02 #00 #00 #00 #03 #00 #00 #00 #1C #00 #53 #00 #61 #00 #6C #00 #6F #00 #6D #00 #65 #00 #53 #00 #74 #00 #61 #00 #6E #00 #64 #00 #61 #00 #72 #00 #64 #01 #00 #00 #00 #00 #FF #FF #FF #FF #00 #00 #00 #00 #00 #00 #00 #00 #00 #00 #00 #1A #00 #53 #00 #61 #00 #6C #00 #6F #00 #6D #00 #65 #00 #4D #00 #6F #00 #64 #00 #75 #00 #6C #00 #65 #00 #73 #01 #00 #00 #00 #8D #FF #FF #FF #FF #00 #00 #00 #00 #00 #00 #00 #00 #00 #00 #00 #22 #00 #4F #00 #70 #00 #65 #00 #72 #00 #61 #00 #74 #00 #69 #00 #6F #00 #6E #00 #73 #00 #54 #00 #6F #00 #6F #00 #6C #00 #62 #00 #61 #00 #72 #01 #00 #00 #01 #CE #FF #FF #FF #FF #00 #00 #00 #00 #00 #00 #00 #00 #00 #00 #00 #02 #00 #00 #00 #01 #00 #00 #00 #1E #00 #43 #00 #6F #00 #6D #00 #6D #00 #61 #00 #6E #00 #64 #00 #73 #00 #54 #00 #6F #00 #6F #00 #6C #00 #62 #00 #61 #00 #72 #01 #00 #00 #00 #00 #FF #FF #FF #FF #00 #00 #00 #00 #00 #00 #00 #00]"/>
+ </section>
+ <section name="windows_geometry_version">
+  <parameter name="ASTERSTUDY" value="8.2.0"/>
+ </section>
+ <section name="windows_visibility">
+  <parameter name="ASTERSTUDY" value="@ByteArray[#00 #00 #00 #00 #15 #FF #FF #FF #FF #01 #00 #00 #00 #1E #00 #43 #00 #6F #00 #6D #00 #6D #00 #61 #00 #6E #00 #64 #00 #73 #00 #54 #00 #6F #00 #6F #00 #6C #00 #62 #00 #61 #00 #72 #01 #00 #00 #00 #20 #00 #44 #00 #61 #00 #74 #00 #61 #00 #46 #00 #69 #00 #6C #00 #65 #00 #73 #00 #54 #00 #6F #00 #6F #00 #6C #00 #62 #00 #61 #00 #72 #00 #00 #00 #00 #22 #00 #4F #00 #70 #00 #65 #00 #72 #00 #61 #00 #74 #00 #69 #00 #6F #00 #6E #00 #73 #00 #54 #00 #6F #00 #6F #00 #6C #00 #62 #00 #61 #00 #72 #01 #00 #00 #00 #2C #00 #53 #00 #4D #00 #45 #00 #53 #00 #48 #00 #41 #00 #64 #00 #64 #00 #45 #00 #6C #00 #65 #00 #6D #00 #65 #00 #6E #00 #74 #00 #54 #00 #6F #00 #6F #00 #6C #00 #62 #00 #61 #00 #72 #01 #00 #00 #00 #2E #00 #53 #00 #4D #00 #45 #00 #53 #00 #48 #00 #44 #00 #69 #00 #73 #00 #70 #00 #6C #00 #61 #00 #79 #00 #4D #00 #6F #00 #64 #00 #65 #00 #54 #00 #6F #00 #6F #00 #6C #00 #62 #00 #61 #00 #72 #01 #00 #00 #00 #30 #00 #53 #00 #4D #00 #45 #00 #53 #00 #48 #00 #45 #00 #64 #00 #67 #00 #65 #00 #43 #00 #6F #00 #6E #00 #74 #00 #72 #00 #6F #00 #6C #00 #73 #00 #54 #00 #6F #00 #6F #00 #6C #00 #62 #00 #61 #00 #72 #00 #00 #00 #00 #30 #00 #53 #00 #4D #00 #45 #00 #53 #00 #48 #00 #46 #00 #61 #00 #63 #00 #65 #00 #43 #00 #6F #00 #6E #00 #74 #00 #72 #00 #6F #00 #6C #00 #73 #00 #54 #00 #6F #00 #6F #00 #6C #00 #62 #00 #61 #00 #72 #00 #00 #00 #00 #22 #00 #53 #00 #4D #00 #45 #00 #53 #00 #48 #00 #47 #00 #72 #00 #6F #00 #75 #00 #70 #00 #54 #00 #6F #00 #6F #00 #6C #00 #62 #00 #61 #00 #72 #01 #00 #00 #00 #2E #00 #53 #00 #4D #00 #45 #00 #53 #00 #48 #00 #49 #00 #6E #00 #66 #00 #6F #00 #72 #00 #6D #00 #61 #00 #74 #00 #69 #00 #6F #00 #6E #00 #54 #00 #6F #00 #6F #00 #6C #00 #62 #00 #61 #00 #72 #01 #00 #00 #00 #30 #00 #53 #00 #4D #00 #45 #00 #53 #00 #48 #00 #4D #00 #65 #00 #61 #00 #73 #00 #75 #00 #72 #00 #65 #00 #6D #00 #65 #00 #6E #00 #74 #00 #73 #00 #54 #00 #6F #00 #6F #00 #6C #00 #62 #00 #61 #00 #72 #01 #00 #00 #00 #20 #00 #53 #00 #4D #00 #45 #00 #53 #00 #48 #00 #4D #00 #65 #00 #73 #00 #68 #00 #54 #00 #6F #00 #6F #00 #6C #00 #62 #00 #61 #00 #72 #01 #00 #00 #00 #30 #00 #53 #00 #4D #00 #45 #00 #53 #00 #48 #00 #4D #00 #6F #00 #64 #00 #69 #00 #66 #00 #69 #00 #63 #00 #61 #00 #74 #00 #69 #00 #6F #00 #6E #00 #54 #00 #6F #00 #6F #00 #6C #00 #62 #00 #61 #00 #72 #01 #00 #00 #00 #30 #00 #53 #00 #4D #00 #45 #00 #53 #00 #48 #00 #4E #00 #6F #00 #64 #00 #65 #00 #43 #00 #6F #00 #6E #00 #74 #00 #72 #00 #6F #00 #6C #00 #73 #00 #54 #00 #6F #00 #6F #00 #6C #00 #62 #00 #61 #00 #72 #00 #00 #00 #00 #24 #00 #53 #00 #4D #00 #45 #00 #53 #00 #48 #00 #52 #00 #65 #00 #6D #00 #6F #00 #76 #00 #65 #00 #54 #00 #6F #00 #6F #00 #6C #00 #62 #00 #61 #00 #72 #01 #00 #00 #00 #34 #00 #53 #00 #4D #00 #45 #00 #53 #00 #48 #00 #54 #00 #72 #00 #61 #00 #6E #00 #73 #00 #66 #00 #6F #00 #72 #00 #6D #00 #61 #00 #74 #00 #69 #00 #6F #00 #6E #00 #54 #00 #6F #00 #6F #00 #6C #00 #62 #00 #61 #00 #72 #01 #00 #00 #00 #34 #00 #53 #00 #4D #00 #45 #00 #53 #00 #48 #00 #56 #00 #6F #00 #6C #00 #75 #00 #6D #00 #65 #00 #43 #00 #6F #00 #6E #00 #74 #00 #72 #00 #6F #00 #6C #00 #73 #00 #54 #00 #6F #00 #6F #00 #6C #00 #62 #00 #61 #00 #72 #00 #00 #00 #00 #1A #00 #53 #00 #61 #00 #6C #00 #6F #00 #6D #00 #65 #00 #4D #00 #6F #00 #64 #00 #75 #00 #6C #00 #65 #00 #73 #01 #00 #00 #00 #1C #00 #53 #00 #61 #00 #6C #00 #6F #00 #6D #00 #65 #00 #53 #00 #74 #00 #61 #00 #6E #00 #64 #00 #61 #00 #72 #00 #64 #01 #00 #00 #00 #2C #00 #56 #00 #54 #00 #4B #00 #52 #00 #65 #00 #63 #00 #6F #00 #72 #00 #64 #00 #69 #00 #6E #00 #67 #00 #4F #00 #70 #00 #65 #00 #72 #00 #61 #00 #74 #00 #69 #00 #6F #00 #6E #00 #73 #01 #00 #00 #00 #2E #00 #56 #00 #54 #00 #4B #00 #56 #00 #69 #00 #65 #00 #77 #00 #65 #00 #72 #00 #56 #00 #69 #00 #65 #00 #77 #00 #4F #00 #70 #00 #65 #00 #72 #00 #61 #00 #74 #00 #69 #00 #6F #00 #6E #00 #73 #01 #01 #00 #00 #00 #00]"/>
+ </section>
+</document>

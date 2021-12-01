@@ -1,0 +1,13 @@
+Persistence tests
+-----------------
+
+rccm01b.ajs::
+    BUILD_AJS=1 check_tests.sh test_export.py:test_rccm01b
+
+
+Recreate *.ajs files
+--------------------
+
+To re-create input ajs file when, for instance, a version of code_aster is changed:
+
+    update_ajs.sh

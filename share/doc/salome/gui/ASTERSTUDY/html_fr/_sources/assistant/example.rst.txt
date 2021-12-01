@@ -1,0 +1,363 @@
+.. _assistant-example:
+
+********************************
+Example of calculation assistant
+********************************
+
+This example demonstrates how new calculation assistant is introduced.
+
+.. note:: This example is not a real working use case, it is only used for
+          demonstration purposes.
+
+Assistant's directory
+=====================
+
+First of all, it is necessary to create a folder in the user's home directory,
+let's say ``~/.config/salome/asterstudy_assistants/elastic``.
+
+This folder will contain *declaration file* and *template file*. Other files
+related to the calculation assistant may be also stored in this directory.
+
+Template file
+=============
+
+Then, it's necessary to create a *template file* which will represent a
+particular calculation case within *AsterStudy*. This template will contain
+several parameters the user will have to enter in the *wizard* dialog.
+
+.. code-block:: python
+
+    DEBUT()
+
+    mesh = LIRE_MAILLAGE(FORMAT='MED', UNITE=%INPUT%)
+
+    model = AFFE_MODELE(AFFE=_F(MODELISATION=(%MODELISATION%, ),
+                                PHENOMENE='MECANIQUE',
+                                TOUT='OUI'),
+                        MAILLAGE=mesh)
+
+    mater = DEFI_MATERIAU(ELAS=_F(E=%E%,
+                                  NU=%NU%))
+
+    materfl = AFFE_MATERIAU(AFFE=_F(MATER=(mater, ),
+                                    TOUT='OUI'),
+                            MODELE=model)
+
+    mecabc = AFFE_CHAR_MECA(DDL_IMPO=%BC%,
+                            MODELE=model)
+
+    mecach = AFFE_CHAR_MECA(MODELE=model,
+                            PRES_REP=%LOAD%)
+
+    result = MECA_STATIQUE(CHAM_MATER=materfl,
+                           EXCIT=(_F(CHARGE=mecabc),
+                                  _F(CHARGE=mecach)),
+                           MODELE=model)
+
+    IMPR_RESU(FORMAT='MED',
+              RESU=_F(RESULTAT=result),
+              UNITE=%OUTPUT%)
+
+    FIN()
+
+Declaration file
+================
+
+Next step consists in writing a *declaration file* in *JSON* format, to specify
+how the parameters from the template should be mapped to the calculation
+assistant's *wizard* dialog; namely, what pages should assistant consist
+of, what controls should be used for each particular parameter, including all
+needed constraints, etc.
+
+Base implementation
+-------------------
+
+.. code-block:: python
+
+    {
+      "title": "Isotropic linear elasticity",
+      "pages": [
+        {
+          "title": "Mesh selection",
+          "parameters": [
+            {
+              "name": "INPUT",
+              "title": "Specify input mesh",
+              "description": "Enter a path to the MED file or select an existing Mesh object from the list",
+              "typ": "mesh",
+              "unit": 20
+            }
+          ]
+        },
+        {
+          "title": "Model definition",
+          "parameters": [
+            {
+              "name": "MODELISATION",
+              "title": "What kind of model do you want to work on?",
+              "description": "Choose model type from the list",
+              "typ": "string",
+              "into": ["3D", "C_PLAN", "D_PLAN", "AXIS"],
+              "default": "3D"
+            }
+          ]
+        },
+        {
+          "title": "Material properties",
+          "parameters": [
+            {
+              "name": "E",
+              "title": "Young's modulus (E)",
+              "description": "Enter value >= {val_min}",
+              "typ": "float",
+              "val_min": 0,
+              "default": 2.1e11
+            },
+            {
+              "name": "NU",
+              "title": "Poisson's ratio (v)",
+              "description": "Enter value between {val_min} and {val_max}",
+              "typ": "float",
+              "val_min": -1,
+              "val_max": 0.5,
+              "default": 0.3
+            }
+          ]
+        },
+        {
+          "title": "Boundary conditions (1/2)",
+          "parameters": [
+            {
+              "name": "BC",
+              "title": "Imposed degrees of freedom on groups",
+              "description": "Select mesh groups and apply degrees of freedom on them",
+              "typ": "table",
+              "columns": [
+                {
+                  "name": "GROUP_MA",
+                  "title": "Group",
+                  "typ": "group_ma"
+                },
+                {
+                  "name": "DX",
+                  "typ": "float",
+                  "mandatory": false
+                },
+                {
+                  "name": "DY",
+                  "typ": "float",
+                  "mandatory": false
+                },
+                {
+                  "name": "DZ",
+                  "typ": "float",
+                  "mandatory": false
+                }
+              ],
+              "rule": "{GROUP_MA!r} is not None and ({DX!r} is not None or {DY!r} is not None or {DZ!r} is not None)"
+            }
+          ]
+        },
+        {
+          "title": "Boundary conditions (2/2)",
+          "parameters": [
+            {
+              "name": "LOAD",
+              "title": "Pressure on meshes groups",
+              "description": "Select mesh groups and apply pressure on them",
+              "typ": "table",
+              "columns": [
+                {
+                  "name": "GROUP_MA",
+                  "title": "Group",
+                  "typ": "group_ma"
+                },
+                {
+                  "name": "PRES",
+                  "typ": "float",
+                  "default": 0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Result",
+          "parameters": [
+            {
+              "name": "OUTPUT",
+              "title": "Specify output mesh file",
+              "description": "Enter a path to the result MED file",
+              "typ": "file",
+              "mode": "out",
+              "filters": "Med files (*.med *.rmed *.mmed)",
+              "unit": 80
+            }
+          ]
+        }
+      ]
+    }
+
+
+Link to catalogue (extension)
+-----------------------------
+
+Usage of *url* attribute allows significantly simplifying the contents of
+*declaration file*. In this case, there is no need to configure extra attributes
+like value type, minimum and/or maximum values, default value, etc. All these
+attributes may be automatically extracted directly from the catalogue.
+
+.. code-block:: python
+
+    {
+      "title": "Isotropic linear elasticity",
+      "pages": [
+        {
+          "title": "Mesh selection",
+          "parameters": [
+            {
+              "name": "INPUT",
+              "url": "LIRE_MAILLAGE/UNITE"
+            }
+          ]
+        },
+        {
+          "title": "Model definition",
+          "parameters": [
+            {
+              "name": "MODELISATION",
+              "url": "AFFE_MODELE/AFFE/MODELISATION"
+            }
+          ]
+        },
+        {
+          "title": "Material properties",
+          "parameters": [
+            {
+              "name": "E",
+              "url": "DEFI_MATERIAU/ELAS/E"
+            },
+            {
+              "name": "NU",
+              "url": "DEFI_MATERIAU/ELAS/NU"
+            }
+          ]
+        },
+        {
+          "title": "Boundary conditions (1/2)",
+          "parameters": [
+            {
+              "name": "BC",
+              "url": "AFFE_CHAR_MECA/DDL_IMPO"
+            }
+          ]
+        },
+        {
+          "title": "Boundary conditions (2/2)",
+          "parameters": [
+            {
+              "name": "LOAD",
+              "url": "AFFE_CHAR_MECA/PRES_REP"
+            }
+          ]
+        },
+        {
+          "title": "Result",
+          "parameters": [
+            {
+              "name": "OUTPUT",
+              "url": "IMPR_RESU/UNITE"
+            }
+          ]
+        }
+      ]
+    }
+
+.. warning::
+    This extension to the base implementation of *Calculation Assistant*
+    is not implemented yet.
+
+Extract description from template (extension)
+---------------------------------------------
+
+With automatic extraction of parameters from the *template file* the
+*declaration file* becomes even simpler as all needed information
+about parameters is automatically extracted from the *template file*.
+
+.. code-block:: python
+
+    {
+      "title": "Isotropic linear elastic study",
+      "pages": [
+        {
+          "title": "Mesh selection",
+          "parameters": [ "INPUT" ]
+        },
+        {
+          "title": "Model definition",
+          "parameters": [ "MODELISATION" ]
+        },
+        {
+          "title": "Material properties",
+          "parameters": [ "E", "NU" ]
+        },
+        {
+          "title": "Boundary conditions (1/2)",
+          "parameters": ["BC" ]
+        },
+        {
+          "title": "Boundary conditions (2/2)",
+          "parameters": [ "LOAD" ]
+        },
+        {
+          "title": "Result",
+          "parameters": [ "OUTPUT" ]
+        }
+      ]
+    }
+
+.. warning::
+    This extension to the base implementation of *Calculation Assistant*
+    is not implemented yet.
+
+Wizard dialog
+=============
+
+The following figures show the *wizard* dialog automatically generated from
+*declaration file* described in previous paragraphs.
+
+.. figure:: /images/assistant_example_page1.png
+    :alt: Page 1: Mesh selection
+    :align: center
+
+    **Page 1: Mesh selection**
+
+.. figure:: /images/assistant_example_page2.png
+    :alt: Page 2: Model definition
+    :align: center
+
+    **Page 2: Model definition**
+
+.. figure:: /images/assistant_example_page3.png
+    :alt: Page 3: Material properties
+    :align: center
+
+    **Page 3: Material properties**
+
+.. figure:: /images/assistant_example_page4.png
+    :alt: Page 4: Boundary conditions (part 1)
+    :align: center
+
+    **Page 4: Boundary conditions (part 1)**
+
+.. figure:: /images/assistant_example_page5.png
+    :alt: Page 5: Boundary conditions (part 2)
+    :align: center
+
+    **Page 5: Boundary conditions (part 2)**
+
+.. figure:: /images/assistant_example_page6.png
+    :alt: Page 6: Output definition
+    :align: center
+
+    **Page 6: Output definition**

@@ -1,0 +1,45 @@
+MAIL = LIRE_MAILLAGE(FORMAT='MED',
+                     NOM_MED='MeshCoude',
+                     UNITE=20)
+
+MAIL = MODI_MAILLAGE(reuse=MAIL,
+                     MAILLAGE=MAIL,
+                     ORIE_PEAU_3D=_F(GROUP_MA=('SURFINT', )))
+
+MODTH = AFFE_MODELE(AFFE=_F(MODELISATION=('3D', ),
+                            PHENOMENE='THERMIQUE',
+                            TOUT='OUI'),
+                    MAILLAGE=MAIL)
+
+MATER = DEFI_MATERIAU(ELAS=_F(ALPHA=1.096e-05,
+                              E=2.04e+11,
+                              NU=0.3),
+                      THER=_F(LAMBDA=54.6,
+                              RHO_CP=3710000.0))
+
+CHMATER = AFFE_MATERIAU(AFFE=_F(MATER=(MATER, ),
+                                TOUT='OUI'),
+                        MAILLAGE=MAIL)
+
+F_TEMP = DEFI_FONCTION(NOM_PARA='INST',
+                       VALE=(0.0, 20.0, 10.0, 70.0))
+
+LINST = DEFI_LIST_REEL(VALE=(0.0, 5.0, 10.0))
+
+F_MULT = DEFI_FONCTION(NOM_PARA='INST',
+                       VALE=(0.0, 1.0, 10.0, 1.0))
+
+CHARTH = AFFE_CHAR_THER_F(MODELE=MODTH,
+                          TEMP_IMPO=_F(GROUP_MA=('SURFINT', ),
+                                       TEMP=F_TEMP))
+
+TEMPE = THER_LINEAIRE(CHAM_MATER=CHMATER,
+                      ETAT_INIT=_F(VALE=20.0),
+                      EXCIT=_F(CHARGE=CHARTH,
+                               FONC_MULT=F_MULT),
+                      INCREMENT=_F(LIST_INST=LINST),
+                      MODELE=MODTH)
+
+IMPR_RESU(FORMAT='MED',
+          RESU=_F(RESULTAT=TEMPE),
+          UNITE=80)

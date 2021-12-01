@@ -1,0 +1,59 @@
+{
+  "title": "Test calculation assistant",
+  "format": "2.1",
+  "pages": [
+    {
+      "title": "Page 1",
+      "parameters": [
+        {
+          "name": "CHOICE",
+          "title": "Choices",
+          "description": "Set of choices",
+          "typ": "choice",
+          "choices": [
+            {
+              "name": "CHOICE_1",
+              "title": "First choice",
+              "parameters": [
+                {
+                  "name": "PARAM1",
+                  "title": "Integer parameter",
+                  "typ": "int",
+                  "default": 100
+                }
+              ]
+            },
+            {
+              "name": "CHOICE_2",
+              "title": "Second choice",
+              "parameters": [
+                {
+                  "name": "PARAM2",
+                  "title": "Float parameter",
+                  "typ": "float",
+                  "default": 1.2
+                }
+              ]
+            },
+            {
+              "name": "CHOICE_3",
+              "title": "Third choice",
+              "parameters": [
+                {
+                  "name": "PARAM3",
+                  "title": "String parameter",
+                  "default": "aaa"
+                }
+              ]
+            },
+            {
+              "name": "CHOICE_4",
+              "title": "Fourth choice"
+            }
+          ],
+          "default": "CHOICE_1"
+        }
+      ]
+    }
+  ]
+}

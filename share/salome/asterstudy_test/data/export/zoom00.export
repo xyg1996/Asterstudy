@@ -1,0 +1,13 @@
+P time_limit 50
+P memory_limit 512
+P ncpus 1
+P mpi_nbcpu 1
+P mpi_nbnoeud 1
+P testlist verification sequential
+
+F mmed zoom00.med D 20
+F comm zoom01.comm D 1
+F comm zoom02.comm D 1
+F comm zoom03.comm D 1
+F comm zoom04.comm D 1
+F libr zoom80.txt D 80

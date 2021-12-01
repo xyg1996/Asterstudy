@@ -1,0 +1,89 @@
+{
+  "history": {
+    "cases": [
+      {
+        "name": "Case_1",
+        "stages": [
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "name": "Case_2",
+        "stages": [
+          1,
+          2,
+          4
+        ]
+      },
+      {
+        "name": "Case_3",
+        "stages": [
+          5,
+          6,
+          7
+        ]
+      }
+    ],
+    "stages": [
+      {
+        "name": "Stage_1",
+        "result": {
+          "job": {},
+          "resstate": 16
+        },
+        "uid": 1
+      },
+      {
+        "name": "Stage_2",
+        "result": {
+          "job": {},
+          "resstate": 16
+        },
+        "uid": 2
+      },
+      {
+        "name": "Stage_3",
+        "result": {
+          "job": {},
+          "resstate": 16
+        },
+        "uid": 3
+      },
+      {
+        "name": "Stage_3",
+        "result": {
+          "job": {},
+          "resstate": 32
+        },
+        "uid": 4
+      },
+      {
+        "name": "Stage_1",
+        "result": {
+          "job": {}
+        },
+        "uid": 5
+      },
+      {
+        "name": "Stage_2",
+        "result": {
+          "job": {}
+        },
+        "uid": 6
+      },
+      {
+        "name": "Stage_3",
+        "result": {
+          "job": {}
+        },
+        "uid": 7
+      }
+    ],
+    "aster": "stable",
+    "versionMajor": 14,
+    "versionMinor": 4
+  },
+  "minor": 10
+}

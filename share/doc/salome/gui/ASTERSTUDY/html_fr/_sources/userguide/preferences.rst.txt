@@ -1,0 +1,83 @@
+.. _userguide-preferences:
+
+***********************
+Application preferences
+***********************
+
+The preferences of the application are accessible via the menu
+*File > Preferences* or the keyboard shortcut *Ctrl+P*.
+
+Preferences
+===========
+
+The *Preferences* dialog allows modifying different parameters of the application.
+
+.. note::
+    The language of the application can be modified in the main preferences of
+    SALOME (a restart will be needed).
+
+General preferences
+-------------------
+
+This page makes it possible to define general parameters of the *AsterStudy*
+application.
+
+The user can also choose whether to use the default **version of Code_Aster**
+for the creation of new case, or ask to choose a version during the creation.
+
+Finally some options allow the user to configure the application by choosing
+the **Workspace tab pages position**, use or not **business-oriented translations**
+by default etc.
+
+.. figure:: /images/preferences_general.png
+    :alt: General preferences
+    :align: center
+
+    **General preferences**
+
+Interface preferences
+---------------------
+
+This page allows specifying additional numerous parameters of the *AsterStudy*
+interface.
+
+.. figure:: /images/preferences_interface.png
+    :alt: Interface preferences
+    :align: center
+
+    **Interface preferences**
+
+Text editor preferences
+-----------------------
+
+In this page the user can specify if he wants to use the default internal text
+editor, or if he prefers to use an **External Editor**.
+
+.. figure:: /images/preferences_editor.png
+    :alt: Editor preferences
+    :align: center
+
+    **Editor preferences**
+
+Confirmations preferences
+-------------------------
+
+This page is used to configure whether the application should ask for
+**confirmation** for certain operations.
+
+.. figure:: /images/preferences_confirmations.png
+    :alt: Confirmations preferences
+    :align: center
+
+    **Confirmations preferences**
+
+Catalogs preferences
+--------------------
+
+This page is used to configure user catalogs.
+
+.. figure:: /images/preferences_catalog.png
+    :alt: Catalogues preferences
+    :align: center
+
+    **Catalogs preferences**

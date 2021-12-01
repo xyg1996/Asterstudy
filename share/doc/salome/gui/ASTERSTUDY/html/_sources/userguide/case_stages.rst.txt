@@ -1,0 +1,185 @@
+.. _userguide-case_stages:
+
+***************
+Case and stages
+***************
+
+In terms of **Code_Aster** a study case is described as a sequence of commands.
+This sequence is fed to **Code_Aster** solver as one or more command files (which
+normally have *.com?* extension, e.g. aaa.comm, aaa.com1, aaa.com2, etc).
+
+In *AsterStudy* application, study case is represented as a set of stages, and
+each stage corresponds to a separate command file. 
+
+Case
+====
+
+When a study is created, an empty **case** is automatically added. The *case*
+represents a particular *Aster* study case within the application.
+
+Content of the case is filled in by means of various editing operations. In
+addition to the **Current Case** which always represents a case being edited
+by the user, there can be other types of cases:
+
+* **Run cases**: these are cases which contain results of **Code_Aster**
+  calculations,
+* **Backup cases**: backup copies of the *Current Case*.
+
+For more details about features related to the cases, refer to the
+:ref:`userguide-case_management` chapter.
+
+Stages
+======
+
+A case is composed of **stages** representing the different phases of the
+*Aster* calculation.
+
+Graphical mode and text mode of the stages
+------------------------------------------
+
+The stages can be managed either in *graphical* or in *text* mode.
+
+The **graphical** mode is used to manage the stages by filling them via
+input panels in the application's interface.
+
+The **text** mode lets the user entering *Aster* commands. This mode can be
+used, for instance, to apply features of **Code_Aster**.
+
+.. |stage_graphical| image:: /images/stage_graphical.png
+.. |stage_text| image:: /images/stage_text.png
+
+The stages in *graphical* mode are represented in the *Data Settings* panel by
+the |stage_graphical| icon, and those in *text* mode by the |stage_text| icon.
+
+.. important::
+    *By default* the stages are created in *graphical* mode.
+
+It is possible to change the mode of a stage via the context menu or
+*Operations* menu.
+
+.. warning::
+    A warning message is displayed if the application cannot convert
+    a stage from *text* mode to *graphical* mode.
+
+Add stage
+---------
+
+.. |stage_new| image:: /images/stage_new.png
+    :height: 24px
+
+To add a stage, perform any of below listed actions:
+
+* Click on the |stage_new| *Add stage* icon of the toolbar,
+* Use *Operations > Add Stage* menu,
+* Use *Add Stage* context menu on the case in the *Data Settings* panel,
+* Use the keyboard shortcut *Ctrl+Shift+N*.
+
+New stages are automatically named by the application.
+It is possible to rename the stage by selecting it in the *Data Settings* panel
+and then using the *Rename* context menu, or by pressing the keyboard
+shortcut *F2*.
+
+Import stage
+------------
+
+.. |stage_import| image:: /images/stage_import.png
+    :height: 24px
+
+It is possible to import an *Aster* command file as a case stage.
+
+For this you can either:
+
+* Click the |stage_import| *Add stage from file* icon of the toolbar,
+* Use the *Operations > Add Stage from File* menu,
+* Use *Add Stage from File* context menu on the case in the *Data Settings* panel,
+* Use the keyboard shortcut *Ctrl+Shift+I*.
+
+.. important::
+    The application parses the command file and creates a stage in the
+    *graphical* mode from the contents of the file. If the file contains commands
+    that cannot be interpreted by the application, the stage will be created in
+    *text* mode with the contents of the file.
+
+Also, it is possible to import *Aster* command file as a stage in *text* mode,
+i.e. without its automatic conversion to the *graphical* mode. This can be done
+by:
+
+* Using the *Operations > Add Text Stage from File* menu,
+* Using *Add Text Stage from File* context menu on the case in the
+  *Data Settings* panel.
+
+Import stage from template
+--------------------------
+
+It is possible to create a stage by importing *Aster* command file from the
+predefined template. The template command files can be created by the user in
+the ``~/.config/salome/asterstudy_templates`` directory. These files appear as
+items in:
+
+* *Operations > Add Stage from Template* and *Operations > Add Text Stage from Template*
+  main menus,
+* *Add Stage from Template* and *Add Text Stage from Template* sub-menus in
+  the case's context menu in *Data Settings* panel.
+
+.. important::
+    Some predefined templates may be supplied with the *AsterStudy* application.
+
+Add stage with assistant
+------------------------
+
+Another way to add a stage to the study case consists in using *Calculation Assistant*.
+
+A *Calculation Assistant* is a predefined study accompanied by a graphical
+interface allowing the user to enter certain parameters, and thus to be able
+to quickly start a calculation.
+
+Several calculation assistants are supplied with the *AsterStdudy* application;
+user's assistants are located in the ``~/.config/salome/asterstudy_assistants``
+directory. These assistants appear as items in:
+
+* *Operations > Add Stage with Assistant* main menu,
+* *Add Stage with Assistant* sub-menu in the case's context menu in
+  *Data Settings* panel.
+
+To learn more about *Calculation Assistant* feature (in particular, how to
+implement and embed own assistants), refer to the :ref:`assistant`
+
+Export stage
+------------
+
+.. |stage_export| image:: /images/stage_export.png
+    :height: 24px
+
+Similarly, it is possible to export a stage to an *Aster* command file:
+
+* Click the |stage_export| *Export command file* icon of the toolbar,
+* Use the *Operation > Export Command File* menu,
+* Use the *Export Command File* context menu on the stage in the *Data Settings*
+  panel,
+* Use the keyboard shortcut *Ctrl+Shift+E*.
+
+If the stage is in *graphical* mode, the command file is generated from the
+commands defined in the stage; if the stage is in *text* mode, the content of
+the stage is directly exported to the file.
+
+Rename stage
+------------
+
+Stages are added to a study with the default name.
+To rename a stage, select it in the *Data Settings* panel and then:
+
+* Use *Edit > Rename* main menu,
+* Use *Rename* context menu item,
+* Press *F2* key.
+
+Delete stage
+------------
+
+.. |stage_delete| image:: /images/delete.png
+    :height: 24px
+
+A stage can be removed from the case by clicking |stage_delete| toolbar button,
+choosing *Delete* menu item, or pressing *Del* on the keyboard.
+
+.. warning::
+    Deleting of a stage will automatically remove all stages which follow it.

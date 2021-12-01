@@ -1,0 +1,227 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="fr">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Rapports avancés &#8212; AsterStudy v0.11 Documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Recherche" href="../search.html" />
+    <link rel="next" title="Préférences de l’application" href="preferences.html" />
+    <link rel="prev" title="Gestion des cas" href="case_management.html" />
+<script type="text/javascript" src="../_static/switchers.js"></script>
+ 
+
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="Index général"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="preferences.html" title="Préférences de l’application"
+             accesskey="N">suivant</a> |</li>
+        <li class="right" >
+          <a href="case_management.html" title="Gestion des cas"
+             accesskey="P">précédent</a> |</li>
+  <span class="language_switcher_placeholder">fr</span>
+  
+        <li class="nav-item nav-item-0"><a href="../index.html">AsterStudy v0.11 Documentation</a> &#187;</li>
+
+          <li class="nav-item nav-item-1"><a href="userguide.html" accesskey="U">Manuel utilisateur</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="advanced-reports">
+<span id="userguide-reports"></span><h1>Rapports avancés<a class="headerlink" href="#advanced-reports" title="Lien permanent vers ce titre">¶</a></h1>
+<div class="section" id="unused-concepts">
+<h2>Concepts non utilisés<a class="headerlink" href="#unused-concepts" title="Lien permanent vers ce titre">¶</a></h2>
+<p>Afin de pouvoir rapidement détecter les concepts qui ne sont pas utilisés dans l’étude courante, il est nécessaire de :</p>
+<ul class="simple">
+<li>Sélectionner le cas courant dans l’onglet <em>Données</em>,</li>
+<li>Activer le menu <em>Opérations &gt; Concepts non utilisés</em>.</li>
+</ul>
+<p>Cette action va ouvrir une boîte de dialogue qui liste tous les concepts qui ne sont pas référencés par d’autre concept. L’utilisateur peut sélectionner tous ou certains de ces concepts et appuyer sur le bouton <em>Supprimer</em> pour nettoyer l’étude.</p>
+<div class="figure align-center" id="id2">
+<img alt="Unused concepts" src="../_images/unused_concepts.png" />
+<p class="caption"><span class="caption-text"><strong>Concepts non utilisés</strong></span></p>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Avertissement</p>
+<p class="last">Le dernier concept de l’étude est toujours, par définition, <em>non utilisé</em>.</p>
+</div>
+</div>
+<div class="section" id="validity-report">
+<h2>Rapport de validité<a class="headerlink" href="#validity-report" title="Lien permanent vers ce titre">¶</a></h2>
+<p>L’utilisateur peut contrôler la validité d’une étape en cours de création, directement dans l’onglet <em>Données</em> : chaque commande invalide est affichée en rouge. Une étape est considérée non valide si un de ces concepts est invalide.</p>
+<p>L’objet peut être invalide pour les raisons suivantes :</p>
+<ul class="simple">
+<li>L’objet est syntaxiquement invalide (un mot-clé nécessaire de la commande n’est pas renseigné),</li>
+<li>Dépendance cassée (cela peut arriver si, par exemple, un concept référencé par un autre a été supprimé),</li>
+<li>Conflit de nom (un même nom est utilisé plusieurs fois).</li>
+</ul>
+<p>L’utilisateur peut voir la validité de l’étape sélectionnée, ou celle du cas, en utilisant le menu <em>Opération &gt; Rapport de validité</em>.</p>
+<p>Ce menu va ouvrir une boîte de dialogue qui affichera, dans une table, le statut de chacun des concepts. L’utilisateur peut également voir si un concept est utilisé (référencé par d’autres concepts) ou pas.</p>
+<div class="figure align-center" id="id3">
+<img alt="Validity report" src="../_images/validity_report.png" />
+<p class="caption"><span class="caption-text"><strong>Rapport de validité</strong></span></p>
+</div>
+</div>
+<div class="section" id="involved-groups">
+<span id="id1"></span><h2>Groupes impliqués<a class="headerlink" href="#involved-groups" title="Lien permanent vers ce titre">¶</a></h2>
+<p>Les groupes de mailles utilisés par certains concepts peuvent être vue de la façon suivante :</p>
+<ul class="simple">
+<li>Sélectionner un concept dans l’onglet <em>Données</em>,</li>
+<li>Activer le menu contextuel <em>Groupes impliqués</em>, ou</li>
+<li>Presser le bouton <a class="reference internal" href="../_images/summary.png"><img alt="summary" src="../_images/summary.png" style="height: 24px;" /></a> dans le panneau d”<em>Information</em>.</li>
+</ul>
+<p>Cela ouvrira un panneau <em>Résumé</em> dans la partie basse de la fenêtre de l’application. Ce panneau liste, dans une table, tous les groupes de mailles utilisés par le concept. Chaque cellule correspond à une <em>utilisation</em> dans la commande avec un code de couleur unique. Une * utilisation* est le contexte du concept dans lequel des groupes de mailles particuliers (un groupe séparé ou une liste de groupes) sont utilisés.</p>
+<p>Dans l’exemple ci-dessous, le concept <em>bc</em> produit par la commande <strong>AFFE_CHAR_MECA</strong> déclare deux <em>utilisations</em> :</p>
+<ul class="simple">
+<li><em>DDL_IMPO / 0</em>, qui utilise les groupes <em>Cont_mast</em>, <em>Cont_slav</em>, et</li>
+<li><em>DDL_IMPO / 1</em>, qui utilise les groupes <em>Sym_x</em>, <em>Sym_y</em>.</li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span class="n">bc</span> <span class="o">=</span> <span class="n">AFFE_CHAR_MECA</span><span class="p">(</span>
+        <span class="n">DDL_IMPO</span><span class="o">=</span><span class="p">(</span><span class="n">_F</span><span class="p">(</span><span class="n">DX</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span><span class="n">DY</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span><span class="n">DZ</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+                     <span class="n">GROUP_MA</span><span class="o">=</span><span class="p">(</span><span class="s">&#39;Cont_mast&#39;</span><span class="p">,</span> <span class="s">&#39;Cont_slav&#39;</span><span class="p">)),</span>
+                  <span class="n">_F</span><span class="p">(</span><span class="n">DX</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span><span class="n">DY</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span><span class="n">DZ</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span>
+                     <span class="n">GROUP_MA</span><span class="o">=</span><span class="p">(</span><span class="s">&#39;Sym_x&#39;</span><span class="p">,</span> <span class="s">&#39;Sym_y&#39;</span><span class="p">))),</span>
+        <span class="n">MODELE</span><span class="o">=</span><span class="n">model</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Pour des raisons de performances, les <em>utilisations</em> sont affichées dans le panneau <em>Résumé</em> par page. La taille d’une page est définie dans <a class="reference internal" href="preferences.html#userguide-preferences"><span class="std std-ref">Préférences de l’application</span></a>. L’utilisateur peut naviguer entre les pages en utilisant les boutons <em>Précédent</em> et <em>Suivant</em>.</p>
+<p>L’utilisateur peut afficher dans le maillage les <em>utilisations</em> sélectionnées en :</p>
+<ul class="simple">
+<li>Pressant l’icône <a class="reference internal" href="../_images/show_groups.png"><img alt="show_groups" src="../_images/show_groups.png" style="height: 24px;" /></a> affiché sur la légende de l”<em>utilisation</em> dans le panneau,</li>
+<li>Choisissant le menu contextuel <em>Voir les groupes</em>,</li>
+<li>Pressant l’icône <a class="reference internal" href="../_images/show_groups.png"><img alt="show_groups" src="../_images/show_groups.png" style="height: 24px;" /></a> de la barre d’outils.</li>
+</ul>
+<p>L’utilisateur peut également supprimer les <em>utilisations</em> sélectionnées de la vue de maillage en :</p>
+<ul class="simple">
+<li>Pressant l’icône <a class="reference internal" href="../_images/hide_groups.png"><img alt="hide_groups" src="../_images/hide_groups.png" style="height: 24px;" /></a> affiché sur la légende de l”<em>utilisation</em> dans le panneau,</li>
+<li>Choisissant le menu contextuel <em>Cacher les groupes</em>,</li>
+<li>Pressant l’icône <a class="reference internal" href="../_images/hide_groups.png"><img alt="hide_groups" src="../_images/hide_groups.png" style="height: 24px;" /></a> de la barre d’outils.</li>
+</ul>
+<p>Lorsqu’une <em>utilisation</em> est affichée, les groupes de mailles impliqués sont affichés avec la couleur de l”<em>utilisation</em> dans la vue de maillage. Cela permet ainsi de distinguer les différentes utilisations dans la vue.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Avertissement</p>
+<p class="last">Le même groupe de mailles peut être affecté à différentes <em>utilisations</em>. Dans la vue du maillage, un groupe sera coloré avec une seule couleur, très probablement celle affectée à <em>l’utilisation la plus faible</em> du panneau. L’utilisateur sera averti de cette situation par un message.</p>
+</div>
+<div class="figure align-center" id="id4">
+<img alt="Involved groups panel" src="../_images/involved_groups.png" />
+<p class="caption"><span class="caption-text"><strong>Panneau des groupes impliqués</strong></span></p>
+</div>
+</div>
+<div class="section" id="analysis-summary">
+<h2>Résumé d’analyse<a class="headerlink" href="#analysis-summary" title="Lien permanent vers ce titre">¶</a></h2>
+<p>Pour les commandes appartenant à la catégorie <em>Analysis</em>, le menu <em>Groupes impliqués</em> n’est pas disponible. Au lieu de cela, l’utilisateur peut ouvrir le panneau <em>Résumé</em> en utilisant le menu contextuel <em>Résumé d’Analyse</em> ou en appuyant sur le bouton <a class="reference internal" href="../_images/summary.png"><img alt="summary" src="../_images/summary.png" style="height: 24px;" /></a> dans le panneau <em>Information</em>.</p>
+<p>Pour ces commandes, le panneau <em>Résumé</em> affiche tous les groupes de mailles impliqués dans les commandes dont la commande sélectionnée de la catégorie <em>Analyse</em> dépend, directement ou indirectement.</p>
+<div class="figure align-center" id="id5">
+<img alt="Analysis summary panel" src="../_images/analysis_summary.png" />
+<p class="caption"><span class="caption-text"><strong>Panneau résumé d’analyse</strong></span></p>
+</div>
+<p>Dans ce mode, le panneau <em>Résumé</em> groupe toutes les <em>utilisations</em> par catégories. L’utilisateur peut filtrer les <em>utilisations</em> d’une certaine catégorie en la sélectionnant dans la liste déroulante du panneau.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+
+<div id="searchbox" style="display: none" role="search">
+  <h3>Recherche rapide</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+<p/>
+  <h3><a href="../index.html">Table des Matières</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Rapports avancés</a><ul>
+<li><a class="reference internal" href="#unused-concepts">Concepts non utilisés</a></li>
+<li><a class="reference internal" href="#validity-report">Rapport de validité</a></li>
+<li><a class="reference internal" href="#involved-groups">Groupes impliqués</a></li>
+<li><a class="reference internal" href="#analysis-summary">Résumé d’analyse</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Sujet précédent</h4>
+  <p class="topless"><a href="case_management.html"
+                        title="Chapitre précédent">Gestion des cas</a></p>
+  <h4>Sujet suivant</h4>
+  <p class="topless"><a href="preferences.html"
+                        title="Chapitre suivant">Préférences de l’application</a></p>
+  <div role="note" aria-label="source link">
+    <h3>Cette page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/userguide/reports.rst.txt"
+            rel="nofollow">Montrer le code source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Recherche rapide</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="Index général"
+             >index</a></li>
+        <li class="right" >
+          <a href="preferences.html" title="Préférences de l’application"
+             >suivant</a> |</li>
+        <li class="right" >
+          <a href="case_management.html" title="Gestion des cas"
+             >précédent</a> |</li>
+  <span class="language_switcher_placeholder">fr</span>
+  
+        <li class="nav-item nav-item-0"><a href="../index.html">AsterStudy v0.11 Documentation</a> &#187;</li>
+
+          <li class="nav-item nav-item-1"><a href="userguide.html" >Manuel utilisateur</a> &#187;</li> 
+      </ul>
+    </div>
+ 
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2016-2019 EDF R&amp;D.
+      Créé avec <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.6.
+    </div>
+  </body>
+</html>

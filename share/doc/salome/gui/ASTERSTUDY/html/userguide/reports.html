@@ -1,0 +1,254 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Advanced reports &#8212; AsterStudy v0.11 Documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Application preferences" href="preferences.html" />
+    <link rel="prev" title="Case Management" href="case_management.html" />
+<script type="text/javascript" src="../_static/switchers.js"></script>
+ 
+
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="preferences.html" title="Application preferences"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="case_management.html" title="Case Management"
+             accesskey="P">previous</a> |</li>
+  <span class="language_switcher_placeholder">en</span>
+  
+        <li class="nav-item nav-item-0"><a href="../index.html">AsterStudy v0.11 Documentation</a> &#187;</li>
+
+          <li class="nav-item nav-item-1"><a href="userguide.html" accesskey="U">User’s Guide</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="advanced-reports">
+<span id="userguide-reports"></span><h1>Advanced reports<a class="headerlink" href="#advanced-reports" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="unused-concepts">
+<h2>Unused concepts<a class="headerlink" href="#unused-concepts" title="Permalink to this headline">¶</a></h2>
+<p>In order to quickly detect concepts which are not used in the current study
+(i.e. which are redundant), it is necessary to:</p>
+<ul class="simple">
+<li>Select <em>Current Case</em> in the <em>Data Settings</em> panel,</li>
+<li>Invoke <em>Operations &gt; Unused Concepts</em> menu item.</li>
+</ul>
+<p>This menu item opens a dialog which lists all concepts which are not referenced
+by any other concept. The user then can select some or all of these concepts and
+press <em>Delete</em> button to clean-up the study.</p>
+<div class="figure align-center" id="id2">
+<img alt="Unused concepts" src="../_images/unused_concepts.png" />
+<p class="caption"><span class="caption-text"><strong>Unused concepts</strong></span></p>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Last concept in the study is always <em>unused</em> by definition.</p>
+</div>
+</div>
+<div class="section" id="validity-report">
+<h2>Validity report<a class="headerlink" href="#validity-report" title="Permalink to this headline">¶</a></h2>
+<p>The user can control the validity of the stage being created directly in the
+<em>Data Settings</em> panel: each command which is invalid from some aspect, is displayed
+in red color. The stage is considered invalid if any enclosed concept is invalid.</p>
+<p>The object can be invalid due to the following reasons:</p>
+<ul class="simple">
+<li>Object is syntaxically invalid (e.g. command misses any mandatory keyword),</li>
+<li>Broken dependency (this can happen if, for instance, some concept referenced by
+other one has been deleted),</li>
+<li>Name conflict (duplicated names are used).</li>
+</ul>
+<p>The user can see the validity of selected stage, or a whole case, by invoking
+<em>Operations &gt; Validity Report</em> menu.</p>
+<p>This menu item opens a dialog that displays validity status for each enclosed
+concept, in form of a table. In addition, the user can see if each given concept
+is used (referenced by other concepts) or not.</p>
+<div class="figure align-center" id="id3">
+<img alt="Validity report" src="../_images/validity_report.png" />
+<p class="caption"><span class="caption-text"><strong>Validity report</strong></span></p>
+</div>
+</div>
+<div class="section" id="involved-groups">
+<span id="id1"></span><h2>Involved groups<a class="headerlink" href="#involved-groups" title="Permalink to this headline">¶</a></h2>
+<p>Mesh groups used by some concept can be viewed in the following way:</p>
+<ul class="simple">
+<li>Select a concept in the <em>Data Settings</em> panel,</li>
+<li>Invoke <em>Groups Involved</em> item in context menu, or</li>
+<li>Press <a class="reference internal" href="../_images/summary.png"><img alt="summary" src="../_images/summary.png" style="height: 24px;" /></a> button in the <em>Information</em> panel.</li>
+</ul>
+<p>This opens a <em>Summary</em> panel in the lower part of application window.
+The panel lists all mesh groups used within the concept, in a form of a table,
+where each cell corresponds to some <em>usage</em> within the command, with the unique
+color assigned to it. A <em>usage</em> is a context within the concept in which
+particular mesh groups (one separate group, or a list of groups) are used.</p>
+<p>In the example below, the concept <em>bc</em> produced by <strong>AFFE_CHAR_MECA</strong> command
+declares two <em>usages</em>:</p>
+<ul class="simple">
+<li><em>DDL_IMPO / 0</em>, that uses mesh groups <em>Cont_mast</em>, <em>Cont_slav</em>, and</li>
+<li><em>DDL_IMPO / 1</em>, that uses mesh groups <em>Sym_x</em>, <em>Sym_y</em>.</li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span class="n">bc</span> <span class="o">=</span> <span class="n">AFFE_CHAR_MECA</span><span class="p">(</span>
+        <span class="n">DDL_IMPO</span><span class="o">=</span><span class="p">(</span><span class="n">_F</span><span class="p">(</span><span class="n">DX</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span><span class="n">DY</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span><span class="n">DZ</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+                     <span class="n">GROUP_MA</span><span class="o">=</span><span class="p">(</span><span class="s">&#39;Cont_mast&#39;</span><span class="p">,</span> <span class="s">&#39;Cont_slav&#39;</span><span class="p">)),</span>
+                  <span class="n">_F</span><span class="p">(</span><span class="n">DX</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span><span class="n">DY</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span><span class="n">DZ</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span>
+                     <span class="n">GROUP_MA</span><span class="o">=</span><span class="p">(</span><span class="s">&#39;Sym_x&#39;</span><span class="p">,</span> <span class="s">&#39;Sym_y&#39;</span><span class="p">))),</span>
+        <span class="n">MODELE</span><span class="o">=</span><span class="n">model</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>For performance reasons <em>usages</em> are displayed in the <em>Summary</em> panel by chunks;
+the chunk size is configured via <a class="reference internal" href="preferences.html#userguide-preferences"><span class="std std-ref">Application preferences</span></a>. The user can
+browse between chunks by pressing <em>Previous</em> and <em>Next</em> buttons.</p>
+<p>User can display selected <em>usages</em> in the mesh view by:</p>
+<ul class="simple">
+<li>Pressing <a class="reference internal" href="../_images/show_groups.png"><img alt="show_groups" src="../_images/show_groups.png" style="height: 24px;" /></a> icon displayed over the <em>usage</em>’s legend item in the panel,</li>
+<li>Choosing <em>Show groups</em> context menu item,</li>
+<li>Pressing <a class="reference internal" href="../_images/show_groups.png"><img alt="show_groups" src="../_images/show_groups.png" style="height: 24px;" /></a> icon in the toolbar.</li>
+</ul>
+<p>Similarly, user can erase selected <em>usages</em> from the mesh view by:</p>
+<ul class="simple">
+<li>Pressing <a class="reference internal" href="../_images/hide_groups.png"><img alt="hide_groups" src="../_images/hide_groups.png" style="height: 24px;" /></a> icon displayed over the <em>usage</em>’s legend item in the panel,</li>
+<li>Choosing <em>Hide groups</em> context menu item,</li>
+<li>Pressing <a class="reference internal" href="../_images/hide_groups.png"><img alt="hide_groups" src="../_images/hide_groups.png" style="height: 24px;" /></a> icon in the toolbar.</li>
+</ul>
+<p>When <em>usage</em> is displayed, the mesh groups involved to it are colored in the mesh
+view in accordance to the color assigned to the <em>usage</em> in the panel; this allows
+distinguishing different usages in a view.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">The same mesh group can be assigned to different <em>usages</em>; in the mesh view,
+a group will be colored with only one color (most likely that one which is
+assigned to the <em>lower usage</em> in the panel; the user will be warned about
+this situation by the corresponding message.</p>
+</div>
+<div class="figure align-center" id="id4">
+<img alt="Involved groups panel" src="../_images/involved_groups.png" />
+<p class="caption"><span class="caption-text"><strong>Involved groups panel</strong></span></p>
+</div>
+</div>
+<div class="section" id="analysis-summary">
+<h2>Analysis summary<a class="headerlink" href="#analysis-summary" title="Permalink to this headline">¶</a></h2>
+<p>For the commands belonging to the <em>Analysis</em> category, the menu operation
+<em>Groups Involved</em> is not available. Instead, user can open <em>Summary</em> panel
+either by invoking <em>Analysis Summary</em> context menu item, or by pressing
+<a class="reference internal" href="../_images/summary.png"><img alt="summary" src="../_images/summary.png" style="height: 24px;" /></a> button in the <em>Information</em> panel.</p>
+<p>For these commands, <em>Summary</em> panel displays all the mesh groups involved
+in all the commands which selected command of <em>Analysis</em> category depends on,
+directly or indirectly.</p>
+<div class="figure align-center" id="id5">
+<img alt="Analysis summary panel" src="../_images/analysis_summary.png" />
+<p class="caption"><span class="caption-text"><strong>Analysis summary panel</strong></span></p>
+</div>
+<p>In this mode, <em>Summary</em> panel groups all <em>usages</em> by categories; the user can
+filter out only <em>usages</em> from a particular category by choosing the corresponding
+item in the combo box in the panel’s toolbar.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+<p/>
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Advanced reports</a><ul>
+<li><a class="reference internal" href="#unused-concepts">Unused concepts</a></li>
+<li><a class="reference internal" href="#validity-report">Validity report</a></li>
+<li><a class="reference internal" href="#involved-groups">Involved groups</a></li>
+<li><a class="reference internal" href="#analysis-summary">Analysis summary</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="case_management.html"
+                        title="previous chapter">Case Management</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="preferences.html"
+                        title="next chapter">Application preferences</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/userguide/reports.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="preferences.html" title="Application preferences"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="case_management.html" title="Case Management"
+             >previous</a> |</li>
+  <span class="language_switcher_placeholder">en</span>
+  
+        <li class="nav-item nav-item-0"><a href="../index.html">AsterStudy v0.11 Documentation</a> &#187;</li>
+
+          <li class="nav-item nav-item-1"><a href="userguide.html" >User’s Guide</a> &#187;</li> 
+      </ul>
+    </div>
+ 
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2016-2019 EDF R&amp;D.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.6.
+    </div>
+  </body>
+</html>

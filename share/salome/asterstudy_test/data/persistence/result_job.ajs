@@ -1,0 +1,87 @@
+{
+  "history": {
+    "cases": [
+      {
+        "name": "RunCase_1",
+        "stages": [
+          1
+        ],
+        "baseFolder": "RunCase_1"
+      },
+      {
+        "name": "RunCase_2",
+        "stages": [
+          2,
+          3
+        ],
+        "baseFolder": "RunCase_2"
+      },
+      {
+        "name": "CurrentCase",
+        "stages": [
+          2,
+          3
+        ]
+      }
+    ],
+    "stages": [
+      {
+        "name": "Stage_1",
+        "text": "a = 1",
+        "result": {
+          "job": {
+            "jobid": "0",
+            "mode": "Interactive",
+            "description": "short description 1",
+            "name": "RunCase_1_Stage_1",
+            "server": "localhost",
+            "memory": 2048,
+            "time": "00:15:00",
+            "version": "stable",
+            "startTime": "mer. 22 ao\u00fbt 2018 14:07:52 CEST",
+            "endTime": "mer. 22 ao\u00fbt 2018 14:07:57 CEST",
+            "folder": "/tmp/Study1_Files"
+          },
+          "resstate": 16
+        },
+        "uid": 1,
+        "baseFolder": "Result-Stage_1"
+      },
+      {
+        "name": "Stage_1",
+        "text": "a = 1",
+        "result": {
+          "job": {},
+          "resstate": 144
+        },
+        "uid": 2
+      },
+      {
+        "name": "Stage_2",
+        "text": "one = DEFI_CONSTANTE(VALE=a)",
+        "result": {
+          "job": {
+            "jobid": "1",
+            "mode": "Interactive",
+            "description": "short description 3",
+            "name": "RunCase_2_Stage_2",
+            "server": "localhost",
+            "memory": 2048,
+            "time": "00:15:00",
+            "version": "stable",
+            "startTime": "mer. 22 ao\u00fbt 2018 14:12:27 CEST",
+            "endTime": "mer. 22 ao\u00fbt 2018 14:12:32 CEST",
+            "folder": "/tmp/Study1_Files"
+          },
+          "resstate": 16
+        },
+        "uid": 3,
+        "baseFolder": "Result-Stage_2"
+      }
+    ],
+    "aster": "stable",
+    "versionMajor": 14,
+    "versionMinor": 4
+  },
+  "minor": 10
+}

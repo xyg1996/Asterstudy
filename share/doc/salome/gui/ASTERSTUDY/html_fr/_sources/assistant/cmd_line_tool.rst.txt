@@ -1,0 +1,137 @@
+.. _assistant-cmd-line-tool:
+
+*****************
+Command line tool
+*****************
+
+*AsterStudy* application includes **asterstudy_assistant** executable. It allows
+generating and testing *Calculation Assistant* wizard, as well as producing
+**Code_Aster** COMM files from the templates. The COMM files can be then imported
+to the *AsterStudy* application.
+
+The *asterstudy_assistant* executable has the following command line syntax:
+
+.. code-block:: none
+
+    usage: asterstudy_assistant [-h] [-v] command [args]
+
+    AsterStudy assistant helper.
+
+    optional arguments:
+      -h, --help     show this help message and exit
+      -v, --version  show program's version number and exit
+
+    Supported commands:
+      generate    Generate assistant.
+      pack        Pack assistant to archive.
+      run         Run assistant.
+      verify      Verify assistant.
+
+Each command has its own set of options described in the following paragraphs.
+
+Generate assistant
+==================
+
+The command **generate** can be used to generate the file *wizard.py* on the
+basis of declaration file *declaration.json*. By default, the file *wizard.py*
+is created in the same folder where the *declaration.json* is located. It is
+possible to specify a path to the declaration file, as well as to the output
+wizard file.
+
+The command line syntax of **generate** command is the following:
+
+.. code-block:: none
+
+    usage: asterstudy_assistant generate [-h] [-d FILE] [-w FILE] folder
+
+    Generate calculation assistant wizard.
+
+    positional arguments:
+      folder                       directory with the wizard description file
+
+    optional arguments:
+      -h, --help                   show this help message and exit
+      -d FILE, --declaration FILE  declaration file (default: declaration.json)
+      -w FILE, --wizard FILE       wizard file (default: wizard.py)
+
+Example:
+
+.. code-block:: bash
+
+    asterstudy_assistant generate /home/user/asterstudy/my_assistant
+
+Run assistant
+=============
+
+The command **run** shows a wizard dialog either from previously generated file
+*wizard.py*, or directly from the declaration file *declaration.json*.
+
+When the dialog is accepted (user presses *Finish* button), the runner parses
+the parameterized template file (*template.comm* by default), substitutes the
+parameters with the values from the wizard and generates an output file
+(*stage.comm* by default), which is ready for import in *AsterStudy* application.
+
+The command line syntax of **run** command is the following:
+
+.. code-block:: none
+
+    usage: asterstudy_assistant run [-h] [-d FILE] [-w FILE] [-t FILE] [-o FILE] folder
+
+    Run calculation assistant wizard.
+
+    positional arguments:
+      folder                       wizard directory
+
+    optional arguments:
+      -h, --help                   show this help message and exit
+      -d FILE, --declaration FILE  declaration file; needed only if wizard file does not
+                                   exist, in which case wizard is generated from description
+                                   (default: declaration.json)
+      -w FILE, --wizard FILE       wizard file (default: wizard.py)
+      -t FILE, --template FILE     template file (default: template.comm)
+      -o FILE, --output FILE       output comm file; relative path is interpreted as a
+                                   sub-path within wizard directory (default: stage.comm)
+
+Example:
+
+.. code-block:: bash
+
+    asterstudy_assistant run /home/user/asterstudy/my_assistant
+
+Verify assistant
+================
+
+The command **verify** can be used to check validity of the calculation wizard.
+
+.. warning:: This command is not implemented yet!
+
+Pack assistant
+==============
+
+The command **pack** creates a ZIP archive with the calculation wizard.
+
+The command line syntax of **pack** command is the following:
+
+.. code-block:: none
+
+    usage: asterstudy_assistant pack [-h] [-d FILE] [-w FILE] [-t FILE] [-o FILE] folder
+
+    Pack calculation assistant wizard to archive.
+
+    positional arguments:
+      folder                       wizard directory
+
+    optional arguments:
+      -h, --help                   show this help message and exit
+      -d FILE, --declaration FILE  declaration file (default: declaration.json)
+      -w FILE, --wizard FILE       wizard file (default: wizard.py)
+      -t FILE, --template FILE     template file (default: template.comm)
+      -o FILE, --output FILE       output archive file; relative path is interpreted
+                                   as a sub-path within wizard directory; if not
+                                   specified, default file name is used (default: None)
+
+Example:
+
+.. code-block:: bash
+
+    asterstudy_assistant pack /home/user/asterstudy/my_assistant

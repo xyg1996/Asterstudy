@@ -1,0 +1,188 @@
+# ------------------------------------------------------------------------------------------
+# Impression du contenu du fichier de commandes à exécuter :
+# ------------------------------------------------------------------------------------------
+POURSUITE(identifier=16,
+          PAR_LOT='NON')
+
+bad = DEFI_FONCTION(identifier=17,
+                    NOM_PARA='unauthorized parameter')
+
+FIN(identifier=18,
+    )
+
+# ------------------------------------------------------------------------------------------
+
+  Ouverture en écriture du fichier ./vola.1
+
+ <INFO> Démarrage de l'exécution.
+
+
+ -- CODE_ASTER -- VERSION : CORRECTIVE AVANT STABILISATION (stable-updates) --
+
+                     Version 13.5.8 modifiée le 30/03/2018
+                     révision 17e692f26311 - branche 'v13'
+                         Copyright EDF R&D 1991 - 2018
+
+                    Exécution du : Sat Apr 28 18:44:04 2018
+                         Nom de la machine : dsp0837509
+                              Architecture : 64bit
+                          Type de processeur : x86_64
+           Système d'exploitation : Linux debian 8.10  3.16.0-5-amd64
+                        Langue des messages : fr (UTF-8)
+
+                           Version de Python : 2.7.10
+                            Version de NumPy : 1.9.2
+                           Parallélisme MPI : inactif
+                          Parallélisme OpenMP : actif
+                        Nombre de processus utilisés : 4
+                     Version de la librairie HDF5 : 1.8.14
+                      Version de la librairie MED : 3.3.1
+                     Version de la librairie MFront : 3.0.0
+                Version de la librairie MUMPS : 5.1.1consortium
+                        Librairie PETSc : non disponible
+                     Version de la librairie SCOTCH : 6.0.4
+
+                  Mémoire limite pour l'exécution : 2560.00 Mo
+                   consommée par l'initialisation : 777.45 Mo
+                  par les objets du jeu de commandes : 0.00 Mo
+                 reste pour l'allocation dynamique : 1780.88 Mo
+                Taille limite des fichiers d'échange : 12.00 Go
+
+
+   !---------------------------------------------------!
+   ! <I> <SUPERVIS_41>                                 !
+   !                                                   !
+   ! La version 13.5.8 a été modifiée par 1 révisions. !
+   !---------------------------------------------------!
+
+
+   !------------------------------------------------------------------------------------!
+   ! <A> <SUPERVIS_1>                                                                   !
+   !                                                                                    !
+   !  L'utilisation du mot-clé PAR_LOT='NON' permet d'accéder en lecture et en écriture !
+   !  au contenu des concepts Aster. De ce fait, votre étude est exclue du périmètre    !
+   !  qualifié de Code_Aster puisque toutes ses étapes ne peuvent être certifiées.      !
+   !                                                                                    !
+   !  Conseils :                                                                        !
+   !    - Il n'y a pas particulièrement de risque de résultat faux... sauf si votre     !
+   !      programmation l'introduit.                                                    !
+   !    - Distinguez le calcul lui-même (qui doit sans doute passer en PAR_LOT='OUI')   !
+   !      des post-traitements (qui nécessiteraient le mode PAR_LOT='NON') qui peuvent  !
+   !      être réalisés en POURSUITE.                                                   !
+   !                                                                                    !
+   !                                                                                    !
+   ! Ceci est une alarme. Si vous ne comprenez pas le sens de cette                     !
+   ! alarme, vous pouvez obtenir des résultats inattendus !                             !
+   !------------------------------------------------------------------------------------!
+
+
+  Valeur initiale du temps CPU maximum =   300 secondes
+  Valeur du temps CPU maximum passé aux commandes =   270 secondes
+  Réserve CPU prévue = 30 secondes
+
+  Ouverture en lecture du fichier ./glob.1
+
+     Nom de la base                          :  GLOBALE
+     Créée avec la version                   :  13.05.08
+     Nombre d'enregistrements utilisés       :  47
+     Nombre d'enregistrements maximum        :  62914
+     Longueur d'enregistrement (octets)      :  819200
+     Nombre d'identificateurs utilisés       :  189
+     Taille maximum du répertoire            :  2000
+     Pourcentage d'utilisation du répertoire :  9 %
+
+  Ouverture en lecture du fichier ./glob.1
+
+  Ouverture en écriture du fichier ./vola.1
+
+  Fin de lecture (durée  0.000001  s.)
+
+ Lecture du fichier pick.1...
+
+  La signature de la base relue est conforme à celle attendue (à l'adresse 0) :
+    d09f88ca7eb32fb5ed6e52af5408f69b5b0f8b04
+
+  Liste des concepts issus de la base :
+    Nom         Type du concept
+    N1          nappe_sdaster
+    N2          nappe_sdaster
+    N3          nappe_sdaster
+
+  L'exécution précédente s'est terminée correctement.
+
+.. __stg1_cmd16
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0001            Concept de type : -
+  # ------------------------------------------------------------------------------------------
+  POURSUITE(PAR_LOT='NON',
+            INFO=1,
+            CODE='NON',
+            IMPR_MACRO='NON',
+            RESERVE_CPU=_F(BORNE=900,),
+            MEMOIRE=_F(TAILLE_BLOC=800.0,
+                       TAILLE_GROUP_ELEM=1000,),
+            DEBUG=_F(JEVEUX='NON',
+                     JXVERI='NON',
+                     HIST_ETAPE='NON',
+                     SDVERI='NON',),
+            FORMAT_HDF='NON',
+            MESURE_TEMPS=_F(MOYENNE='NON',
+                            NIVE_DETAIL=1,),
+            )
+
+  # Mémoire (Mo) :   847.30 /   839.66 /     7.58 /     7.58 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0001   user+syst:        0.00s (syst:        0.00s, elaps:        0.00s)
+  # ------------------------------------------------------------------------------------------
+
+
+  <I> Informations sur les temps d'exécution
+      Temps cpu user total                    0.79 s
+      Temps cpu systeme total                 0.07 s
+      Temps elapsed total                     0.86 s
+      Temps restant                         269.14 s
+
+
+  La signature de la base sauvegardée est (à l'adresse 0) :
+    d09f88ca7eb32fb5ed6e52af5408f69b5b0f8b04
+
+ ********************************************************************************
+ * COMMAND                  :       USER :     SYSTEM :   USER+SYS :    ELAPSED *
+ ********************************************************************************
+ * init (jdc)               :       0.79 :       0.07 :       0.86 :       0.86 *
+ *  . compile               :       0.00 :       0.00 :       0.00 :       0.00 *
+ *  . exec_compile          :       0.45 :       0.03 :       0.48 :       0.48 *
+ * POURSUITE                :       0.00 :       0.00 :       0.00 :       0.00 *
+ *  . part Superviseur      :       0.79 :       0.07 :       0.86 :       0.86 *
+ ********************************************************************************
+ * TOTAL_JOB                :       0.79 :       0.07 :       0.86 :       0.86 *
+ ********************************************************************************
+
+ERREUR A L'INTERPRETATION DANS ACCAS - INTERRUPTION
+>> JDC.py : DEBUT RAPPORT
+CR phase d'initialisation
+   Etape : DEFI_FONCTION    ligne : 5    fichier : u'fort.1'
+      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      ! Règle(s) non respectée(s) :                                             !
+      ! - Il faut un et un seul mot-clé parmi : ('VALE', 'VALE_C', 'VALE_PARA', !
+      ! 'NOEUD_PARA', 'ABSCISSE')                                               !
+      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      ! Concept retourné non défini !
+      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      Mot-clé simple : NOM_PARA
+         !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+         ! La valeur : 'unauthorized parameter'  ne fait pas partie des choix possibles    !
+         ! (u'DX', u'DY', u'DZ', u'DRX', u'DRY', u'DRZ', u'TEMP', u'TSEC', u'INST', u'X',  !
+         ! u'Y', u'Z', u'EPSI', u'META', u'FREQ', u'PULS', u'DSP', u'AMOR', u'ABSC',       !
+         ! u'SIGM', u'HYDR', u'SECH', u'PORO', u'SAT', u'PGAZ', u'PCAP', u'PLIQ', u'PVAP', !
+         ! u'PAD', u'VITE', u'ENDO', u'NORM', u'EPAIS', u'NEUT1', u'NEUT2', u'XF', u'YF',  !
+         ! u'ZF', u'NUME_ORDRE')                                                           !
+         !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      Fin Mot-clé simple : NOM_PARA
+   Fin Etape : DEFI_FONCTION
+fin CR phase d'initialisation
+
+>> JDC.py : FIN RAPPORT
+EXECUTION_CODE_ASTER_EXIT_20324-0002-dsp0837509=1
+
+ <I>_EXIT_CODE = 1

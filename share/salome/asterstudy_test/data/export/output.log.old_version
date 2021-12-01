@@ -1,0 +1,1365 @@
+
+--------------------------------------------------------------------------------
+ Exécution de Code_Aster
+
+<INFO> préparation de l'environnement dans /local00/tmp/B87457-dsp0682157-interactif_16226-0029-dsp0682157
+
+--------------------------------------------------------------------------------
+ Copie des données
+
+copie de .../B87457-dsp0682157-jeu.-09-101641.379/RunCase_6_Stage_1.comm...
+                                                                        [  OK  ]
+copie de .../B87457-dsp0682157-jeu.-09-101641.379/_ExportedFromSalomeObject_0_1_2_17.med...
+                                                                        [  OK  ]
+<INFO> Paramètres : mémoire 5000.0 Mo - temps max 900 s
+
+--------------------------------------------------------------------------------
+ Contenu de /local00/tmp/B87457-dsp0682157-interactif_16226-0029-dsp0682157 avant l'exécution
+
+total 4692
+drwx------   3 B87457 rdusers    4096 août   9 10:16 .
+drwxrwxrwt 189 root   root     208896 août   9 10:16 ..
+-rw-r--r--   1 B87457 rdusers     906 août   9 10:16 16226-0029-dsp0682157.export
+-rw-r--r--   1 B87457 rdusers    2892 août   9 10:16 config.txt
+-rw-r--r--   1 B87457 rdusers    4960 août   9 10:16 fort.1.1
+-rw-r--r--   1 B87457 rdusers 4564683 août   9 10:16 fort.20
+drwxr-xr-x   2 B87457 rdusers    4096 août   9 10:16 REPE_OUT
+
+
+--------------------------------------------------------------------------------
+ Exécution de Code_Aster
+
+<INFO> Ligne de commande 1 :
+<INFO> /home/B87457/dev/codeaster/install/std/bin/aster /home/B87457/dev/codeaster/install/std/lib/aster/Execution/E_SUPERV.py -commandes fort.1 --num_job=16226-0029-dsp0682157 --mode=interactif --rep_outils=/home/B87457/salome_meca_dev/V8_INTEGR/tools/Code_aster_frontend-salomemeca/outils --rep_mat=/local00/home/B87457/dev/codeaster/install/std/share/aster/materiau --rep_dex=/local00/home/B87457/dev/codeaster/install/std/share/aster/datg --numthreads=4 --suivi_batch --memjeveux=625.0 --tpmax=900.0
+/home/B87457/dev/codeaster/install/std/lib/aster/aster_settings.py:248: DeprecationWarning: this command line option is deprecated : --rep_outils
+  coreopts.parse_args(argv or sys.argv)
+# ------------------------------------------------------------------------------------------
+# Impression du contenu du fichier de commandes à exécuter :
+# ------------------------------------------------------------------------------------------
+DEBUT(identifier=76,
+      )
+
+maillage = LIRE_MAILLAGE(identifier=77,
+                         FORMAT='MED',
+                         UNITE=20)
+
+modele = AFFE_MODELE(identifier=78,
+                     AFFE=_F(MODELISATION='3D',
+                             PHENOMENE='MECANIQUE',
+                             TOUT='OUI'),
+                     MAILLAGE=maillage)
+
+acier = DEFI_MATERIAU(identifier=79,
+                      ELAS=_F(E=2.1e+11,
+                              NU=0.3))
+
+neoprene = DEFI_MATERIAU(identifier=80,
+                         ELAS_HYPER=_F(C01=134070.0,
+                                       C10=480000.0,
+                                       K=2900000000.0))
+
+affect = AFFE_MATERIAU(identifier=81,
+                       AFFE=(_F(MATER=neoprene,
+                                TOUT='OUI'),
+                             _F(GROUP_MA=('fretint', 'fretext'),
+                                MATER=acier)),
+                       MAILLAGE=maillage,
+                       MODELE=modele)
+
+inst1 = DEFI_LIST_REEL(identifier=82,
+                       DEBUT=0.0,
+                       INTERVALLE=(_F(JUSQU_A=8.0,
+                                      PAS=5.0),
+                                   _F(JUSQU_A=826.0,
+                                      PAS=2.0)))
+
+depver = DEFI_CONSTANTE(identifier=83,
+                        VALE=0.00025)
+
+zero = DEFI_CONSTANTE(identifier=84,
+                      VALE=0.0)
+
+list_lim = DEFI_LIST_REEL(identifier=85,
+                          DEBUT=0.0,
+                          INTERVALLE=_F(JUSQU_A=5000.0,
+                                        PAS=1.0))
+
+deph = FORMULE(identifier=86,
+               NOM_PARA='INST',
+               VALE='-0.000167*INST')
+
+depht = CALC_FONC_INTERP(identifier=87,
+                         FONCTION=deph,
+                         LIST_PARA=list_lim)
+
+cd_lim1 = AFFE_CHAR_MECA_F(identifier=88,
+                           DDL_IMPO=(_F(DX=depht,
+                                        DZ=zero,
+                                        GROUP_MA=('haut', )),
+                                     _F(DX=zero,
+                                        DY=zero,
+                                        DZ=zero,
+                                        GROUP_MA=('bas', ))),
+                           MODELE=modele)
+
+frotc1 = DEFI_CONTACT(identifier=89,
+                      FORMULATION='CONTINUE',
+                      FROTTEMENT='COULOMB',
+                      MODELE=modele,
+                      REAC_GEOM='CONTROLE',
+                      ZONE=_F(COULOMB=0.5,
+                              GROUP_MA_ESCL='fissinf',
+                              GROUP_MA_MAIT='fissup'))
+
+frotc2 = DEFI_CONTACT(identifier=90,
+                      ALGO_RESO_CONT='POINT_FIXE',
+                      ALGO_RESO_FROT='POINT_FIXE',
+                      FORMULATION='CONTINUE',
+                      FROTTEMENT='COULOMB',
+                      MODELE=modele,
+                      REAC_GEOM='CONTROLE',
+                      RESI_FROT=1.0,
+                      ZONE=_F(ADAPTATION='TOUT',
+                              ALGO_CONT='PENALISATION',
+                              COEF_PENA_CONT=10000.0,
+                              COULOMB=0.5,
+                              GROUP_MA_ESCL='fissup',
+                              GROUP_MA_MAIT='fissinf'))
+
+chamno = CREA_CHAMP(identifier=91,
+                    AFFE=_F(NOM_CMP=('DX', 'DY', 'DZ'),
+                            TOUT='OUI',
+                            VALE=(0.0, 0.0, 0.0)),
+                    MAILLAGE=maillage,
+                    OPERATION='AFFE',
+                    TYPE_CHAM='NOEU_DEPL_R')
+
+siginit = CREA_CHAMP(identifier=92,
+                     AFFE=_F(NOM_CMP=('SIXX', 'SIYY', 'SIZZ', 'SIXY', 'SIYZ', 'SIXZ'),
+                             TOUT='OUI',
+                             VALE=(0.0, 0.0, 0.0, 0.0, 0.0, 0.0)),
+                     MAILLAGE=maillage,
+                     OPERATION='AFFE',
+                     TYPE_CHAM='CART_SIEF_R')
+
+U0 = STAT_NON_LINE(identifier=93,
+                   CHAM_MATER=affect,
+                   COMPORTEMENT=_F(DEFORMATION='GROT_GDEP',
+                                   GROUP_MA=('neo_fiss', 'neop'),
+                                   RELATION='ELAS_HYPER'),
+                   CONTACT=frotc2,
+                   CONVERGENCE=_F(ITER_GLOB_MAXI=300,
+                                  RESI_GLOB_RELA=0.0001),
+                   ETAT_INIT=_F(DEPL=chamno,
+                                SIGM=siginit),
+                   EXCIT=_F(CHARGE=cd_lim1),
+                   INCREMENT=_F(LIST_INST=inst1,
+                                NUME_INST_FIN=1),
+                   METHODE='NEWTON',
+                   MODELE=modele,
+                   NEWTON=_F(MATRICE='TANGENTE',
+                             REAC_ITER=1),
+                   SOLVEUR=_F(METHODE='MUMPS'))
+
+IMPR_RESU(identifier=94,
+          FORMAT='MED',
+          RESU=_F(RESULTAT=U0),
+          UNITE=2)
+
+FIN(identifier=95,
+    )
+
+# ------------------------------------------------------------------------------------------
+
+  Ouverture en écriture du fichier ./vola.1
+
+ <INFO> Démarrage de l'exécution.
+                                                                                
+                                                                                
+             -- CODE_ASTER -- VERSION : DÉVELOPPEMENT (unstable) --             
+                                                                                
+                     Version 14.2.3 modifiée le 13/07/2018                      
+                   révision bd10969db9ec - branche 'default'                    
+                         Copyright EDF R&D 1991 - 2018                          
+                                                                                
+                    Exécution du : Thu Aug  9 10:16:43 2018                     
+                         Nom de la machine : dsp0682157                         
+                              Architecture : 64bit                              
+                          Type de processeur : x86_64                           
+           Système d'exploitation : Linux debian 8.10  3.16.0-6-amd64           
+                        Langue des messages : fr (UTF-8)                        
+                                                                                
+                           Version de Python : 2.7.10                           
+                           Version de NumPy : 1.12.1                            
+                           Parallélisme MPI : inactif                           
+                          Parallélisme OpenMP : actif                           
+                        Nombre de processus utilisés : 4                        
+                     Version de la librairie HDF5 : 1.8.14                      
+                      Version de la librairie MED : 3.3.1                       
+                     Version de la librairie MFront : 3.1.1                     
+                Version de la librairie MUMPS : 5.1.2consortium                 
+                        Librairie PETSc : non disponible                        
+                     Version de la librairie SCOTCH : 6.0.4                     
+
+                  Mémoire limite pour l'exécution : 5000.00 Mo                  
+                   consommée par l'initialisation : 637.60 Mo                   
+                  par les objets du jeu de commandes : 2.28 Mo                  
+                 reste pour l'allocation dynamique : 4359.86 Mo                 
+                Taille limite des fichiers d'échange : 12.00 Go                 
+                                                                                
+
+.. __stg1_cmd76
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0001            Concept de type : -
+  # ------------------------------------------------------------------------------------------
+  DEBUT(INFO=1,
+        PAR_LOT='OUI',
+        IMPR_MACRO='NON',
+        DEBUG=_F(JEVEUX='NON',
+                 JXVERI='NON',
+                 HIST_ETAPE='NON',
+                 SDVERI='NON',),
+        MEMOIRE=_F(TAILLE_BLOC=800.0,
+                   TAILLE_GROUP_ELEM=1000,),
+        RESERVE_CPU=_F(BORNE=900,),
+        MESURE_TEMPS=_F(MOYENNE='NON',
+                        NIVE_DETAIL=1,),
+        )
+
+   
+   !---------------------------------------------------!
+   ! <I> <SUPERVIS_41>                                 !
+   !                                                   !
+   ! La version 14.2.3 a été modifiée par 1 révisions. !
+   !---------------------------------------------------!
+   
+   
+   !------------------------------------------------------------------------------------------------------------------------------------!
+   ! <A> <SUPERVIS_42>                                                                                                                  !
+   !                                                                                                                                    !
+   ! Les fichiers suivants ont été modifiés par rapport à la dernière révision bd10969db9ecad5022f9e3e3d890eac7403fabce :               !
+   !                                                                                                                                    !
+   ! astest/zzzz291c.comm, bibfor/include/asterfort/peecin.h, bibfor/op/op0107.F90, bibfor/utilitai/peecin.F90,                         !
+   ! bibfor/fracture/Fracture_Datastructure_type.F90, code_aster/Cata/Commands/.defi_group.py.kate-swp, data.prof, gmon.out, graph.png, !
+   ! run_testcases.log, submit.log                                                                                                      !
+   !                                                                                                                                    !
+   !                                                                                                                                    !
+   ! Ceci est une alarme. Si vous ne comprenez pas le sens de cette                                                                     !
+   ! alarme, vous pouvez obtenir des résultats inattendus !                                                                             !
+   !------------------------------------------------------------------------------------------------------------------------------------!
+   
+
+  Valeur initiale du temps CPU maximum =   900 secondes
+  Valeur du temps CPU maximum passé aux commandes =   810 secondes
+  Réserve CPU prévue = 90 secondes
+
+  Ouverture en écriture du fichier ./glob.1
+
+  Ouverture en écriture du fichier ./vola.1
+
+  Ouverture en lecture du fichier /home/B87457/dev/codeaster/install/std/lib/aster/elem.1
+
+     Nom de la base                          :  ELEMBASE
+     Créée avec la version                   :  14.02.03
+     Nombre d'enregistrements utilisés       :  44
+     Nombre d'enregistrements maximum        :  512
+     Longueur d'enregistrement (octets)      :  819200
+     Nombre d'identificateurs utilisés       :  123
+     Taille maximum du répertoire            :  300
+     Pourcentage d'utilisation du répertoire :  41 %
+
+  Ouverture en lecture du fichier /home/B87457/dev/codeaster/install/std/lib/aster/elem.1
+
+
+     Nom de la base                          :  ELEMBASE
+     Nombre d'enregistrements utilisés       :  44
+     Nombre d'enregistrements maximum        :  512
+     Longueur d'enregistrement (octets)      :  819200
+     Nombre total d'accès en lecture         :  62
+     Volume des accès en lecture             :         48.44 Mo.
+     Nombre total d'accès en écriture        :  0
+     Volume des accès en écriture            :          0.00 Mo.
+     Nombre d'identificateurs utilisés       :  123
+     Taille maximum du répertoire            :  300
+     Pourcentage d'utilisation du répertoire :  41 %
+
+  Relecture des catalogues des éléments faite.
+
+  Fin de lecture (durée  0.022322  s.) 
+  # Mémoire (Mo) :   686.07 /   678.26 /    44.91 /    23.29 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0001   user+syst:        0.03s (syst:        0.02s, elaps:        0.04s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_cmd77
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0002            Concept de type : maillage_sdaster
+  # ------------------------------------------------------------------------------------------
+  maillage = LIRE_MAILLAGE(FORMAT='MED',
+                           UNITE=20,
+                           INFO_MED=1,
+                           INFO=1,
+                           VERI_MAIL=_F(APLAT=1.E-3,
+                                        VERIF='OUI',),
+                           )
+
+Vérification du maillage.
+   
+   !------------------------------------------------------------------!
+   ! <A> <MODELISA8_13>                                               !
+   !                                                                  !
+   ! Les mailles M3437 et M118 sont doubles (même noeuds en support). !
+   !     Type de maille : SEG2                                        !
+   !                                                                  !
+   !                                                                  !
+   ! Ceci est une alarme. Si vous ne comprenez pas le sens de cette   !
+   ! alarme, vous pouvez obtenir des résultats inattendus !           !
+   !------------------------------------------------------------------!
+   
+   
+   !------------------------------------------------------------------!
+   ! <A> <MODELISA8_13>                                               !
+   !                                                                  !
+   ! Les mailles M3438 et M119 sont doubles (même noeuds en support). !
+   !     Type de maille : SEG2                                        !
+   !                                                                  !
+   !                                                                  !
+   ! Ceci est une alarme. Si vous ne comprenez pas le sens de cette   !
+   ! alarme, vous pouvez obtenir des résultats inattendus !           !
+   !------------------------------------------------------------------!
+   
+   
+   !------------------------------------------------------------------!
+   ! <A> <MODELISA8_13>                                               !
+   !                                                                  !
+   ! Les mailles M3439 et M120 sont doubles (même noeuds en support). !
+   !     Type de maille : SEG2                                        !
+   !                                                                  !
+   !                                                                  !
+   ! Ceci est une alarme. Si vous ne comprenez pas le sens de cette   !
+   ! alarme, vous pouvez obtenir des résultats inattendus !           !
+   !------------------------------------------------------------------!
+   
+   
+   !------------------------------------------------------------------!
+   ! <A> <MODELISA8_13>                                               !
+   !                                                                  !
+   ! Les mailles M3440 et M121 sont doubles (même noeuds en support). !
+   !     Type de maille : SEG2                                        !
+   !                                                                  !
+   !                                                                  !
+   ! Ceci est une alarme. Si vous ne comprenez pas le sens de cette   !
+   ! alarme, vous pouvez obtenir des résultats inattendus !           !
+   !------------------------------------------------------------------!
+   
+   
+   !------------------------------------------------------------------!
+   ! <A> <MODELISA8_13>                                               !
+   !                                                                  !
+   ! Les mailles M3441 et M122 sont doubles (même noeuds en support). !
+   !     Type de maille : SEG2                                        !
+   !                                                                  !
+   !                                                                  !
+   ! Ceci est une alarme. Si vous ne comprenez pas le sens de cette   !
+   ! alarme, vous pouvez obtenir des résultats inattendus !           !
+   !------------------------------------------------------------------!
+   
+   
+   !--------------------------------------------------------------------------------!
+   ! <A> <CATAMESS_41>                                                              !
+   !                                                                                !
+   ! Le message d'alarme 'MODELISA8_13' a été émis 5 fois, il ne sera plus affiché. !
+   !                                                                                !
+   !                                                                                !
+   ! Ceci est une alarme. Si vous ne comprenez pas le sens de cette                 !
+   ! alarme, vous pouvez obtenir des résultats inattendus !                         !
+   !--------------------------------------------------------------------------------!
+   
+   
+   !---------------------------------------------------------------------------------------------!
+   ! <A> <MODELISA4_8>                                                                           !
+   !                                                                                             !
+   !   -> Phase de vérification du maillage : présence de mailles doubles (ou triples, ...)      !
+   !      Les mailles multiples sont des mailles de noms différents qui ont la même connectivité !
+   !      (elles s'appuient sur les mêmes noeuds).                                               !
+   !                                                                                             !
+   !   -> Risque & Conseil :                                                                     !
+   !      Le risque est de modéliser 2 fois (ou plus) l'espace. On peut par exemple avoir        !
+   !      un modèle 2 fois trop lourd ou 2 fois trop rigide.                                     !
+   !      Remarque : les mailles concernées sont imprimées dans le fichier "message".            !
+   !      Sur ce maillage, il est imprudent d'affecter des quantités avec le mot clé TOUT='OUI'. !
+   !                                                                                             !
+   !                                                                                             !
+   ! Ceci est une alarme. Si vous ne comprenez pas le sens de cette                              !
+   ! alarme, vous pouvez obtenir des résultats inattendus !                                      !
+   !---------------------------------------------------------------------------------------------!
+   
+
+------------ MAILLAGE maillage - IMPRESSIONS NIVEAU  1 ------------
+
+JE-09-AOUT-2018 10:16:43                                                        
+
+NOMBRE DE NOEUDS                       56469
+
+NOMBRE DE MAILLES                      79132
+                              SEG2                 3912
+                              QUAD4               24220
+                              HEXA8               51000
+
+NOMBRE DE GROUPES DE NOEUDS               10
+                              fissinf                            231
+                              inf                               2184
+                              sup                               2184
+                              fissup                             231
+                              infint                               4
+                              supint                               4
+                              bas_1                              231
+                              bas_2                              336
+                              haut_1                             231
+                              haut_2                             336
+
+NOMBRE DE GROUPES DE MAILLES              58
+                              f4                                  66
+                              f3                                  66
+                              f2                                  66
+                              f1                                  66
+                              m1                                  22
+                              m2                                  22
+                              m3                                  22
+                              m4                                  22
+                              ext1                                 8
+                              ext2                                 8
+                              ext3                                 8
+                              ext4                                 8
+                              neo2_E                              36
+                              neo2_F                            1660
+                              neo3_F                            1660
+                              neo4_F                            1660
+                              neo5_F                            1660
+                              neo6_F                            1660
+                              neo7_F                            1660
+                              neo8_F                            1660
+                              neo9_F                            1660
+                              neo10_F                           1660
+                              neo11_F                           1660
+                              neo12_F                           1660
+                              haut                               500
+                              bas                                500
+                              fissup                             200
+                              fissinf                            200
+                              neo2                              3000
+                              neop                             33000
+                              neo3                              3000
+                              neo4                              3000
+                              neo5                              3000
+                              neo6                              3000
+                              neo7                              3000
+                              neo8                              3000
+                              neo9                              3000
+                              neo10                             3000
+                              neo11                             3000
+                              neo12                             3000
+                              fr1                               1000
+                              fretint                          11000
+                              fr2                               1000
+                              fr3                               1000
+                              fr4                               1000
+                              fr5                               1000
+                              fr6                               1000
+                              fr7                               1000
+                              fr8                               1000
+                              fr9                               1000
+                              fr10                              1000
+                              fr11                              1000
+                              extba                             2000
+                              fretext                           4000
+                              exthaut                           2000
+                              neo_fiss                          3000
+                              sup                               1500
+                              inf                               1500
+
+--------------------------------------------------------------------------------
+
+  # Mémoire (Mo) :   698.07 /   691.07 /    55.28 /    24.64 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0002   user+syst:        0.23s (syst:        0.02s, elaps:        0.22s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_cmd78
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0003            Concept de type : modele_sdaster
+  # ------------------------------------------------------------------------------------------
+  modele = AFFE_MODELE(MAILLAGE=maillage,
+                       AFFE=_F(PHENOMENE='MECANIQUE',
+                               TOUT='OUI',
+                               MODELISATION=('3D', ),),
+                       INFO=1,
+                       VERI_JACOBIEN='OUI',
+                       DISTRIBUTION=_F(PARTITIONNEUR='METIS',
+                                       METHODE='SOUS_DOMAINE',),
+                       )
+
+
+Sur les 79132 mailles du maillage maillage, on a demandé l'affectation de 79132, on a pu en affecter 79132
+ Modélisation     Type maille  Élément fini     Nombre
+                  SEG2         MECA_ARETE2      3912
+                  QUAD4        MECA_FACE4       24220
+ 3D               HEXA8        MECA_HEXA8       51000
+#2      Calculs elementaires et assemblages               CPU (USER+SYST/SYST/ELAPS):      0.22      0.11      0.06
+  # Mémoire (Mo) :   886.11 /   857.00 /    55.64 /    45.83 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0003   user+syst:        0.42s (syst:        0.22s, elaps:        0.11s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_cmd79
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0004            Concept de type : mater_sdaster
+  # ------------------------------------------------------------------------------------------
+  acier = DEFI_MATERIAU(ELAS=_F(E=2.10000000000E11,
+                                NU=0.3,
+                                COEF_AMOR=1.0,),
+                        INFO=1,)
+
+
+ MATERIAU : acier   
+ RELATION DE COMPORTEMENT: ELAS                            
+
+
+  # Mémoire (Mo) :   886.11 /   857.00 /    55.64 /    45.83 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0004   user+syst:        0.01s (syst:        0.01s, elaps:        0.01s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_cmd80
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0005            Concept de type : mater_sdaster
+  # ------------------------------------------------------------------------------------------
+  neoprene = DEFI_MATERIAU(ELAS_HYPER=_F(K=2.900000000E9,
+                                         C01=1.34070E5,
+                                         C10=4.80000E5,
+                                         C20=0.0,
+                                         RHO=0.0,),
+                           INFO=1,)
+
+
+ MATERIAU : neoprene
+ RELATION DE COMPORTEMENT: ELAS_HYPER                      
+
+
+  # Mémoire (Mo) :   886.11 /   857.00 /    55.64 /    45.83 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0005   user+syst:        0.00s (syst:        0.00s, elaps:        0.00s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_cmd81
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0006            Concept de type : cham_mater
+  # ------------------------------------------------------------------------------------------
+  affect = AFFE_MATERIAU(MAILLAGE=maillage,
+                         MODELE=modele,
+                         AFFE=(_F(MATER=(neoprene, ),
+                                  TOUT='OUI',),
+                               _F(MATER=(acier, ),
+                                  GROUP_MA=('fretint', 'fretext'),),
+                               ),
+                         INFO=1,
+                         )
+
+  # Mémoire (Mo) :   886.11 /   857.12 /    55.64 /    45.83 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0006   user+syst:        0.02s (syst:        0.01s, elaps:        0.00s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_cmd82
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0007            Concept de type : listr8_sdaster
+  # ------------------------------------------------------------------------------------------
+  inst1 = DEFI_LIST_REEL(DEBUT=0.0,
+                         INTERVALLE=(_F(PAS=5.0,
+                                        JUSQU_A=8.0,),
+                                     _F(PAS=2.0,
+                                        JUSQU_A=826.0,),
+                                     ),
+                         INFO=1,)
+
+   
+   !----------------------------------------------------------------!
+   ! <A> <ALGORITH13_82>                                            !
+   !                                                                !
+   !  la distance entre les deux derniers réels ne sera pas égale   !
+   !  au pas courant :  5.000000,                                   !
+   !  pour l'intervalle  1                                          !
+   !                                                                !
+   !                                                                !
+   ! Ceci est une alarme. Si vous ne comprenez pas le sens de cette !
+   ! alarme, vous pouvez obtenir des résultats inattendus !         !
+   !----------------------------------------------------------------!
+   
+  # Mémoire (Mo) :   886.11 /   857.12 /    55.64 /    45.83 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0007   user+syst:        0.00s (syst:        0.00s, elaps:        0.01s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_cmd83
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0008            Concept de type : fonction_sdaster
+  # ------------------------------------------------------------------------------------------
+  depver = DEFI_CONSTANTE(VALE=2.5E-4,
+                          NOM_RESU='TOUTRESU',)
+
+  # Mémoire (Mo) :   886.11 /   857.12 /    55.64 /    45.83 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0008   user+syst:        0.01s (syst:        0.01s, elaps:        0.00s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_cmd84
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0009            Concept de type : fonction_sdaster
+  # ------------------------------------------------------------------------------------------
+  zero = DEFI_CONSTANTE(VALE=0.0,
+                        NOM_RESU='TOUTRESU',)
+
+  # Mémoire (Mo) :   886.11 /   857.12 /    55.64 /    45.83 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0009   user+syst:        0.00s (syst:        0.00s, elaps:        0.00s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_cmd85
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0010            Concept de type : listr8_sdaster
+  # ------------------------------------------------------------------------------------------
+  list_lim = DEFI_LIST_REEL(DEBUT=0.0,
+                            INTERVALLE=_F(PAS=1.0,
+                                          JUSQU_A=5000.0,),
+                            INFO=1,)
+
+  # Mémoire (Mo) :   886.11 /   857.12 /    55.64 /    45.83 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0010   user+syst:        0.00s (syst:        0.00s, elaps:        0.00s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_cmd86
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0011            Concept de type : formule
+  # ------------------------------------------------------------------------------------------
+  deph = FORMULE(VALE='-0.000167*INST',
+                 NOM_PARA=('INST', ),)
+
+  # Mémoire (Mo) :   886.11 /   857.12 /    55.64 /    45.83 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0011   user+syst:        0.00s (syst:        0.00s, elaps:        0.00s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_cmd87
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0012            Concept de type : fonction_sdaster
+  # ------------------------------------------------------------------------------------------
+  depht = CALC_FONC_INTERP(LIST_PARA=list_lim,
+                           FONCTION=deph,
+                           INFO=1,)
+
+  # Mémoire (Mo) :   886.11 /   857.12 /    55.64 /    45.83 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0012   user+syst:        0.03s (syst:        0.00s, elaps:        0.03s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_cmd88
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0013            Concept de type : char_meca
+  # ------------------------------------------------------------------------------------------
+  cd_lim1 = AFFE_CHAR_MECA_F(MODELE=modele,
+                             DDL_IMPO=(_F(DZ=zero,
+                                          DX=depht,
+                                          GROUP_MA=('haut', ),),
+                                       _F(DZ=zero,
+                                          DX=zero,
+                                          DY=zero,
+                                          GROUP_MA=('bas', ),),
+                                       ),
+                             INFO=1,
+                             VERI_NORM='OUI',)
+
+  # Mémoire (Mo) :   886.11 /   860.44 /    56.22 /    45.83 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0013   user+syst:        0.26s (syst:        0.00s, elaps:        0.25s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_cmd89
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0014            Concept de type : char_contact
+  # ------------------------------------------------------------------------------------------
+  frotc1 = DEFI_CONTACT(FROTTEMENT='COULOMB',
+                        FORMULATION='CONTINUE',
+                        MODELE=modele,
+                        REAC_GEOM='CONTROLE',
+                        NB_ITER_GEOM=2,
+                        ALGO_RESO_GEOM='POINT_FIXE',
+                        RESI_FROT=1.E-4,
+                        ALGO_RESO_FROT='NEWTON',
+                        ALGO_RESO_CONT='NEWTON',
+                        VERI_NORM='OUI',
+                        STOP_INTERP='NON',
+                        LISSAGE='NON',
+                        ZONE=_F(COULOMB=0.5,
+                                COEF_CONT=100.0,
+                                ADAPTATION='CYCLAGE',
+                                COEF_FROT=100.0,
+                                GROUP_MA_MAIT='fissup',
+                                GROUP_MA_ESCL='fissinf',
+                                NORMALE='MAIT',
+                                CONTACT_INIT='INTERPENETRE',
+                                VECT_ESCL='AUTO',
+                                APPARIEMENT='MAIT_ESCL',
+                                RESOLUTION='OUI',
+                                INTEGRATION='AUTO',
+                                DIST_POUTRE='NON',
+                                GLISSIERE='NON',
+                                VECT_MAIT='AUTO',
+                                DIST_COQUE='NON',
+                                TOLE_PROJ_EXT=0.5,
+                                TYPE_PROJECTION='ORTHOGONALE',
+                                DIST_APPA=-1.0,
+                                GRAND_GLIS='NON',
+                                ALGO_FROT='STANDARD',
+                                ALGO_CONT='STANDARD',),
+                        )
+
+ granglis cazocc   0.0000000000000000     
+  # Mémoire (Mo) :   886.11 /   863.96 /    66.44 /    45.83 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0014   user+syst:        0.10s (syst:        0.01s, elaps:        0.11s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_cmd90
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0015            Concept de type : char_contact
+  # ------------------------------------------------------------------------------------------
+  frotc2 = DEFI_CONTACT(FROTTEMENT='COULOMB',
+                        FORMULATION='CONTINUE',
+                        MODELE=modele,
+                        REAC_GEOM='CONTROLE',
+                        NB_ITER_GEOM=2,
+                        ALGO_RESO_GEOM='POINT_FIXE',
+                        ALGO_RESO_FROT='POINT_FIXE',
+                        RESI_FROT=1.0,
+                        ITER_FROT_MAXI=10,
+                        ALGO_RESO_CONT='POINT_FIXE',
+                        ITER_CONT_MAXI=30,
+                        ITER_CONT_TYPE='MAXI',
+                        VERI_NORM='OUI',
+                        STOP_INTERP='NON',
+                        LISSAGE='NON',
+                        ZONE=_F(COULOMB=0.5,
+                                ALGO_CONT='PENALISATION',
+                                COEF_FROT=100.0,
+                                ADAPTATION='TOUT',
+                                COEF_PENA_CONT=1.E4,
+                                GROUP_MA_MAIT='fissinf',
+                                GROUP_MA_ESCL='fissup',
+                                NORMALE='MAIT',
+                                CONTACT_INIT='INTERPENETRE',
+                                VECT_ESCL='AUTO',
+                                APPARIEMENT='MAIT_ESCL',
+                                RESOLUTION='OUI',
+                                INTEGRATION='AUTO',
+                                DIST_POUTRE='NON',
+                                GLISSIERE='NON',
+                                VECT_MAIT='AUTO',
+                                DIST_COQUE='NON',
+                                TOLE_PROJ_EXT=0.5,
+                                TYPE_PROJECTION='ORTHOGONALE',
+                                DIST_APPA=-1.0,
+                                GRAND_GLIS='NON',
+                                ALGO_FROT='STANDARD',),
+                        )
+
+ granglis cazocc   0.0000000000000000     
+  # Mémoire (Mo) :   886.11 /   867.47 /    69.99 /    45.83 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0015   user+syst:        0.10s (syst:        0.00s, elaps:        0.10s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_cmd91
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0016            Concept de type : cham_no_sdaster
+  # ------------------------------------------------------------------------------------------
+  chamno = CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',
+                      OPERATION='AFFE',
+                      MAILLAGE=maillage,
+                      AFFE=_F(NOM_CMP=('DX', 'DY', 'DZ'),
+                              VALE=(0.0, 0.0, 0.0),
+                              TOUT='OUI',),
+                      INFO=1,)
+
+  # Mémoire (Mo) :   886.11 /   875.66 /    73.38 /    45.83 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0016   user+syst:        0.01s (syst:        0.00s, elaps:        0.02s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_cmd92
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0017            Concept de type : carte_sdaster
+  # ------------------------------------------------------------------------------------------
+  siginit = CREA_CHAMP(TYPE_CHAM='CART_SIEF_R',
+                       OPERATION='AFFE',
+                       MAILLAGE=maillage,
+                       AFFE=_F(NOM_CMP=('SIXX', 'SIYY', 'SIZZ', 'SIXY', 'SIYZ', 'SIXZ'),
+                               VALE=(0.0, 0.0, 0.0, 0.0, 0.0, 0.0),
+                               TOUT='OUI',),
+                       INFO=1,)
+
+  # Mémoire (Mo) :  1044.20 /   876.27 /   240.02 /   177.86 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0017   user+syst:        0.18s (syst:        0.03s, elaps:        0.18s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_cmd93
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0018            Concept de type : evol_noli
+  # ------------------------------------------------------------------------------------------
+  U0 = STAT_NON_LINE(METHODE='NEWTON',
+                     CHAM_MATER=affect,
+                     MODELE=modele,
+                     CONTACT=frotc2,
+                     EXCIT=_F(CHARGE=cd_lim1,
+                              TYPE_CHARGE='FIXE_CSTE',),
+                     INCREMENT=_F(LIST_INST=inst1,
+                                  NUME_INST_FIN=1,
+                                  PRECISION=1.E-06,),
+                     CONVERGENCE=_F(RESI_GLOB_RELA=1.E-4,
+                                    ITER_GLOB_MAXI=300,
+                                    ARRET='OUI',
+                                    ITER_GLOB_ELAS=25,),
+                     ETAT_INIT=_F(DEPL=chamno,
+                                  SIGM=siginit,
+                                  PRECISION=1.E-06,
+                                  CRITERE='RELATIF',),
+                     COMPORTEMENT=_F(DEFORMATION='GROT_GDEP',
+                                     GROUP_MA=('neo_fiss', 'neop'),
+                                     RELATION='ELAS_HYPER',
+                                     ITER_INTE_MAXI=20,
+                                     RESI_INTE_RELA=1.E-06,
+                                     ITER_INTE_PAS=0,
+                                     RESI_CPLAN_RELA=1.E-06,
+                                     PARM_THETA=1.0,
+                                     SYME_MATR_TANG='OUI',
+                                     ITER_CPLAN_MAXI=1,),
+                     SOLVEUR=_F(METHODE='MUMPS',
+                                ACCELERATION='AUTO',
+                                STOP_SINGULIER='OUI',
+                                ELIM_LAGR='LAGR2',
+                                TYPE_RESOL='AUTO',
+                                MATR_DISTRIBUEE='NON',
+                                GESTION_MEMOIRE='AUTO',
+                                FILTRAGE_MATRICE=-1.0,
+                                RENUM='AUTO',
+                                LOW_RANK_SEUIL=0.0,
+                                NPREC=8,
+                                PCENT_PIVOT=20,
+                                RESI_RELA=-1.0,
+                                PRETRAITEMENTS='AUTO',
+                                POSTTRAITEMENTS='AUTO',
+                                MIXER_PRECISION='NON',),
+                     NEWTON=_F(MATRICE='TANGENTE',
+                               REAC_ITER=1,
+                               REAC_INCR=1,
+                               REAC_ITER_ELAS=0,
+                               MATR_RIGI_SYME='NON',),
+                     ARCHIVAGE=_F(PRECISION=1.E-06,
+                                  CRITERE='RELATIF',),
+                     MESURE=_F(TABLE='NON',),
+                     )
+
+
+ Sur certaines mailles, la modélisation est incompatible avec le comportement.
+ Une erreur fatale pourrait suivre ce message.
+
+Liste des comportements
+Affecté sur 43132 éléments
+  Relation                             : ELAS
+  Déformation                          : PETIT
+  Nombre total de variables internes   : 1
+         V1 : VIDE
+Affecté sur 36000 éléments
+  Relation                             : ELAS_HYPER
+  Déformation                          : GROT_GDEP
+  Nombre total de variables internes   : 1
+         V1 : VIDE
+
+Le système linéaire à résoudre a 175560 degrés de liberté:
+   - 170100 sont des degrés de liberté physiques
+     (ils sont portés par 56469 noeuds du maillage)
+   - 5460 sont les couples de paramètres de Lagrange associés
+     aux 2730 relations linéaires dualisées.
+
+La matrice est de taille 175560 équations.
+Elle contient 6566958 termes non nuls si elle est symétrique et 12958356 termes non nuls si elle n'est pas symétrique.
+Soit un taux de remplissage de   0.042 %.
+
+ Nombre total de noeuds esclaves pour le contact: 231
+
+ Lecture de l'état initial
+
+ Il n'y a pas d'état initial défini. On prend un état initial nul.
+   
+   !---------------------------------------------------------------------!
+   ! <A> <ALGELINE7_20>                                                  !
+   !                                                                     !
+   !  On ne peut pas remplir la composante LAGS_C du noeud numéro N53515 !
+   !  pour le champ "&&NMETL2.CHAMP.CONV"                                !
+   !                                                                     !
+   !                                                                     !
+   ! Ceci est une alarme. Si vous ne comprenez pas le sens de cette      !
+   ! alarme, vous pouvez obtenir des résultats inattendus !              !
+   !---------------------------------------------------------------------!
+   
+   
+   !----------------------------------------------------------------------------------------!
+   ! <A> <MECANONLINE_2>                                                                    !
+   !                                                                                        !
+   !  Lors de la recopie du champ &&NMETL2.CHAMP.CONVER donné dans ETAT_INIT de la commande !
+   !  STAT_NON_LINE vers le champ &&NMCH1P.DEPMOI, certaines composantes de &&NMCH1P.DEPMOI !
+   !  ont du être mises à zéro.                                                             !
+   !                                                                                        !
+   !  Ce problème survient lorsque le champ donné dans ETAT_INIT ne comporte                !
+   !  pas assez de composantes, on complète donc par des zéros.                             !
+   !                                                                                        !
+   !                                                                                        !
+   ! Ceci est une alarme. Si vous ne comprenez pas le sens de cette                         !
+   ! alarme, vous pouvez obtenir des résultats inattendus !                                 !
+   !----------------------------------------------------------------------------------------!
+   
+  Le champ <DEPL> est lu dans ETAT_INIT, par un champ donné explicitement
+  Le champ <siginit> est de type <CART> mais on attend un champ de type <ELGA>.
+On le convertit automatiquement
+  Le champ <SIEF_ELGA> est lu dans ETAT_INIT, par un champ donné explicitement
+  Le champ <VARI_ELGA> est initialisé a zéro
+
+ Archivage de l'état initial
+
+  Archivage des champs
+    Champ stocké <DEPL> à l'instant  0.000000000000e+00 pour le numéro d'ordre 0
+    Champ stocké <SIEF_ELGA> à l'instant  0.000000000000e+00 pour le numéro d'ordre 0
+    Champ stocké <VARI_ELGA> à l'instant  0.000000000000e+00 pour le numéro d'ordre 0
+    Champ stocké <COMPORTEMENT> à l'instant  0.000000000000e+00 pour le numéro d'ordre 0
+    Champ stocké <CONT_NOEU> à l'instant  0.000000000000e+00 pour le numéro d'ordre 0
+
+Il y a 0 points initialement en contact et 0 points exclus.
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+ Instant de calcul:  5.000000000000e+00 - Niveau de découpe: 1
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+|     CONTACT    |     CONTACT    |     CONTACT    |     NEWTON     |     RESIDU     |     RESIDU     |     OPTION     |     CONTACT    |     CONTACT    |     CONTACT    |
+|    BCL. GEOM.  |    BCL. FROT.  |    BCL. CONT.  |    ITERATION   |     RELATIF    |     ABSOLU     |   ASSEMBLAGE   |    PRESSURE    |     CRITERE    |  PENETRATION   |
+|    ITERATION   |    ITERATION   |    ITERATION   |                | RESI_GLOB_RELA | RESI_GLOB_MAXI |                |    ERROR       |    VALEUR      |                |
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+  La mémoire consommée actuellement hors JEVEUX est de 1084.22 Mo.
+  La limite de l'allocation dynamique JEVEUX est fixée à 3915.78 Mo.
+  Cette valeur limite a été réactualisée lors de la mise en oeuvre d'un processus de libération
+|     1        X |     1        X |     1        X |     0        X | 3.59700E-02  X | 6.84059E-01    |TANGENTE        | 1.00000E+03    |                | 0.00000E+00    |
+ plus petite arete de maillage   9.8488578017960571E-002
+|     1        X |     1        X |     1        X |     1          | 1.97714E-08    | 3.76323E-07    |TANGENTE        | 1.00000E+03    |                | 0.00000E+00    |
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+|     1        X |     1        X |     2        X |     0        X | 3.59700E-02  X | 6.84059E-01    |TANGENTE        | 1.00000E+00    |                | 3.25125E-08    |
+ plus petite arete de maillage   9.8488578017960571E-002
+|     1        X |     1        X |     2          |     1          | 1.97742E-08    | 3.76377E-07    |TANGENTE        | 1.00000E+00    | 1.00000E+00    | 3.25125E-08    |
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+|     1        X |     2        X |     1        X |     0        X | 3.63062E-02  X | 6.86225E-01    |TANGENTE        | 9.99000E-01    |                | 3.25124E-08    |
+ plus petite arete de maillage   9.8488578017960571E-002
+|     1        X |     2          |     1          |     1          | 3.86175E-08    | 7.30530E-07    |TANGENTE        | 9.99000E-01    | 1.00000E-01    | 3.25124E-08    |
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+|     2        X |     1        X |     1        X |     0        X | 1.35528E+00  X | 2.56162E+01    |TANGENTE        | 1.78991E-01    |                | 3.91737E-08    |
+|     2        X |     1        X |     1        X |     1        X | 9.97976E-03  X | 1.89952E-01    |TANGENTE        | 1.78991E-01    |                | 3.91737E-08    |
+ plus petite arete de maillage   9.8488578017960571E-002
+   
+   !-----------------------------------------------------------------------------------------------------------!
+   ! <A> <CONTACT3_96>                                                                                         !
+   !                                                                                                           !
+   ! Contact.                                                                                                  !
+   !     -> Les surfaces en contact ont bougé de plus de 1% depuis la dernière réactualisation.                !
+   !        Or vous n'avez pas activé la réactualisation géométrique automatique dans la commande DEFI_CONTACT !
+   !        (REAC_GEOM='AUTOMATIQUE') ou bien vous utilisez le mode 'CONTROLE'                                 !
+   !     -> Risque & conseil :                                                                                 !
+   !        Vos résultats risquent d'être faux, les mailles ne seront peut-être pas correctement appariées     !
+   !        et des interpénétrations pourraient apparaître.                                                    !
+   !        Si vous avez volontairement négligé la non-linéarité géométrique de contact (pour des raisons      !
+   !        de performance), nous vous invitons à vérifier visuellement qu'il n'y a effectivement              !
+   !        pas d'interpénétrations.                                                                           !
+   !                                                                                                           !
+   !                                                                                                           !
+   ! Ceci est une alarme. Si vous ne comprenez pas le sens de cette                                            !
+   ! alarme, vous pouvez obtenir des résultats inattendus !                                                    !
+   !-----------------------------------------------------------------------------------------------------------!
+   
+|     2          |     1          |     1          |     2          | 1.05172E-09    | 2.00181E-08    |TANGENTE        | 1.78991E-01    | 1.91079E-02    | 3.91737E-08    |
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+   
+   !--------------------------------------------------------------------------------------------------------------------------!
+   ! <A> <CONTACT3_98>                                                                                                        !
+   !                                                                                                                          !
+   ! Contact et détection de collision.                                                                                       !
+   !     Le contact semble "rasant", c'est-à-dire que le jeu est nul mais que la pression de contact est quasiment            !
+   !     nulle également.                                                                                                     !
+   !     -> Risque & Conseil :                                                                                                !
+   !       La découpe automatique du pas de temps ne sera probablement pas efficace. Si vous constatez de fortes oscillations !
+   !       de la vitesse ou du déplacement au point de contact pour cet instant de calcul malgré l'activation du mode de      !
+   !       traitement automatique de la collision, vous pouvez essayer d'éviter l'instant pour lequel le contact "rasant"     !
+   !       apparaît de deux manières différentes:                                                                             !
+   !        - changer la discrétisation en temps initiale                                                                     !
+   !        - changer la valeur de SUBD_INST                                                                                  !
+   !                                                                                                                          !
+   !                                                                                                                          !
+   ! Ceci est une alarme. Si vous ne comprenez pas le sens de cette                                                           !
+   ! alarme, vous pouvez obtenir des résultats inattendus !                                                                   !
+   !--------------------------------------------------------------------------------------------------------------------------!
+   
+
+  Critère(s) de convergence atteint(s)
+    Le résidu de type <RESI_GLOB_RELA> vaut  1.051717468593e-09 au noeud et degré de liberté <N55181  DZ>
+    Le résidu de type <RESI_PENE> vaut  3.917366984268e-08 au noeud et degré de liberté <>
+
+  Temps CPU consommé dans ce pas de temps    : 3 min 13 s
+    * Nombre d'itérations de Newton                     : 9
+    * Temps total intégration comportement              : 34.737 s (13 intégrations)
+    * Temps total factorisation matrice                 : 2 min 20 s (9 factorisations)
+    * Temps construction second membre                  : 2.372 s
+    * Temps total résolution K.U=F                      : 4.725 s (9 résolutions)
+    * Temps appariement contact                         : 0.156 s (2 appariements)
+    * Temps préparation données contact                 : 0.066 s (4 préparations)
+    * Temps calculs élémentaires contact                : 1.229 s
+    * Temps assemblage matrice                          : 6.950 s
+    * Nombre de liaisons de contact                     : 7
+    * Nombre de liaisons de frottement adhérentes       : 0
+    * Nombre de cycles de type contact/pas contact      : 0
+    * Nombre de cycles de type glissement/adhérence     : 0
+    * Nombre de cycles de type glissement avant/arrière : 0
+    * Nombre de cycles de type point fixe contact       : 0
+    * Temps autres opérations                           : 3.248 s
+
+  Mémoire (Mo) :  4840.62 /  4565.84 /   732.92 /   252.06 (VmPeak / VmSize / Optimum / Minimum)
+
+  Archivage des champs
+    Champ stocké <DEPL> à l'instant  5.000000000000e+00 pour le numéro d'ordre 1
+    Champ stocké <SIEF_ELGA> à l'instant  5.000000000000e+00 pour le numéro d'ordre 1
+    Champ stocké <VARI_ELGA> à l'instant  5.000000000000e+00 pour le numéro d'ordre 1
+    Champ stocké <COMPORTEMENT> à l'instant  5.000000000000e+00 pour le numéro d'ordre 1
+    Champ stocké <CONT_NOEU> à l'instant  5.000000000000e+00 pour le numéro d'ordre 1
+
+  Temps CPU consommé dans le calcul          : 3 min 14 s
+    dont temps CPU "perdu" dans les découpes            : 0.000 s
+    * Nombre de pas de temps                            : 1
+    * Nombre d'itérations de Newton                     : 9
+    * Temps dans l'archivage                            : 0.218 s
+    * Temps dans le post-traitement                     : 0.609 s
+    * Temps total intégration comportement              : 34.737 s (13 intégrations)
+    * Temps total factorisation matrice                 : 2 min 20 s (9 factorisations)
+    * Temps construction second membre                  : 2.372 s
+    * Temps total résolution K.U=F                      : 4.725 s (9 résolutions)
+    * Temps appariement contact                         : 0.156 s (2 appariements)
+    * Temps préparation données contact                 : 0.066 s (4 préparations)
+    * Temps calculs élémentaires contact                : 1.229 s
+    * Temps assemblage matrice                          : 6.950 s
+    * Nombre de liaisons de contact                     : 7
+    * Nombre de liaisons de frottement adhérentes       : 0
+    * Nombre de cycles de type contact/pas contact      : 0
+    * Nombre de cycles de type glissement/adhérence     : 0
+    * Nombre de cycles de type glissement avant/arrière : 0
+    * Nombre de cycles de type point fixe contact       : 0
+#1      Resolution des systemes lineaires                 CPU (USER+SYST/SYST/ELAPS):    600.53    139.61    146.57
+#2      Calculs elementaires et assemblages               CPU (USER+SYST/SYST/ELAPS):     47.25      5.03     43.34
+#3      Dechargement de la memoire sur disque             CPU (USER+SYST/SYST/ELAPS):      0.95      0.89      1.53
+
+
+ Critère de destruction du fichier (1.00 %) associé à la base VOLATILE dépassé 1.29 %
+ Nombre d'enregistrements utilisés : 813
+ Volume disque occupé              : 635 Mo.
+ Nombre maximum d'enregistrements  : 62914
+
+
+  Ouverture en écriture du fichier ./vola.1
+  # Mémoire (Mo) :  4840.62 /   922.39 /   732.92 /   252.06 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0018   user+syst:      659.18s (syst:      150.09s, elaps:      198.78s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_cmd94
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0019            Concept de type : -
+  # ------------------------------------------------------------------------------------------
+  IMPR_RESU(FORMAT='MED',
+            RESU=_F(RESULTAT=U0,
+                    INFO_MAILLAGE='NON',
+                    IMPR_NOM_VARI='OUI',),
+            UNITE=2,
+            INFO=1,
+            PROC0='OUI',)
+
+
+  -> Votre modèle semble être composé de plusieurs modélisations, les composantes
+      de DEPL qui n'existent pas pour une partie du modèle ont été
+      mises à zéro.
+
+     Dans certains cas, le fichier MED produit peut devenir volumineux. Dans ce
+     cas, l'utilisation du mot-clé NOM_CMP est conseillée.
+  # Mémoire (Mo) :  4840.62 /   944.32 /   732.92 /   252.06 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0019   user+syst:        0.87s (syst:        0.11s, elaps:        2.64s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_cmd95
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0020            Concept de type : -
+  # ------------------------------------------------------------------------------------------
+  FIN(RETASSAGE='NON',
+      INFO_RESU='OUI',
+      FORMAT_HDF='NON',
+      PROC0='OUI',
+      )
+
+   
+   !-------------------------------------------------------------------------!
+   ! <I> <CATAMESS_89>                                                       !
+   !                                                                         !
+   !     Liste des alarmes émises lors de l'exécution du calcul.             !
+   !                                                                         !
+   !     Les alarmes que vous avez choisies d'ignorer sont précédées de (*). !
+   !     Nombre d'occurrences pour chacune des alarmes :                     !
+   !            ALGELINE7_20         émise    1 fois                         !
+   !            ALGORITH13_82        émise    1 fois                         !
+   !            CONTACT3_96          émise    1 fois                         !
+   !            CONTACT3_98          émise    1 fois                         !
+   !            MECANONLINE_2        émise    1 fois                         !
+   !            MODELISA4_8          émise    1 fois                         !
+   !            MODELISA8_13         émise  548 fois                         !
+   !            SUPERVIS_42          émise    1 fois                         !
+   !-------------------------------------------------------------------------!
+   
+
+ ======>
+
+ STRUCTURE DU CONCEPT U0       CALCULE POUR          2 NUMEROS D'ORDRE
+
+ LISTE DES NOMS SYMBOLIQUES:
+ ! ---------- !----------------!----------------!----------------!----------------!----------------!
+ ! NUME_ORDRE !      DEPL      !   SIEF_ELGA    !   VARI_ELGA    !  COMPORTEMENT  !   CONT_NOEU    !
+ ! ---------- !----------------!----------------!----------------!----------------!----------------!
+ !          0 !     DEPL_R     !     SIEF_R     !     VARI_R     !     COMPOR     !     INFC_R     !
+ !          1 !     DEPL_R     !     SIEF_R     !     VARI_R     !     COMPOR     !     INFC_R     !
+ ! ---------- !----------------!----------------!----------------!----------------!----------------!
+
+ LISTE DES NOMS DE VARIABLES D'ACCES:
+                                      INST             DE TYPE  R
+
+ LISTE DES NOMS DE PARAMETRES:
+ ! ---------- !----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!
+ ! NUME_ORDRE !    CARAELEM    !    CHAMPMAT    !     MODELE     !     EXCIT      !  ETA_PILOTAGE  !   ITER_GLOB    !   CHAR_MINI    ! TRAN_GENE_NOLI !
+ ! ---------- !----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!
+ !          0 !       K8       !       K8       !       K8       !      K24       !       R        !       I        !       R        !      K24       !
+ !          1 !       K8       !       K8       !       K8       !      K24       !       R        !       I        !       R        !      K24       !
+ ! ---------- !----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!
+ ---------------------------------------------------------------------------
+ Concepts de la base: G
+    Nom       Type                 Taille (Mo)         Nombre      Nombre de
+                                                     d'objets       segments
+    TOTAL                               125.22            333            551
+  
+    maillage   MAILLAGE_SDASTER          11.19             36            125
+    modele     MODELE_SDASTER             4.57              8             13
+    acier      MATER_SDASTER              0.00              5              5
+    neoprene   MATER_SDASTER              0.00              5              5
+    affect     CHAM_MATER                 0.12              6             11
+    inst1      LISTR8_SDASTER             0.00              6              6
+    depver     FONCTION_SDASTER           0.00              4              4
+    zero       FONCTION_SDASTER           0.00              4              4
+    list_lim   LISTR8_SDASTER             0.04              6              6
+    deph       FORMULE                    0.00              3              3
+    depht      FONCTION_SDASTER           0.08              4              4
+    cd_lim1    CHAR_MECA                  3.22             23             43
+    frotc1     CHAR_CONTACT               3.54             37             42
+    frotc2     CHAR_CONTACT               3.54             37             42
+    chamno     CHAM_NO_SDASTER            8.19              9             11
+    siginit    CARTE_SDASTER              0.61              7             12
+    U0         EVOL_NOLI                 62.35             88            109
+    &FOZERO                               0.00              2              2
+    &&_NUM_C                              0.00              1              1
+    &CATA.AC                              0.00              2              4
+    &CATA.CL                              0.87              1              3
+    &CATA.GD                              0.14              4             11
+    &CATA.ME                              0.20              2              4
+    &CATA.OP                              0.32              4             19
+    &CATA.PH                              0.00              1              1
+    &CATA.PR                              0.00              2              4
+    &CATA.TE                             26.22             17             42
+    &CATA.TH                              0.01              2              4
+    &CATA.TM                              0.01              7             11
+ ---------------------------------------------------------------------------
+
+
+     Nom de la base                          :  GLOBALE
+     Nombre d'enregistrements utilisés       :  184
+     Nombre d'enregistrements maximum        :  62914
+     Longueur d'enregistrement (octets)      :  819200
+     Nombre total d'accès en lecture         :  758
+     Volume des accès en lecture             :        592.19 Mo.
+     Nombre total d'accès en écriture        :  215
+     Volume des accès en écriture            :        167.97 Mo.
+     Nombre d'identificateurs utilisés       :  501
+     Taille maximum du répertoire            :  2000
+     Pourcentage d'utilisation du répertoire :  25 %
+
+
+     Nom de la base                          :  VOLATILE
+     Nombre d'enregistrements utilisés       :  3
+     Nombre d'enregistrements maximum        :  62914
+     Longueur d'enregistrement (octets)      :  819200
+     Nombre total d'accès en lecture         :  2011
+     Volume des accès en lecture             :       1571.09 Mo.
+     Nombre total d'accès en écriture        :  4555
+     Volume des accès en écriture            :       3558.59 Mo.
+     Nombre d'identificateurs utilisés       :  114
+     Taille maximum du répertoire            :  2000
+     Pourcentage d'utilisation du répertoire :  5 %
+
+ <FIN> Arrêt normal dans "FIN".
+ <I> <FIN> ARRET NORMAL DANS "FIN" PAR APPEL A "JEFINI".
+
+
+     Nom de la base                          :  ELEMBASE
+     Nombre d'enregistrements utilisés       :  44
+     Nombre d'enregistrements maximum        :  512
+     Longueur d'enregistrement (octets)      :  819200
+     Nombre total d'accès en lecture         :  62
+     Volume des accès en lecture             :         48.44 Mo.
+     Nombre total d'accès en écriture        :  0
+     Volume des accès en écriture            :          0.00 Mo.
+     Nombre d'identificateurs utilisés       :  123
+     Taille maximum du répertoire            :  300
+     Pourcentage d'utilisation du répertoire :  41 %
+  
+ <I> <FIN> MEMOIRE JEVEUX MINIMALE REQUISE POUR L'EXECUTION :                     252.06 Mo
+ <I> <FIN> MEMOIRE JEVEUX OPTIMALE REQUISE POUR L'EXECUTION :                     732.92 Mo
+ <I> <FIN> MAXIMUM DE MEMOIRE UTILISEE PAR LE PROCESSUS LORS DE L'EXECUTION :    4840.62 Mo
+  
+ <I>       FERMETURE DES BASES EFFECTUEE
+  
+   STATISTIQUES CONCERNANT L'ALLOCATION DYNAMIQUE :
+     TAILLE CUMULEE MAXIMUM            :                  733  Mo.
+     TAILLE CUMULEE LIBEREE            :                 1605  Mo.
+     NOMBRE TOTAL D'ALLOCATIONS        :              1236894
+     NOMBRE TOTAL DE LIBERATIONS       :              1236874
+     APPELS AU MECANISME DE LIBERATION :                    9
+     TAILLE MEMOIRE CUMULEE RECUPEREE  :                 3826  Mo.
+     VOLUME DES LECTURES               :                    9  Mo.
+     VOLUME DES ECRITURES              :                 3274  Mo.
+  
+   MEMOIRE JEVEUX MINIMALE REQUISE POUR L'EXECUTION :     252.06 Mo
+     - IMPOSE DE NOMBREUX ACCES DISQUE
+     - RALENTIT LA VITESSE D'EXECUTION
+   MEMOIRE JEVEUX OPTIMALE REQUISE POUR L'EXECUTION :     732.92 Mo
+     - LIMITE LES ACCES DISQUE
+     - AMELIORE LA VITESSE D'EXECUTION
+   MAXIMUM DE MEMOIRE UTILISEE PAR LE PROCESSUS     :    4840.62 Mo
+     - COMPREND LA MEMOIRE CONSOMMEE PAR  JEVEUX, 
+       LE SUPERVISEUR PYTHON, LES LIBRAIRIES EXTERNES
+  
+ <I>       FIN D'EXECUTION LE : JE-09-AOUT-2018 10:20:06
+
+
+  <I> Informations sur les temps d'exécution
+      Temps cpu user total                  511.45 s
+      Temps cpu systeme total               150.64 s
+      Temps elapsed total                   203.12 s
+      Temps restant                         606.88 s
+
+
+  La signature de la base sauvegardée est (à l'adresse 0) :
+    c592ed2234c8f5dfa26a5dbd9126eaa606f4347c
+
+ ********************************************************************************
+ * COMMAND                  :       USER :     SYSTEM :   USER+SYS :    ELAPSED *
+ ********************************************************************************
+ * init (jdc)               :       0.51 :       0.06 :       0.57 :       0.56 *
+ *  . compile               :       0.00 :       0.00 :       0.00 :       0.00 *
+ *  . exec_compile          :       0.05 :       0.00 :       0.05 :       0.05 *
+ *  . report                :       0.01 :       0.01 :       0.02 :       0.01 *
+ *  . build                 :       0.00 :       0.00 :       0.00 :       0.00 *
+ * DEBUT                    :       0.01 :       0.02 :       0.03 :       0.04 *
+ * LIRE_MAILLAGE            :       0.21 :       0.02 :       0.23 :       0.22 *
+ * AFFE_MODELE              :       0.20 :       0.22 :       0.42 :       0.11 *
+ * DEFI_MATERIAU            :       0.00 :       0.01 :       0.01 :       0.01 *
+ * DEFI_MATERIAU            :       0.00 :       0.00 :       0.00 :       0.00 *
+ * AFFE_MATERIAU            :       0.01 :       0.01 :       0.02 :       0.00 *
+ * DEFI_LIST_REEL           :       0.00 :       0.00 :       0.00 :       0.01 *
+ * DEFI_CONSTANTE           :       0.00 :       0.01 :       0.01 :       0.00 *
+ * DEFI_CONSTANTE           :       0.00 :       0.00 :       0.00 :       0.00 *
+ * DEFI_LIST_REEL           :       0.00 :       0.00 :       0.00 :       0.00 *
+ * FORMULE                  :       0.00 :       0.00 :       0.00 :       0.00 *
+ * CALC_FONC_INTERP         :       0.03 :       0.00 :       0.03 :       0.03 *
+ * AFFE_CHAR_MECA_F         :       0.26 :       0.00 :       0.26 :       0.25 *
+ * DEFI_CONTACT             :       0.09 :       0.01 :       0.10 :       0.11 *
+ * DEFI_CONTACT             :       0.10 :       0.00 :       0.10 :       0.10 *
+ * CREA_CHAMP               :       0.01 :       0.00 :       0.01 :       0.02 *
+ * CREA_CHAMP               :       0.15 :       0.03 :       0.18 :       0.18 *
+ * STAT_NON_LINE            :     509.09 :     150.09 :     659.18 :     198.78 *
+ * IMPR_RESU                :       0.76 :       0.11 :       0.87 :       2.64 *
+ * FIN                      :       0.04 :       0.05 :       0.09 :       0.16 *
+ *  . part Superviseur      :       0.53 :       0.09 :       0.62 :       0.60 *
+ *  . part Fortran          :     510.94 :     150.55 :     661.49 :     202.62 *
+ ********************************************************************************
+ * TOTAL_JOB                :     511.45 :     150.64 :     662.09 :     203.12 *
+ ********************************************************************************
+
+EXECUTION_CODE_ASTER_EXIT_16226-0029-dsp0682157=0
+<INFO> Exécution Code_Aster terminée, diagnostic : <A>_ALARM
+
+--------------------------------------------------------------------------------
+ Contenu de /local00/tmp/B87457-dsp0682157-interactif_16226-0029-dsp0682157 après l'exécution
+
+.:
+total 214868
+drwx------   3 B87457 rdusers      4096 août   9 10:20 .
+drwxrwxrwt 189 root   root       208896 août   9 10:20 ..
+-rw-r--r--   1 B87457 rdusers       906 août   9 10:16 16226-0029-dsp0682157.export
+-rw-r--r--   1 B87457 rdusers      2892 août   9 10:16 config.txt
+-rw-r--r--   1 B87457 rdusers      4960 août   9 10:16 fort.1
+-rw-r--r--   1 B87457 rdusers      4960 août   9 10:16 fort.1.1
+-rw-r--r--   1 B87457 rdusers         0 août   9 10:16 fort.15
+-rw-r--r--   1 B87457 rdusers  57759303 août   9 10:20 fort.2
+-rw-r--r--   1 B87457 rdusers   4564683 août   9 10:16 fort.20
+-rw-r--r--   1 B87457 rdusers     75052 août   9 10:20 fort.6
+-rw-r--r--   1 B87457 rdusers         0 août   9 10:16 fort.8
+-rw-r--r--   1 B87457 rdusers         0 août   9 10:16 fort.9
+-rw-r--r--   1 B87457 rdusers 150732808 août   9 10:20 glob.1
+-rw-r--r--   1 B87457 rdusers        44 août   9 10:20 info_cpu
+-rw-r--r--   1 B87457 rdusers   4980417 août   9 10:20 pick.1
+drwxr-xr-x   2 B87457 rdusers      4096 août   9 10:16 REPE_OUT
+-rw-r--r--   1 B87457 rdusers   2457608 août   9 10:20 vola.1
+
+REPE_OUT:
+total 8
+drwxr-xr-x 2 B87457 rdusers 4096 août   9 10:16 .
+drwx------ 3 B87457 rdusers 4096 août   9 10:20 ..
+
+
+--------------------------------------------------------------------------------
+ Taille des bases
+
+<INFO> taille de vola.1 :      2457608 octets
+<INFO> taille de glob.1 :    150732808 octets
+<INFO> taille de pick.1 :      4980417 octets
+
+--------------------------------------------------------------------------------
+ Copie des résultats
+
+copie de .../fort.2...                                                  [  OK  ]
+copie de .../fort.6...                                                  [  OK  ]
+compression de glob.1                                                   [  OK  ]
+compression de pick.1                                                   [  OK  ]
+copie de .../glob.1.gz...                                               [  OK  ]
+copie de .../pick.1.gz...                                               [  OK  ]
+
+<A>_ALARM          Exécution de Code_Aster terminée
+
+
+ 
+ ---------------------------------------------------------------------------------
+                                            cpu    système    cpu+sys     écoulé
+ ---------------------------------------------------------------------------------
+   Préparation de l'environnement          0.00       0.00       0.00       0.00
+   Copie des données                       0.01       0.00       0.01       0.03
+   Exécution de Code_Aster               512.52     151.01     663.53     204.37
+   Copie des résultats                     3.02       0.11       3.13       4.48
+ ---------------------------------------------------------------------------------
+   Total                                 515.60     151.14     666.74     209.02
+ ---------------------------------------------------------------------------------
+
+as_run 2017.0
+
+------------------------------------------------------------
+--- DIAGNOSTIC JOB : <A>_ALARM
+------------------------------------------------------------
+
+
+EXIT_CODE=0

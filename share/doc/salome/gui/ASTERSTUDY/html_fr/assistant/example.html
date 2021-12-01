@@ -1,0 +1,464 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="fr">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Exemple d’assistant de calcul &#8212; AsterStudy v0.11 Documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Recherche" href="../search.html" />
+    <link rel="next" title="Outil en ligne de commande" href="cmd_line_tool.html" />
+    <link rel="prev" title="Fichier de configuration" href="cfg_file.html" />
+<script type="text/javascript" src="../_static/switchers.js"></script>
+ 
+
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="Index général"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="cmd_line_tool.html" title="Outil en ligne de commande"
+             accesskey="N">suivant</a> |</li>
+        <li class="right" >
+          <a href="cfg_file.html" title="Fichier de configuration"
+             accesskey="P">précédent</a> |</li>
+  <span class="language_switcher_placeholder">fr</span>
+  
+        <li class="nav-item nav-item-0"><a href="../index.html">AsterStudy v0.11 Documentation</a> &#187;</li>
+
+          <li class="nav-item nav-item-1"><a href="assistant.html" accesskey="U">Guide de l’assistant de calcul</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="example-of-calculation-assistant">
+<span id="assistant-example"></span><h1>Exemple d’assistant de calcul<a class="headerlink" href="#example-of-calculation-assistant" title="Lien permanent vers ce titre">¶</a></h1>
+<p>Cet exemple montre comment créer un nouvel assistant de calcul.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Cet exemple n’est pas un cas d’utilisation réel, il est uniquement utilisé à des fins de démonstration.</p>
+</div>
+<div class="section" id="assistant-s-directory">
+<h2>Répertoire de l’assistant<a class="headerlink" href="#assistant-s-directory" title="Lien permanent vers ce titre">¶</a></h2>
+<p>Tout d’abord, il est nécessaire de créer un répertoire dans le répertoire de l’utilisateur, par exemple <code class="docutils literal notranslate"><span class="pre">~/.config/salome/asterstudy_assistants/elastic</span></code>.</p>
+<p>Ce répertoire contiendra le <em>fichier déclaration</em> et le <em>fichier template</em>. Les autres fichiers liés à l’assistant de calcul seront également placés dans ce répertoire.</p>
+</div>
+<div class="section" id="template-file">
+<h2>Fichier template<a class="headerlink" href="#template-file" title="Lien permanent vers ce titre">¶</a></h2>
+<p>Ensuite, il est nécessaire de créer le <em>fichier template</em> qui va représenter un cas de calcul dans <em>AsterStudy</em>. Ce template contiendra plusieurs paramètres que l’utilisateur saisira via l’assistant.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span class="n">DEBUT</span><span class="p">()</span>
+
+<span class="n">mesh</span> <span class="o">=</span> <span class="n">LIRE_MAILLAGE</span><span class="p">(</span><span class="n">FORMAT</span><span class="o">=</span><span class="s">&#39;MED&#39;</span><span class="p">,</span> <span class="n">UNITE</span><span class="o">=%</span><span class="n">INPUT</span><span class="o">%</span><span class="p">)</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">AFFE_MODELE</span><span class="p">(</span><span class="n">AFFE</span><span class="o">=</span><span class="n">_F</span><span class="p">(</span><span class="n">MODELISATION</span><span class="o">=</span><span class="p">(</span><span class="o">%</span><span class="n">MODELISATION</span><span class="o">%</span><span class="p">,</span> <span class="p">),</span>
+                            <span class="n">PHENOMENE</span><span class="o">=</span><span class="s">&#39;MECANIQUE&#39;</span><span class="p">,</span>
+                            <span class="n">TOUT</span><span class="o">=</span><span class="s">&#39;OUI&#39;</span><span class="p">),</span>
+                    <span class="n">MAILLAGE</span><span class="o">=</span><span class="n">mesh</span><span class="p">)</span>
+
+<span class="n">mater</span> <span class="o">=</span> <span class="n">DEFI_MATERIAU</span><span class="p">(</span><span class="n">ELAS</span><span class="o">=</span><span class="n">_F</span><span class="p">(</span><span class="n">E</span><span class="o">=%</span><span class="n">E</span><span class="o">%</span><span class="p">,</span>
+                              <span class="n">NU</span><span class="o">=%</span><span class="n">NU</span><span class="o">%</span><span class="p">))</span>
+
+<span class="n">materfl</span> <span class="o">=</span> <span class="n">AFFE_MATERIAU</span><span class="p">(</span><span class="n">AFFE</span><span class="o">=</span><span class="n">_F</span><span class="p">(</span><span class="n">MATER</span><span class="o">=</span><span class="p">(</span><span class="n">mater</span><span class="p">,</span> <span class="p">),</span>
+                                <span class="n">TOUT</span><span class="o">=</span><span class="s">&#39;OUI&#39;</span><span class="p">),</span>
+                        <span class="n">MODELE</span><span class="o">=</span><span class="n">model</span><span class="p">)</span>
+
+<span class="n">mecabc</span> <span class="o">=</span> <span class="n">AFFE_CHAR_MECA</span><span class="p">(</span><span class="n">DDL_IMPO</span><span class="o">=%</span><span class="n">BC</span><span class="o">%</span><span class="p">,</span>
+                        <span class="n">MODELE</span><span class="o">=</span><span class="n">model</span><span class="p">)</span>
+
+<span class="n">mecach</span> <span class="o">=</span> <span class="n">AFFE_CHAR_MECA</span><span class="p">(</span><span class="n">MODELE</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+                        <span class="n">PRES_REP</span><span class="o">=%</span><span class="n">LOAD</span><span class="o">%</span><span class="p">)</span>
+
+<span class="n">result</span> <span class="o">=</span> <span class="n">MECA_STATIQUE</span><span class="p">(</span><span class="n">CHAM_MATER</span><span class="o">=</span><span class="n">materfl</span><span class="p">,</span>
+                       <span class="n">EXCIT</span><span class="o">=</span><span class="p">(</span><span class="n">_F</span><span class="p">(</span><span class="n">CHARGE</span><span class="o">=</span><span class="n">mecabc</span><span class="p">),</span>
+                              <span class="n">_F</span><span class="p">(</span><span class="n">CHARGE</span><span class="o">=</span><span class="n">mecach</span><span class="p">)),</span>
+                       <span class="n">MODELE</span><span class="o">=</span><span class="n">model</span><span class="p">)</span>
+
+<span class="n">IMPR_RESU</span><span class="p">(</span><span class="n">FORMAT</span><span class="o">=</span><span class="s">&#39;MED&#39;</span><span class="p">,</span>
+          <span class="n">RESU</span><span class="o">=</span><span class="n">_F</span><span class="p">(</span><span class="n">RESULTAT</span><span class="o">=</span><span class="n">result</span><span class="p">),</span>
+          <span class="n">UNITE</span><span class="o">=%</span><span class="n">OUTPUT</span><span class="o">%</span><span class="p">)</span>
+
+<span class="n">FIN</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="declaration-file">
+<h2>Fichier déclaration<a class="headerlink" href="#declaration-file" title="Lien permanent vers ce titre">¶</a></h2>
+<p>L’étape suivante consiste à écrire le <em>fichier déclaration</em>. Celui-ci est écrit dans le format JSON et spécifie comment les paramètres utilisés dans le template sont mappés avec les contrôles de la fenêtre de l’assistant. C’est-à-dire quelles sont les pages de l’assistant, quels sont les contrôles de chaque page, quelles sont les contraintes sur ces contrôles, etc.</p>
+<div class="section" id="base-implementation">
+<h3>Implémentation de base<a class="headerlink" href="#base-implementation" title="Lien permanent vers ce titre">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span class="p">{</span>
+  <span class="s">&quot;title&quot;</span><span class="p">:</span> <span class="s">&quot;Isotropic linear elasticity&quot;</span><span class="p">,</span>
+  <span class="s">&quot;pages&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="p">{</span>
+      <span class="s">&quot;title&quot;</span><span class="p">:</span> <span class="s">&quot;Mesh selection&quot;</span><span class="p">,</span>
+      <span class="s">&quot;parameters&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+          <span class="s">&quot;name&quot;</span><span class="p">:</span> <span class="s">&quot;INPUT&quot;</span><span class="p">,</span>
+          <span class="s">&quot;title&quot;</span><span class="p">:</span> <span class="s">&quot;Specify input mesh&quot;</span><span class="p">,</span>
+          <span class="s">&quot;description&quot;</span><span class="p">:</span> <span class="s">&quot;Enter a path to the MED file or select an existing Mesh object from the list&quot;</span><span class="p">,</span>
+          <span class="s">&quot;typ&quot;</span><span class="p">:</span> <span class="s">&quot;mesh&quot;</span><span class="p">,</span>
+          <span class="s">&quot;unit&quot;</span><span class="p">:</span> <span class="mi">20</span>
+        <span class="p">}</span>
+      <span class="p">]</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+      <span class="s">&quot;title&quot;</span><span class="p">:</span> <span class="s">&quot;Model definition&quot;</span><span class="p">,</span>
+      <span class="s">&quot;parameters&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+          <span class="s">&quot;name&quot;</span><span class="p">:</span> <span class="s">&quot;MODELISATION&quot;</span><span class="p">,</span>
+          <span class="s">&quot;title&quot;</span><span class="p">:</span> <span class="s">&quot;What kind of model do you want to work on?&quot;</span><span class="p">,</span>
+          <span class="s">&quot;description&quot;</span><span class="p">:</span> <span class="s">&quot;Choose model type from the list&quot;</span><span class="p">,</span>
+          <span class="s">&quot;typ&quot;</span><span class="p">:</span> <span class="s">&quot;string&quot;</span><span class="p">,</span>
+          <span class="s">&quot;into&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s">&quot;3D&quot;</span><span class="p">,</span> <span class="s">&quot;C_PLAN&quot;</span><span class="p">,</span> <span class="s">&quot;D_PLAN&quot;</span><span class="p">,</span> <span class="s">&quot;AXIS&quot;</span><span class="p">],</span>
+          <span class="s">&quot;default&quot;</span><span class="p">:</span> <span class="s">&quot;3D&quot;</span>
+        <span class="p">}</span>
+      <span class="p">]</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+      <span class="s">&quot;title&quot;</span><span class="p">:</span> <span class="s">&quot;Material properties&quot;</span><span class="p">,</span>
+      <span class="s">&quot;parameters&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+          <span class="s">&quot;name&quot;</span><span class="p">:</span> <span class="s">&quot;E&quot;</span><span class="p">,</span>
+          <span class="s">&quot;title&quot;</span><span class="p">:</span> <span class="s">&quot;Young&#39;s modulus (E)&quot;</span><span class="p">,</span>
+          <span class="s">&quot;description&quot;</span><span class="p">:</span> <span class="s">&quot;Enter value &gt;= {val_min}&quot;</span><span class="p">,</span>
+          <span class="s">&quot;typ&quot;</span><span class="p">:</span> <span class="s">&quot;float&quot;</span><span class="p">,</span>
+          <span class="s">&quot;val_min&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+          <span class="s">&quot;default&quot;</span><span class="p">:</span> <span class="mf">2.1e11</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+          <span class="s">&quot;name&quot;</span><span class="p">:</span> <span class="s">&quot;NU&quot;</span><span class="p">,</span>
+          <span class="s">&quot;title&quot;</span><span class="p">:</span> <span class="s">&quot;Poisson&#39;s ratio (v)&quot;</span><span class="p">,</span>
+          <span class="s">&quot;description&quot;</span><span class="p">:</span> <span class="s">&quot;Enter value between {val_min} and {val_max}&quot;</span><span class="p">,</span>
+          <span class="s">&quot;typ&quot;</span><span class="p">:</span> <span class="s">&quot;float&quot;</span><span class="p">,</span>
+          <span class="s">&quot;val_min&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+          <span class="s">&quot;val_max&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
+          <span class="s">&quot;default&quot;</span><span class="p">:</span> <span class="mf">0.3</span>
+        <span class="p">}</span>
+      <span class="p">]</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+      <span class="s">&quot;title&quot;</span><span class="p">:</span> <span class="s">&quot;Boundary conditions (1/2)&quot;</span><span class="p">,</span>
+      <span class="s">&quot;parameters&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+          <span class="s">&quot;name&quot;</span><span class="p">:</span> <span class="s">&quot;BC&quot;</span><span class="p">,</span>
+          <span class="s">&quot;title&quot;</span><span class="p">:</span> <span class="s">&quot;Imposed degrees of freedom on groups&quot;</span><span class="p">,</span>
+          <span class="s">&quot;description&quot;</span><span class="p">:</span> <span class="s">&quot;Select mesh groups and apply degrees of freedom on them&quot;</span><span class="p">,</span>
+          <span class="s">&quot;typ&quot;</span><span class="p">:</span> <span class="s">&quot;table&quot;</span><span class="p">,</span>
+          <span class="s">&quot;columns&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">{</span>
+              <span class="s">&quot;name&quot;</span><span class="p">:</span> <span class="s">&quot;GROUP_MA&quot;</span><span class="p">,</span>
+              <span class="s">&quot;title&quot;</span><span class="p">:</span> <span class="s">&quot;Group&quot;</span><span class="p">,</span>
+              <span class="s">&quot;typ&quot;</span><span class="p">:</span> <span class="s">&quot;group_ma&quot;</span>
+            <span class="p">},</span>
+            <span class="p">{</span>
+              <span class="s">&quot;name&quot;</span><span class="p">:</span> <span class="s">&quot;DX&quot;</span><span class="p">,</span>
+              <span class="s">&quot;typ&quot;</span><span class="p">:</span> <span class="s">&quot;float&quot;</span><span class="p">,</span>
+              <span class="s">&quot;mandatory&quot;</span><span class="p">:</span> <span class="n">false</span>
+            <span class="p">},</span>
+            <span class="p">{</span>
+              <span class="s">&quot;name&quot;</span><span class="p">:</span> <span class="s">&quot;DY&quot;</span><span class="p">,</span>
+              <span class="s">&quot;typ&quot;</span><span class="p">:</span> <span class="s">&quot;float&quot;</span><span class="p">,</span>
+              <span class="s">&quot;mandatory&quot;</span><span class="p">:</span> <span class="n">false</span>
+            <span class="p">},</span>
+            <span class="p">{</span>
+              <span class="s">&quot;name&quot;</span><span class="p">:</span> <span class="s">&quot;DZ&quot;</span><span class="p">,</span>
+              <span class="s">&quot;typ&quot;</span><span class="p">:</span> <span class="s">&quot;float&quot;</span><span class="p">,</span>
+              <span class="s">&quot;mandatory&quot;</span><span class="p">:</span> <span class="n">false</span>
+            <span class="p">}</span>
+          <span class="p">],</span>
+          <span class="s">&quot;rule&quot;</span><span class="p">:</span> <span class="s">&quot;{GROUP_MA!r} is not None and ({DX!r} is not None or {DY!r} is not None or {DZ!r} is not None)&quot;</span>
+        <span class="p">}</span>
+      <span class="p">]</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+      <span class="s">&quot;title&quot;</span><span class="p">:</span> <span class="s">&quot;Boundary conditions (2/2)&quot;</span><span class="p">,</span>
+      <span class="s">&quot;parameters&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+          <span class="s">&quot;name&quot;</span><span class="p">:</span> <span class="s">&quot;LOAD&quot;</span><span class="p">,</span>
+          <span class="s">&quot;title&quot;</span><span class="p">:</span> <span class="s">&quot;Pressure on meshes groups&quot;</span><span class="p">,</span>
+          <span class="s">&quot;description&quot;</span><span class="p">:</span> <span class="s">&quot;Select mesh groups and apply pressure on them&quot;</span><span class="p">,</span>
+          <span class="s">&quot;typ&quot;</span><span class="p">:</span> <span class="s">&quot;table&quot;</span><span class="p">,</span>
+          <span class="s">&quot;columns&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">{</span>
+              <span class="s">&quot;name&quot;</span><span class="p">:</span> <span class="s">&quot;GROUP_MA&quot;</span><span class="p">,</span>
+              <span class="s">&quot;title&quot;</span><span class="p">:</span> <span class="s">&quot;Group&quot;</span><span class="p">,</span>
+              <span class="s">&quot;typ&quot;</span><span class="p">:</span> <span class="s">&quot;group_ma&quot;</span>
+            <span class="p">},</span>
+            <span class="p">{</span>
+              <span class="s">&quot;name&quot;</span><span class="p">:</span> <span class="s">&quot;PRES&quot;</span><span class="p">,</span>
+              <span class="s">&quot;typ&quot;</span><span class="p">:</span> <span class="s">&quot;float&quot;</span><span class="p">,</span>
+              <span class="s">&quot;default&quot;</span><span class="p">:</span> <span class="mi">0</span>
+            <span class="p">}</span>
+          <span class="p">]</span>
+        <span class="p">}</span>
+      <span class="p">]</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+      <span class="s">&quot;title&quot;</span><span class="p">:</span> <span class="s">&quot;Result&quot;</span><span class="p">,</span>
+      <span class="s">&quot;parameters&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+          <span class="s">&quot;name&quot;</span><span class="p">:</span> <span class="s">&quot;OUTPUT&quot;</span><span class="p">,</span>
+          <span class="s">&quot;title&quot;</span><span class="p">:</span> <span class="s">&quot;Specify output mesh file&quot;</span><span class="p">,</span>
+          <span class="s">&quot;description&quot;</span><span class="p">:</span> <span class="s">&quot;Enter a path to the result MED file&quot;</span><span class="p">,</span>
+          <span class="s">&quot;typ&quot;</span><span class="p">:</span> <span class="s">&quot;file&quot;</span><span class="p">,</span>
+          <span class="s">&quot;mode&quot;</span><span class="p">:</span> <span class="s">&quot;out&quot;</span><span class="p">,</span>
+          <span class="s">&quot;filters&quot;</span><span class="p">:</span> <span class="s">&quot;Med files (*.med *.rmed *.mmed)&quot;</span><span class="p">,</span>
+          <span class="s">&quot;unit&quot;</span><span class="p">:</span> <span class="mi">80</span>
+        <span class="p">}</span>
+      <span class="p">]</span>
+    <span class="p">}</span>
+  <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="link-to-catalogue-extension">
+<h3>Lien avec le catalogue (extension)<a class="headerlink" href="#link-to-catalogue-extension" title="Lien permanent vers ce titre">¶</a></h3>
+<p>L’utilisation de l’attribut <em>url</em> permet de simplifier le contenu du <em>fichier déclaration</em>. Dans ce cas, il n’est pas nécessaire de préciser tous les attributs, comme le type de valeur, les valeurs minimales/maximales, la valeur par défaut, etc. Tous ces paramètres sont automatiquement déduits depuis le catalogue.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span class="p">{</span>
+  <span class="s">&quot;title&quot;</span><span class="p">:</span> <span class="s">&quot;Isotropic linear elasticity&quot;</span><span class="p">,</span>
+  <span class="s">&quot;pages&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="p">{</span>
+      <span class="s">&quot;title&quot;</span><span class="p">:</span> <span class="s">&quot;Mesh selection&quot;</span><span class="p">,</span>
+      <span class="s">&quot;parameters&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+          <span class="s">&quot;name&quot;</span><span class="p">:</span> <span class="s">&quot;INPUT&quot;</span><span class="p">,</span>
+          <span class="s">&quot;url&quot;</span><span class="p">:</span> <span class="s">&quot;LIRE_MAILLAGE/UNITE&quot;</span>
+        <span class="p">}</span>
+      <span class="p">]</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+      <span class="s">&quot;title&quot;</span><span class="p">:</span> <span class="s">&quot;Model definition&quot;</span><span class="p">,</span>
+      <span class="s">&quot;parameters&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+          <span class="s">&quot;name&quot;</span><span class="p">:</span> <span class="s">&quot;MODELISATION&quot;</span><span class="p">,</span>
+          <span class="s">&quot;url&quot;</span><span class="p">:</span> <span class="s">&quot;AFFE_MODELE/AFFE/MODELISATION&quot;</span>
+        <span class="p">}</span>
+      <span class="p">]</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+      <span class="s">&quot;title&quot;</span><span class="p">:</span> <span class="s">&quot;Material properties&quot;</span><span class="p">,</span>
+      <span class="s">&quot;parameters&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+          <span class="s">&quot;name&quot;</span><span class="p">:</span> <span class="s">&quot;E&quot;</span><span class="p">,</span>
+          <span class="s">&quot;url&quot;</span><span class="p">:</span> <span class="s">&quot;DEFI_MATERIAU/ELAS/E&quot;</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+          <span class="s">&quot;name&quot;</span><span class="p">:</span> <span class="s">&quot;NU&quot;</span><span class="p">,</span>
+          <span class="s">&quot;url&quot;</span><span class="p">:</span> <span class="s">&quot;DEFI_MATERIAU/ELAS/NU&quot;</span>
+        <span class="p">}</span>
+      <span class="p">]</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+      <span class="s">&quot;title&quot;</span><span class="p">:</span> <span class="s">&quot;Boundary conditions (1/2)&quot;</span><span class="p">,</span>
+      <span class="s">&quot;parameters&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+          <span class="s">&quot;name&quot;</span><span class="p">:</span> <span class="s">&quot;BC&quot;</span><span class="p">,</span>
+          <span class="s">&quot;url&quot;</span><span class="p">:</span> <span class="s">&quot;AFFE_CHAR_MECA/DDL_IMPO&quot;</span>
+        <span class="p">}</span>
+      <span class="p">]</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+      <span class="s">&quot;title&quot;</span><span class="p">:</span> <span class="s">&quot;Boundary conditions (2/2)&quot;</span><span class="p">,</span>
+      <span class="s">&quot;parameters&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+          <span class="s">&quot;name&quot;</span><span class="p">:</span> <span class="s">&quot;LOAD&quot;</span><span class="p">,</span>
+          <span class="s">&quot;url&quot;</span><span class="p">:</span> <span class="s">&quot;AFFE_CHAR_MECA/PRES_REP&quot;</span>
+        <span class="p">}</span>
+      <span class="p">]</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+      <span class="s">&quot;title&quot;</span><span class="p">:</span> <span class="s">&quot;Result&quot;</span><span class="p">,</span>
+      <span class="s">&quot;parameters&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+          <span class="s">&quot;name&quot;</span><span class="p">:</span> <span class="s">&quot;OUTPUT&quot;</span><span class="p">,</span>
+          <span class="s">&quot;url&quot;</span><span class="p">:</span> <span class="s">&quot;IMPR_RESU/UNITE&quot;</span>
+        <span class="p">}</span>
+      <span class="p">]</span>
+    <span class="p">}</span>
+  <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Avertissement</p>
+<p class="last">Cette extension de l’implémentation de base de l”<em>assistant de calcul</em> n’est pas encore implémentée.</p>
+</div>
+</div>
+<div class="section" id="extract-description-from-template-extension">
+<h3>Extraire la description depuis le template (extension)<a class="headerlink" href="#extract-description-from-template-extension" title="Lien permanent vers ce titre">¶</a></h3>
+<p>Avec l’extraction automatique des paramètres depuis le <em>fichier template</em>, le <em>fichier déclaration</em> devient encore plus simple étant donné que toutes les informations des paramètres sont extraites automatiquement depuis le <em>fichier template</em>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span class="p">{</span>
+  <span class="s">&quot;title&quot;</span><span class="p">:</span> <span class="s">&quot;Isotropic linear elastic study&quot;</span><span class="p">,</span>
+  <span class="s">&quot;pages&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="p">{</span>
+      <span class="s">&quot;title&quot;</span><span class="p">:</span> <span class="s">&quot;Mesh selection&quot;</span><span class="p">,</span>
+      <span class="s">&quot;parameters&quot;</span><span class="p">:</span> <span class="p">[</span> <span class="s">&quot;INPUT&quot;</span> <span class="p">]</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+      <span class="s">&quot;title&quot;</span><span class="p">:</span> <span class="s">&quot;Model definition&quot;</span><span class="p">,</span>
+      <span class="s">&quot;parameters&quot;</span><span class="p">:</span> <span class="p">[</span> <span class="s">&quot;MODELISATION&quot;</span> <span class="p">]</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+      <span class="s">&quot;title&quot;</span><span class="p">:</span> <span class="s">&quot;Material properties&quot;</span><span class="p">,</span>
+      <span class="s">&quot;parameters&quot;</span><span class="p">:</span> <span class="p">[</span> <span class="s">&quot;E&quot;</span><span class="p">,</span> <span class="s">&quot;NU&quot;</span> <span class="p">]</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+      <span class="s">&quot;title&quot;</span><span class="p">:</span> <span class="s">&quot;Boundary conditions (1/2)&quot;</span><span class="p">,</span>
+      <span class="s">&quot;parameters&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s">&quot;BC&quot;</span> <span class="p">]</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+      <span class="s">&quot;title&quot;</span><span class="p">:</span> <span class="s">&quot;Boundary conditions (2/2)&quot;</span><span class="p">,</span>
+      <span class="s">&quot;parameters&quot;</span><span class="p">:</span> <span class="p">[</span> <span class="s">&quot;LOAD&quot;</span> <span class="p">]</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+      <span class="s">&quot;title&quot;</span><span class="p">:</span> <span class="s">&quot;Result&quot;</span><span class="p">,</span>
+      <span class="s">&quot;parameters&quot;</span><span class="p">:</span> <span class="p">[</span> <span class="s">&quot;OUTPUT&quot;</span> <span class="p">]</span>
+    <span class="p">}</span>
+  <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Avertissement</p>
+<p class="last">Cette extension de l’implémentation de base de l”<em>assistant de calcul</em> n’est pas encore implémentée.</p>
+</div>
+</div>
+</div>
+<div class="section" id="wizard-dialog">
+<h2>Fenêtre de l’assistant<a class="headerlink" href="#wizard-dialog" title="Lien permanent vers ce titre">¶</a></h2>
+<p>L’image ci-dessous montre la fenêtre de l’assistant générée automatiquement à partir du <em>fichier déclaration</em> décrit dans les paragraphes précédents.</p>
+<div class="figure align-center" id="id1">
+<img alt="Page 1: Mesh selection" src="../_images/assistant_example_page1.png" />
+<p class="caption"><span class="caption-text"><strong>Page 1 : Sélection maillage</strong></span></p>
+</div>
+<div class="figure align-center" id="id2">
+<img alt="Page 2: Model definition" src="../_images/assistant_example_page2.png" />
+<p class="caption"><span class="caption-text"><strong>Page 2 : Définition du modèle</strong></span></p>
+</div>
+<div class="figure align-center" id="id3">
+<img alt="Page 3: Material properties" src="../_images/assistant_example_page3.png" />
+<p class="caption"><span class="caption-text"><strong>Page 3 : Propriétés des matériaux</strong></span></p>
+</div>
+<div class="figure align-center" id="id4">
+<img alt="Page 4: Boundary conditions (part 1)" src="../_images/assistant_example_page4.png" />
+<p class="caption"><span class="caption-text"><strong>Page 4 : Conditions limites (part 1)</strong></span></p>
+</div>
+<div class="figure align-center" id="id5">
+<img alt="Page 5: Boundary conditions (part 2)" src="../_images/assistant_example_page5.png" />
+<p class="caption"><span class="caption-text"><strong>Page 5 : Conditions limites (part 2)</strong></span></p>
+</div>
+<div class="figure align-center" id="id6">
+<img alt="Page 6: Output definition" src="../_images/assistant_example_page6.png" />
+<p class="caption"><span class="caption-text"><strong>Page 6 : Définition de la sortie</strong></span></p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+
+<div id="searchbox" style="display: none" role="search">
+  <h3>Recherche rapide</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+<p/>
+  <h3><a href="../index.html">Table des Matières</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Exemple d’assistant de calcul</a><ul>
+<li><a class="reference internal" href="#assistant-s-directory">Répertoire de l’assistant</a></li>
+<li><a class="reference internal" href="#template-file">Fichier template</a></li>
+<li><a class="reference internal" href="#declaration-file">Fichier déclaration</a><ul>
+<li><a class="reference internal" href="#base-implementation">Implémentation de base</a></li>
+<li><a class="reference internal" href="#link-to-catalogue-extension">Lien avec le catalogue (extension)</a></li>
+<li><a class="reference internal" href="#extract-description-from-template-extension">Extraire la description depuis le template (extension)</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#wizard-dialog">Fenêtre de l’assistant</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Sujet précédent</h4>
+  <p class="topless"><a href="cfg_file.html"
+                        title="Chapitre précédent">Fichier de configuration</a></p>
+  <h4>Sujet suivant</h4>
+  <p class="topless"><a href="cmd_line_tool.html"
+                        title="Chapitre suivant">Outil en ligne de commande</a></p>
+  <div role="note" aria-label="source link">
+    <h3>Cette page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/assistant/example.rst.txt"
+            rel="nofollow">Montrer le code source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Recherche rapide</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="Index général"
+             >index</a></li>
+        <li class="right" >
+          <a href="cmd_line_tool.html" title="Outil en ligne de commande"
+             >suivant</a> |</li>
+        <li class="right" >
+          <a href="cfg_file.html" title="Fichier de configuration"
+             >précédent</a> |</li>
+  <span class="language_switcher_placeholder">fr</span>
+  
+        <li class="nav-item nav-item-0"><a href="../index.html">AsterStudy v0.11 Documentation</a> &#187;</li>
+
+          <li class="nav-item nav-item-1"><a href="assistant.html" >Guide de l’assistant de calcul</a> &#187;</li> 
+      </ul>
+    </div>
+ 
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2016-2019 EDF R&amp;D.
+      Créé avec <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.6.
+    </div>
+  </body>
+</html>

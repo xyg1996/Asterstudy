@@ -1,0 +1,6 @@
+DEBUT()
+var1 = (_F(TABLE_PARAM1="value1", TABLE_PARAM2=10, TABLE_PARAM3=12340.0, TABLE_PARAM4="test"), )
+var2 = 10
+var3 = 22
+var4 = True
+FIN()

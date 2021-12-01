@@ -1,0 +1,27 @@
+res_proj = PROJ_CHAMP(
+    MODELE_1=mod_side,
+    MODELE_2=model,
+    NOM_CHAM=('DEPL', ),
+    PROJECTION='OUI',
+    RESULTAT=res_side,
+    VIS_A_VIS=_F(GROUP_MA_1=('side', ), GROUP_MA_2=('side', ))
+)
+
+deplproj = CREA_CHAMP(
+    NOM_CHAM='DEPL',
+    OPERATION='EXTR',
+    RESULTAT=res_proj,
+    TYPE_CHAM='NOEU_DEPL_R'
+)
+
+loaddepl = AFFE_CHAR_MECA(
+    CHAMNO_IMPO=_F(CHAM_NO=deplproj, COEF_IMPO=100.0), MODELE=model
+)
+
+result2 = MECA_STATIQUE(
+    CHAM_MATER=fieldmat, EXCIT=_F(CHARGE=loaddepl), MODELE=model
+)
+
+# IMPR_RESU(RESU=(_F(RESULTAT=result2), _F(RESULTAT=result)), UNITE=80)
+# for test_export.py:test_zoom
+table = LIRE_TABLE(UNITE=80)

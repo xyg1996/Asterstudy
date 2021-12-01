@@ -1,0 +1,148 @@
+{
+  "title": "Isotropic linear elasticity",
+  "class": "IsotropicLineaElasticity",
+  "description": "Isotropic linear elasticity case study",
+  "format": "2.1",
+  "pages": [
+    {
+      "title": "",
+      "description": "",
+      "parameters": [
+        {
+          "name": "INTRO",
+          "title": "Introduction",
+          "text": [
+            "This wizard will create a simple linear elastic analysis.",
+            "",
+            "Boundary conditions are:",
+            "- blocked displacements,",
+            "- and pressures.",
+            "",
+            "Requirements:",
+            "- MED file containing a 2D or 3D mesh.",
+            "- Applying a pressure needs a surface with consistent oriented normals."
+          ],
+          "typ": "text"
+        }
+      ]
+    },
+    {
+      "title": "Mesh selection",
+      "parameters": [
+        {
+          "name": "INPUT",
+          "title": "Specify input mesh",
+          "description": "Enter a path to the MED file or select an existing Mesh object from the list",
+          "typ": "mesh",
+          "unit": 20
+        }
+      ]
+    },
+    {
+      "title": "Model definition",
+      "parameters": [
+        {
+          "name": "MODELISATION",
+          "title": "What kind of model do you want to work on?",
+          "description": "Choose model type from the list",
+          "typ": "string",
+          "into": ["3D", "C_PLAN", "D_PLAN", "AXIS"],
+          "default": "3D"
+        }
+      ]
+    },
+    {
+      "title": "Material properties",
+      "parameters": [
+        {
+          "name": "E",
+          "title": "Young's modulus (E)",
+          "description": "Enter value >= {val_min}",
+          "typ": "float",
+          "val_min": 0,
+          "default": 2.1e11
+        },
+        {
+          "name": "NU",
+          "title": "Poisson's ratio (v)",
+          "description": "Enter value between {val_min} and {val_max}",
+          "typ": "float",
+          "val_min": -1,
+          "val_max": 0.5,
+          "default": 0.3
+        }
+      ]
+    },
+    {
+      "title": "Boundary conditions (1/2)",
+      "parameters": [
+        {
+          "name": "BC",
+          "title": "Imposed degrees of freedom on groups",
+          "description": "Select mesh groups and apply degrees of freedom on them",
+          "typ": "table",
+          "columns": [
+            {
+              "name": "GROUP_MA",
+              "title": "Group",
+              "typ": "groups_ma"
+            },
+            {
+              "name": "DX",
+              "typ": "float",
+              "mandatory": false
+            },
+            {
+              "name": "DY",
+              "typ": "float",
+              "mandatory": false
+            },
+            {
+              "name": "DZ",
+              "typ": "float",
+              "mandatory": false
+            }
+          ],
+          "rule": "{GROUP_MA!r} is not None and ({DX!r} is not None or {DY!r} is not None or {DZ!r} is not None)"
+        }
+      ]
+    },
+    {
+      "title": "Boundary conditions (2/2)",
+      "parameters": [
+        {
+          "name": "LOAD",
+          "title": "Pressure on meshes groups",
+          "description": "Select mesh groups and apply pressure on them",
+          "typ": "table",
+          "columns": [
+            {
+              "name": "GROUP_MA",
+              "title": "Group",
+              "typ": "groups_ma"
+            },
+            {
+              "name": "PRES",
+              "title": "Pressure",
+              "typ": "float",
+              "default": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Result",
+      "parameters": [
+        {
+          "name": "OUTPUT",
+          "title": "Specify output result file",
+          "description": "Enter a path to the MED result file",
+          "typ": "file",
+          "mode": "out",
+          "unit": 80
+        }
+      ]
+    }
+  ]
+}

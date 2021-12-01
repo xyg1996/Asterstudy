@@ -1,0 +1,2611 @@
+
+--------------------------------------------------------------------------------
+ Exécution de Code_Aster
+
+<INFO> préparation de l'environnement dans /local00/tmp/G79848-dsp0837509-interactif_12769
+
+--------------------------------------------------------------------------------
+ Copie des données
+
+copie de .../G79848-dsp0837509-lun.-15-162711.859/RunCase_10_ssnv128a.comm...
+                                                                        [  OK  ]
+copie de .../G79848-dsp0837509-lun.-15-162711.859/ssnv128a.mmed...      [  OK  ]
+<INFO> Paramètres : mémoire 1024.0 Mo - temps max 900 s
+
+--------------------------------------------------------------------------------
+ Contenu de /local00/tmp/G79848-dsp0837509-interactif_12769 avant l'exécution
+
+total 204
+drwx------   3 G79848 rdusers   4096 janv. 15 16:27 .
+drwxrwxrwt 221 root   root     65536 janv. 15 16:27 ..
+-rw-r--r--   1 G79848 rdusers    749 janv. 15 16:27 12769.export
+-rw-r--r--   1 G79848 rdusers   2955 janv. 15 16:27 config.txt
+-rw-r--r--   1 G79848 rdusers   8095 janv. 15 16:27 fort.1.1
+-rw-r--r--   1 G79848 rdusers 111033 janv. 15 16:27 fort.20
+drwxr-xr-x   2 G79848 rdusers   4096 janv. 15 16:27 REPE_OUT
+
+
+--------------------------------------------------------------------------------
+ Exécution de Code_Aster
+
+<INFO> Ligne de commande 1 :
+<INFO> /home/G79848/data/dev/codeaster/install/std/bin/aster /home/G79848/data/dev/codeaster/install/std/lib/aster/Execution/E_SUPERV.py -commandes fort.1 --num_job=12769 --mode=interactif --rep_outils=/home/G79848/salome_meca_integr/V8_INTEGR/tools/Code_aster_frontend-salomemeca/outils --rep_mat=/home/G79848/dev/codeaster/install/std/share/aster/materiau --rep_dex=/home/G79848/dev/codeaster/install/std/share/aster/datg --numthreads=4 --suivi_batch --memjeveux=128.0 --tpmax=900.0
+/home/G79848/data/dev/codeaster/install/std/lib/aster/aster_settings.py:248: DeprecationWarning: this command line option is deprecated : --rep_outils
+  coreopts.parse_args(argv or sys.argv)
+# ------------------------------------------------------------------------------------------
+# Impression du contenu du fichier de commandes à exécuter :
+# ------------------------------------------------------------------------------------------
+DEBUT(
+    CODE=_F(NIV_PUB_WEB='INTERNET'),
+    DEBUG=_F(SDVERI='OUI'),
+    IGNORE_ALARM='MODELE1_63'
+)
+
+MA = LIRE_MAILLAGE(FORMAT='MED', UNITE=20, VERI_MAIL=_F(VERIF='OUI'))
+
+MA = MODI_MAILLAGE(
+    reuse=MA,
+    MAILLAGE=MA,
+    ORIE_PEAU_2D=(_F(GROUP_MA='LPRESV'), _F(GROUP_MA='LPRESH'))
+)
+
+MA = DEFI_GROUP(
+    reuse=MA, CREA_GROUP_NO=_F(GROUP_MA='LCONTA', NOM='LCONTA'), MAILLAGE=MA
+)
+
+MO = AFFE_MODELE(
+    AFFE=_F(MODELISATION='D_PLAN', PHENOMENE='MECANIQUE', TOUT='OUI'),
+    MAILLAGE=MA
+)
+
+MATPLA = DEFI_MATERIAU(ELAS=_F(E=1.3e+11, NU=0.2))
+
+CHMAT = AFFE_MATERIAU(AFFE=_F(MATER=MATPLA, TOUT='OUI'), MAILLAGE=MA)
+
+RAMPE = DEFI_FONCTION(
+    NOM_PARA='INST',
+    PROL_DROITE='LINEAIRE',
+    PROL_GAUCHE='LINEAIRE',
+    VALE=(-4.0, 0.0, 1.0, 1.0)
+)
+
+L_INST = DEFI_LIST_REEL(
+    DEBUT=-4.0,
+    INTERVALLE=(_F(JUSQU_A=0.0, NOMBRE=4), _F(JUSQU_A=1.0, NOMBRE=1))
+)
+
+CHA1 = AFFE_CHAR_MECA(
+    DDL_IMPO=(
+        _F(DX=0.0, DY=0.0, GROUP_MA='LBATI'),
+        _F(DX=0.0, DY=0.0, GROUP_NO='PPS'), _F(DX=0.0, GROUP_MA='LBLOCX')
+    ),
+    MODELE=MO,
+    PRES_REP=(
+        _F(GROUP_MA='LPRESV', PRES=50000000.0),
+        _F(GROUP_MA='LPRESH', PRES=150000000.0)
+    )
+)
+
+CHA3 = DEFI_CONTACT(
+    FORMULATION='DISCRETE',
+    FROTTEMENT='COULOMB',
+    MODELE=MO,
+    NB_ITER_GEOM=2,
+    REAC_GEOM='CONTROLE',
+    ZONE=_F(
+        ALGO_CONT='PENALISATION',
+        ALGO_FROT='PENALISATION',
+        APPARIEMENT='NODAL',
+        COEF_MATR_FROT=0.8,
+        COULOMB=1.0,
+        E_N=1e+12,
+        E_T=1e+11,
+        GROUP_MA_ESCL='LCONTA',
+        GROUP_MA_MAIT='LBATI',
+        NORMALE='MAIT_ESCL'
+    )
+)
+
+U3M = STAT_NON_LINE(
+    CHAM_MATER=CHMAT,
+    COMPORTEMENT=_F(RELATION='ELAS'),
+    CONTACT=CHA3,
+    CONVERGENCE=_F(ARRET='OUI', ITER_GLOB_MAXI=200, RESI_GLOB_RELA=1e-05),
+    EXCIT=_F(CHARGE=CHA1, FONC_MULT=RAMPE),
+    INCREMENT=_F(LIST_INST=L_INST),
+    INFO=1,
+    MODELE=MO,
+    NEWTON=_F(REAC_ITER=1),
+    SOLVEUR=_F()
+)
+
+U3L = STAT_NON_LINE(
+    CHAM_MATER=CHMAT,
+    COMPORTEMENT=_F(RELATION='ELAS'),
+    CONTACT=CHA3,
+    CONVERGENCE=_F(ARRET='OUI', ITER_GLOB_MAXI=200, RESI_GLOB_RELA=1e-05),
+    EXCIT=_F(CHARGE=CHA1, FONC_MULT=RAMPE),
+    INCREMENT=_F(LIST_INST=L_INST),
+    MODELE=MO,
+    NEWTON=_F(REAC_ITER=1),
+    SOLVEUR=_F(METHODE='LDLT')
+)
+
+U3M = CALC_CHAMP(
+    reuse=U3M, CONTRAINTE='SIGM_ELNO', RESULTAT=U3M, VARI_INTERNE='VARI_ELNO'
+)
+
+DEPL3M = CREA_CHAMP(
+    INST=1.0,
+    NOM_CHAM='DEPL',
+    OPERATION='EXTR',
+    RESULTAT=U3M,
+    TYPE_CHAM='NOEU_DEPL_R'
+)
+
+U3L = CALC_CHAMP(
+    reuse=U3L, CONTRAINTE='SIGM_ELNO', RESULTAT=U3L, VARI_INTERNE='VARI_ELNO'
+)
+
+DEPL3L = CREA_CHAMP(
+    INST=1.0,
+    NOM_CHAM='DEPL',
+    OPERATION='EXTR',
+    RESULTAT=U3L,
+    TYPE_CHAM='NOEU_DEPL_R'
+)
+
+TCONT = POST_RELEVE_T(
+    ACTION=_F(
+        GROUP_NO='LCONTA',
+        INST=1.0,
+        INTITULE='CONT',
+        NOM_CHAM='CONT_NOEU',
+        OPERATION='EXTRACTION',
+        RESULTAT=U3L,
+        TOUT_CMP='OUI'
+    )
+)
+
+IMPR_TABLE(TABLE=TCONT)
+
+TEST_RESU(
+    RESU=(
+        _F(
+            GROUP_NO='PPA',
+            INST=1.0,
+            NOM_CHAM='DEPL',
+            NOM_CMP='DX',
+            PRECISION=0.05,
+            REFERENCE='SOURCE_EXTERNE',
+            RESULTAT=U3M,
+            VALE_CALC=2.8648839013e-05,
+            VALE_REFE=2.86e-05
+        ), _F(
+            GROUP_NO='PPB',
+            INST=1.0,
+            NOM_CHAM='DEPL',
+            NOM_CMP='DX',
+            PRECISION=0.05,
+            REFERENCE='SOURCE_EXTERNE',
+            RESULTAT=U3M,
+            VALE_CALC=2.72686641895e-05,
+            VALE_REFE=2.72e-05
+        ), _F(
+            GROUP_NO='PPC',
+            INST=1.0,
+            NOM_CHAM='DEPL',
+            NOM_CMP='DX',
+            PRECISION=0.05,
+            REFERENCE='SOURCE_EXTERNE',
+            RESULTAT=U3M,
+            VALE_CALC=2.29235577257e-05,
+            VALE_REFE=2.28e-05
+        ), _F(
+            GROUP_NO='PPD',
+            INST=1.0,
+            NOM_CHAM='DEPL',
+            NOM_CMP='DX',
+            PRECISION=0.05,
+            REFERENCE='SOURCE_EXTERNE',
+            RESULTAT=U3M,
+            VALE_CALC=1.99288812011e-05,
+            VALE_REFE=1.98e-05
+        ), _F(
+            GROUP_NO='PPE',
+            INST=1.0,
+            NOM_CHAM='DEPL',
+            NOM_CMP='DX',
+            PRECISION=0.05,
+            REFERENCE='SOURCE_EXTERNE',
+            RESULTAT=U3M,
+            VALE_CALC=1.56084651799e-05,
+            VALE_REFE=1.5e-05
+        )
+    )
+)
+
+TEST_RESU(
+    RESU=(
+        _F(
+            GROUP_NO='PPA',
+            INST=1.0,
+            NOM_CHAM='DEPL',
+            NOM_CMP='DX',
+            PRECISION=0.05,
+            REFERENCE='SOURCE_EXTERNE',
+            RESULTAT=U3L,
+            VALE_CALC=2.8648839013e-05,
+            VALE_REFE=2.86e-05
+        ), _F(
+            GROUP_NO='PPB',
+            INST=1.0,
+            NOM_CHAM='DEPL',
+            NOM_CMP='DX',
+            PRECISION=0.05,
+            REFERENCE='SOURCE_EXTERNE',
+            RESULTAT=U3L,
+            VALE_CALC=2.72686641895e-05,
+            VALE_REFE=2.72e-05
+        ), _F(
+            GROUP_NO='PPC',
+            INST=1.0,
+            NOM_CHAM='DEPL',
+            NOM_CMP='DX',
+            PRECISION=0.05,
+            REFERENCE='SOURCE_EXTERNE',
+            RESULTAT=U3L,
+            VALE_CALC=2.29235577257e-05,
+            VALE_REFE=2.28e-05
+        ), _F(
+            GROUP_NO='PPD',
+            INST=1.0,
+            NOM_CHAM='DEPL',
+            NOM_CMP='DX',
+            PRECISION=0.05,
+            REFERENCE='SOURCE_EXTERNE',
+            RESULTAT=U3L,
+            VALE_CALC=1.99288812011e-05,
+            VALE_REFE=1.98e-05
+        ), _F(
+            GROUP_NO='PPE',
+            INST=1.0,
+            NOM_CHAM='DEPL',
+            NOM_CMP='DX',
+            PRECISION=0.05,
+            REFERENCE='SOURCE_EXTERNE',
+            RESULTAT=U3L,
+            VALE_CALC=1.56084651799e-05,
+            VALE_REFE=1.5e-05
+        )
+    )
+)
+
+TEST_RESU(
+    RESU=_F(
+        INST=1.0,
+        NOEUD='N32',
+        NOM_CHAM='CONT_NOEU',
+        NOM_CMP='PROJ_X',
+        PRECISION=1e-08,
+        REFERENCE='ANALYTIQUE',
+        RESULTAT=U3L,
+        VALE_CALC=0.03875,
+        VALE_REFE=0.03875
+    )
+)
+
+TEST_RESU(
+    RESU=_F(
+        CRITERE='ABSOLU',
+        INST=1.0,
+        NOEUD='N32',
+        NOM_CHAM='CONT_NOEU',
+        NOM_CMP='PROJ_Y',
+        PRECISION=1e-08,
+        REFERENCE='ANALYTIQUE',
+        RESULTAT=U3L,
+        VALE_CALC=0.0,
+        VALE_REFE=0.0
+    )
+)
+
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+# 
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+# CAS_TEST__:SSNV128A
+# TEST DU GRECO CALCUL 2D
+# MODELE
+# MAILLAGE : ELEMENT 2D QUADRANGLE A 4 NOEUDS
+# UNITES   : NEWTON , METRE , SECONDE (N,M,S)
+# <MODELE1_63> : DANS UN MODELE, IL EXISTE DES ELEMENTS DE TYPE "BORD" QUI N'ONT PAS DE VOISIN AVEC RIGIDITE
+#  LE MODELE PROVOQUANT CES ALARMES CONTIENT UNE SURFACE RIGIDE POUR LE CONTACT
+# ......................................................................
+#  CALCUL TEST ELEMENTS FINIS DE CONTACT 2D QUAD4
+#  PLAQUE AVEC CONTACT ET FROTTEMENT SUR UN PLAN RIGIDE
+# ......................................................................
+# 
+# -----------------------------------------------------------
+# 
+# -----------------------------------------------------------
+# VERIF PROJECTION  (AVANT-DERNIER NOEUD A DROITE)
+FIN()
+
+# ------------------------------------------------------------------------------------------
+
+  Ouverture en écriture du fichier ./vola.1
+
+ <INFO> Démarrage de l'exécution.
+                                                                                
+                                                                                
+             -- CODE_ASTER -- VERSION : DÉVELOPPEMENT (unstable) --             
+                                                                                
+                     Version 14.1.1 modifiée le 21/12/2017                      
+                   révision 5e48baf462b3 - branche 'default'                    
+                         Copyright EDF R&D 1991 - 2018                          
+                                                                                
+                    Exécution du : Mon Jan 15 16:27:13 2018                     
+                         Nom de la machine : dsp0837509                         
+                              Architecture : 64bit                              
+                          Type de processeur : x86_64                           
+           Système d'exploitation : Linux debian 8.10  3.16.0-4-amd64           
+                        Langue des messages : fr (UTF-8)                        
+                                                                                
+                           Version de Python : 2.7.10                           
+                            Version de NumPy : 1.9.2                            
+                           Parallélisme MPI : inactif                           
+                          Parallélisme OpenMP : actif                           
+                        Nombre de processus utilisés : 4                        
+                     Version de la librairie HDF5 : 1.8.14                      
+                      Version de la librairie MED : 3.2.1                       
+                     Version de la librairie MFront : 3.0.0                     
+                Version de la librairie MUMPS : 5.1.1consortium                 
+                        Librairie PETSc : non disponible                        
+                     Version de la librairie SCOTCH : 6.0.4                     
+
+                  Mémoire limite pour l'exécution : 1024.00 Mo                  
+                   consommée par l'initialisation : 781.16 Mo                   
+                  par les objets du jeu de commandes : 2.64 Mo                  
+                 reste pour l'allocation dynamique : 239.54 Mo                  
+                Taille limite des fichiers d'échange : 12.00 Go                 
+                                                                                
+
+.. __stg1_txt4
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0001            Concept de type : -
+  # ------------------------------------------------------------------------------------------
+  DEBUT(IGNORE_ALARM=('MODELE1_63', ),
+        CODE=_F(NIV_PUB_WEB='INTERNET',),
+        DEBUG=_F(SDVERI='OUI',
+                 JEVEUX='NON',
+                 JXVERI='NON',
+                 HIST_ETAPE='NON',),
+        INFO=1,
+        PAR_LOT='OUI',
+        IMPR_MACRO='NON',
+        MEMOIRE=_F(TAILLE_BLOC=800.0,
+                   TAILLE_GROUP_ELEM=1000,),
+        RESERVE_CPU=_F(BORNE=900,),
+        MESURE_TEMPS=_F(MOYENNE='NON',
+                        NIVE_DETAIL=1,),
+        )
+
+
+  Débogage SDVERI demandé
+   
+   !-------------------------------------------------------------------------------------------!
+   ! <I> <SUPERVIS_22>                                                                         !
+   !                                                                                           !
+   !    Les mots-clés facteurs CODE et DEBUG dans DEBUT/POURSUITE sont réservés aux cas-tests. !
+   !    Il ne faut pas les utiliser dans les études car ils modifient certaines valeurs par    !
+   !    défaut des commandes DEBUT/POURSUITE qui ont des conséquences sur le comportement      !
+   !    en cas d'erreur ou sur les performances.                                               !
+   !-------------------------------------------------------------------------------------------!
+   
+
+  Valeur initiale du temps CPU maximum =   900 secondes
+  Valeur du temps CPU maximum passé aux commandes =   890 secondes
+  Réserve CPU prévue = 10 secondes
+
+  Ouverture en écriture du fichier ./glob.1
+
+  Ouverture en écriture du fichier ./vola.1
+
+  Ouverture en lecture du fichier /home/G79848/data/dev/codeaster/install/std/lib/aster/elem.1
+
+     Nom de la base                          :  ELEMBASE
+     Créée avec la version                   :  14.01.01
+     Nombre d'enregistrements utilisés       :  44
+     Nombre d'enregistrements maximum        :  512
+     Longueur d'enregistrement (octets)      :  819200
+     Nombre d'identificateurs utilisés       :  123
+     Taille maximum du répertoire            :  300
+     Pourcentage d'utilisation du répertoire :  41 %
+
+  Ouverture en lecture du fichier /home/G79848/data/dev/codeaster/install/std/lib/aster/elem.1
+
+
+     Nom de la base                          :  ELEMBASE
+     Nombre d'enregistrements utilisés       :  44
+     Nombre d'enregistrements maximum        :  512
+     Longueur d'enregistrement (octets)      :  819200
+     Nombre total d'accès en lecture         :  62
+     Volume des accès en lecture             :         48.44 Mo.
+     Nombre total d'accès en écriture        :  0
+     Volume des accès en écriture            :          0.00 Mo.
+     Nombre d'identificateurs utilisés       :  123
+     Taille maximum du répertoire            :  300
+     Pourcentage d'utilisation du répertoire :  41 %
+
+  Relecture des catalogues des éléments faite.
+
+  Fin de lecture (durée  0.022661  s.) 
+  # Mémoire (Mo) :   830.36 /   822.46 /    45.26 /    23.44 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0001   user+syst:        0.04s (syst:        0.02s, elaps:        0.04s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_txt7
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0002            Concept de type : maillage_sdaster
+  # ------------------------------------------------------------------------------------------
+  MA = LIRE_MAILLAGE(UNITE=20,
+                     FORMAT='MED',
+                     VERI_MAIL=_F(VERIF='OUI',
+                                  APLAT=1.E-3,),
+                     INFO_MED=1,
+                     INFO=1,)
+
+Vérification du maillage.
+
+------------ MAILLAGE MA       - IMPRESSIONS NIVEAU  1 ------------
+
+CODE_ASTER - 11.00.27 - VERSION DE DEVELOPPEMENT          - FRONTAL1         - L
+
+NOMBRE DE NOEUDS                         396
+
+NOMBRE DE MAILLES                        436
+                              SEG2                  116
+                              QUAD4                 320
+
+NOMBRE DE GROUPES DE NOEUDS               12
+                              PBA                                  1
+                              PBR                                  1
+                              PBS                                  1
+                              PHA                                  1
+                              PHS                                  1
+                              PPA                                  1
+                              PPB                                  1
+                              PPC                                  1
+                              PPD                                  1
+                              PPE                                  1
+                              PPR                                  1
+                              PPS                                  1
+
+NOMBRE DE GROUPES DE MAILLES               8
+                              LBLOCX                              10
+                              LCONTA                              32
+                              LCONTAR                             31
+                              LPRESH                              10
+                              LPRESV                              32
+                              MTOT                               352
+                              LBATI                               32
+                              SPLAQ                              320
+
+--------------------------------------------------------------------------------
+
+  # Mémoire (Mo) :   830.36 /   825.04 /    45.26 /    23.44 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0002   user+syst:        0.03s (syst:        0.00s, elaps:        0.03s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_txt12
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0003            Concept de type : maillage_sdaster
+  # ------------------------------------------------------------------------------------------
+  MA = MODI_MAILLAGE(reuse=MA,
+                     MAILLAGE=MA,
+                     ORIE_PEAU_2D=(_F(GROUP_MA=('LPRESV', ),),
+                                   _F(GROUP_MA=('LPRESH', ),),
+                                   ),
+                     INFO=1,)
+
+TRAITEMENT DU GROUP_MA: LPRESV                   DE      32 MAILLES
+                             32 MAILLE(S) ONT ETE ORIENTEE(S)
+TRAITEMENT DU GROUP_MA: LPRESH                   DE      10 MAILLES
+                             10 MAILLE(S) ONT ETE ORIENTEE(S)
+AU TOTAL      42 MAILLE(S) ORIENTEE(S) 
+  # Mémoire (Mo) :   830.36 /   825.16 /    45.26 /    23.44 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0003   user+syst:        0.01s (syst:        0.00s, elaps:        0.01s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_txt16
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0004            Concept de type : maillage_sdaster
+  # ------------------------------------------------------------------------------------------
+  MA = DEFI_GROUP(reuse=MA,
+                  MAILLAGE=MA,
+                  CREA_GROUP_NO=_F(GROUP_MA=('LCONTA', ),
+                                   NOM=('LCONTA', ),
+                                   CRIT_NOEUD='TOUS',),
+                  ALARME='OUI',)
+
+
+
+NOMBRE  DE GROUPES DE NOEUDS CREES :      1
+=======================================
+
+               ------------------------------------------------------
+               !         NOM DU GROUPE         ! NBRE DE NOEUDS DU  !
+               !            NOEUDS             !      GROUPE_NO     !
+               ------------------------------------------------------
+               !  LCONTA                       !        33          !
+               ------------------------------------------------------
+
+  # Mémoire (Mo) :   830.36 /   825.29 /    45.26 /    23.44 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0004   user+syst:        0.02s (syst:        0.00s, elaps:        0.01s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_txt21
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0005            Concept de type : modele_sdaster
+  # ------------------------------------------------------------------------------------------
+  MO = AFFE_MODELE(MAILLAGE=MA,
+                   AFFE=_F(PHENOMENE='MECANIQUE',
+                           TOUT='OUI',
+                           MODELISATION=('D_PLAN', ),),
+                   INFO=1,
+                   VERI_JACOBIEN='OUI',
+                   DISTRIBUTION=_F(PARTITIONNEUR='METIS',
+                                   METHODE='SOUS_DOMAINE',),
+                   )
+
+
+Sur les 436 mailles du maillage MA, on a demandé l'affectation de 436, on a pu en affecter 436
+ Modélisation     Type maille  Élément fini     Nombre
+ D_PLAN           QUAD4        MEDPQU4          320
+                  SEG2         MEPLSE2          116
+#2      Calculs elementaires et assemblages               CPU (USER+SYST/SYST/ELAPS):      0.00      0.00      0.00
+  # Mémoire (Mo) :   860.62 /   860.62 /    45.26 /    34.50 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0005   user+syst:        0.20s (syst:        0.12s, elaps:        0.06s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_txt24
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0006            Concept de type : mater_sdaster
+  # ------------------------------------------------------------------------------------------
+  MATPLA = DEFI_MATERIAU(ELAS=_F(E=1.30000000000E11,
+                                 NU=0.2,
+                                 COEF_AMOR=1.0,),
+                         INFO=1,)
+
+
+ MATERIAU : MATPLA  
+ RELATION DE COMPORTEMENT: ELAS                            
+
+
+  # Mémoire (Mo) :   860.63 /   860.62 /    45.26 /    34.50 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0006   user+syst:        0.01s (syst:        0.01s, elaps:        0.00s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_txt26
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0007            Concept de type : cham_mater
+  # ------------------------------------------------------------------------------------------
+  CHMAT = AFFE_MATERIAU(MAILLAGE=MA,
+                        AFFE=_F(MATER=(MATPLA, ),
+                                TOUT='OUI',),
+                        INFO=1,
+                        )
+
+  # Mémoire (Mo) :   862.17 /   862.17 /    45.26 /    34.50 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0007   user+syst:        0.11s (syst:        0.07s, elaps:        0.03s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_txt32
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0008            Concept de type : fonction_sdaster
+  # ------------------------------------------------------------------------------------------
+  RAMPE = DEFI_FONCTION(PROL_DROITE='LINEAIRE',
+                        VALE=(-4.0, 0.0, 1.0, 1.0),
+                        NOM_PARA='INST',
+                        PROL_GAUCHE='LINEAIRE',
+                        INFO=1,
+                        INTERPOL=('LIN', ),
+                        NOM_RESU='TOUTRESU',
+                        VERIF='CROISSANT',)
+
+  # Mémoire (Mo) :   862.17 /   862.17 /    45.26 /    34.50 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0008   user+syst:        0.01s (syst:        0.01s, elaps:        0.00s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_txt37
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0009            Concept de type : listr8_sdaster
+  # ------------------------------------------------------------------------------------------
+  L_INST = DEFI_LIST_REEL(DEBUT=-4.0,
+                          INTERVALLE=(_F(NOMBRE=4,
+                                         JUSQU_A=0.0,),
+                                      _F(NOMBRE=1,
+                                         JUSQU_A=1.0,),
+                                      ),
+                          INFO=1,)
+
+  # Mémoire (Mo) :   862.18 /   862.17 /    45.26 /    34.50 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0009   user+syst:        0.01s (syst:        0.01s, elaps:        0.00s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_txt48
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0010            Concept de type : char_meca
+  # ------------------------------------------------------------------------------------------
+  CHA1 = AFFE_CHAR_MECA(MODELE=MO,
+                        DDL_IMPO=(_F(GROUP_MA=('LBATI', ),
+                                     DX=0.0,
+                                     DY=0.0,),
+                                  _F(GROUP_NO=('PPS', ),
+                                     DX=0.0,
+                                     DY=0.0,),
+                                  _F(GROUP_MA=('LBLOCX', ),
+                                     DX=0.0,),
+                                  ),
+                        PRES_REP=(_F(GROUP_MA=('LPRESV', ),
+                                     PRES=5.E7,),
+                                  _F(GROUP_MA=('LPRESH', ),
+                                     PRES=1.50000000E8,),
+                                  ),
+                        INFO=1,
+                        VERI_NORM='OUI',)
+
+  # Mémoire (Mo) :   864.71 /   864.71 /    45.26 /    34.50 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0010   user+syst:        0.13s (syst:        0.04s, elaps:        0.07s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_txt68
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0011            Concept de type : char_contact
+  # ------------------------------------------------------------------------------------------
+  CHA3 = DEFI_CONTACT(FROTTEMENT='COULOMB',
+                      FORMULATION='DISCRETE',
+                      MODELE=MO,
+                      REAC_GEOM='CONTROLE',
+                      NB_ITER_GEOM=2,
+                      ALGO_RESO_GEOM='POINT_FIXE',
+                      ZONE=_F(NORMALE='MAIT_ESCL',
+                              COULOMB=1.0,
+                              GROUP_MA_MAIT='LBATI',
+                              APPARIEMENT='NODAL',
+                              COEF_MATR_FROT=0.8,
+                              E_T=1.E11,
+                              GROUP_MA_ESCL='LCONTA',
+                              ALGO_CONT='PENALISATION',
+                              ALGO_FROT='PENALISATION',
+                              E_N=1.E12,
+                              VECT_ESCL='AUTO',
+                              RESOLUTION='OUI',
+                              DIST_POUTRE='NON',
+                              VECT_MAIT='AUTO',
+                              DIST_COQUE='NON',
+                              TOLE_PROJ_EXT=0.5,
+                              TYPE_PROJECTION='ORTHOGONALE',
+                              DIST_APPA=-1.0,),
+                      VERI_NORM='OUI',
+                      STOP_INTERP='NON',
+                      LISSAGE='NON',
+                      STOP_SINGULIER='OUI',
+                      ITER_GCP_MAXI=0,
+                      PRE_COND='SANS',
+                      NB_RESOL=10,
+                      RECH_LINEAIRE='ADMISSIBLE',
+                      ITER_CONT_MULT=4,)
+
+ T
+  # Mémoire (Mo) :   865.29 /   865.10 /    45.26 /    34.50 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0011   user+syst:        0.04s (syst:        0.00s, elaps:        0.04s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_txt82
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0012            Concept de type : evol_noli
+  # ------------------------------------------------------------------------------------------
+  U3M = STAT_NON_LINE(CHAM_MATER=CHMAT,
+                      MODELE=MO,
+                      INFO=1,
+                      CONTACT=CHA3,
+                      EXCIT=_F(CHARGE=CHA1,
+                               FONC_MULT=RAMPE,
+                               TYPE_CHARGE='FIXE_CSTE',),
+                      INCREMENT=_F(LIST_INST=L_INST,
+                                   PRECISION=1.E-06,),
+                      CONVERGENCE=_F(ARRET='OUI',
+                                     RESI_GLOB_RELA=1.E-05,
+                                     ITER_GLOB_MAXI=200,
+                                     ITER_GLOB_ELAS=25,),
+                      COMPORTEMENT=_F(RELATION='ELAS',
+                                      ITER_INTE_MAXI=20,
+                                      RESI_INTE_RELA=1.E-06,
+                                      ITER_INTE_PAS=0,
+                                      RESI_CPLAN_RELA=1.E-06,
+                                      PARM_THETA=1.0,
+                                      SYME_MATR_TANG='OUI',
+                                      ITER_CPLAN_MAXI=1,
+                                      DEFORMATION='PETIT',
+                                      PARM_ALPHA=1.0,),
+                      SOLVEUR=_F(ACCELERATION='AUTO',
+                                 STOP_SINGULIER='OUI',
+                                 ELIM_LAGR='LAGR2',
+                                 TYPE_RESOL='AUTO',
+                                 MATR_DISTRIBUEE='NON',
+                                 GESTION_MEMOIRE='AUTO',
+                                 FILTRAGE_MATRICE=-1.0,
+                                 RENUM='AUTO',
+                                 LOW_RANK_SEUIL=0.0,
+                                 NPREC=8,
+                                 PCENT_PIVOT=20,
+                                 RESI_RELA=-1.0,
+                                 PRETRAITEMENTS='AUTO',
+                                 POSTTRAITEMENTS='AUTO',
+                                 MIXER_PRECISION='NON',
+                                 METHODE='MUMPS',),
+                      NEWTON=_F(REAC_ITER=1,
+                                REAC_INCR=1,
+                                MATRICE='TANGENTE',
+                                REAC_ITER_ELAS=0,
+                                MATR_RIGI_SYME='NON',),
+                      METHODE='NEWTON',
+                      ARCHIVAGE=_F(PRECISION=1.E-06,
+                                   CRITERE='RELATIF',),
+                      MESURE=_F(TABLE='NON',),
+                      )
+
+
+Liste des comportements
+Affecté sur 436 éléments
+  Relation                             : ELAS
+  Déformation                          : PETIT
+  Nombre total de variables internes   : 1
+         V1 : VIDE
+
+Le système linéaire à résoudre a 948 degrés de liberté:
+   - 792 sont des degrés de liberté physiques
+     (ils sont portés par 396 noeuds du maillage)
+   - 156 sont les couples de paramètres de Lagrange associés
+     aux 78 relations linéaires dualisées.
+
+La matrice est de taille 948 équations.
+Elle contient 7150 termes non nuls si elle est symétrique et 13352 termes non nuls si elle n'est pas symétrique.
+Soit un taux de remplissage de   1.486 %.
+   
+   !------------------------------------------------------------------------------------------------------!
+   ! <A> <CONTACT_1>                                                                                      !
+   !                                                                                                      !
+   ! Contact méthodes discrètes.                                                                          !
+   !  -> Les méthodes de contact discrètes supposent la symétrie de la matrice obtenue après assemblage.  !
+   !     Si votre modélisation produit une matrice non-symétrique, cela peut conduire à des difficultés   !
+   !     de convergence dans le processus de Newton mais en aucun cas il ne produit des résultats faux.   !
+   !                                                                                                      !
+   !     Si la matrice de rigidité de votre structure est symétrique, vous pouvez ignorer ce qui précède. !
+   !     Enfin, il est possible de supprimer l'affichage de cette alarme en renseignant                   !
+   !     MATR_RIGI_SYME  ='OUI' sous le mot-clé facteur NEWTON.                                           !
+   !                                                                                                      !
+   !                                                                                                      !
+   ! Ceci est une alarme. Si vous ne comprenez pas le sens de cette                                       !
+   ! alarme, vous pouvez obtenir des résultats inattendus !                                               !
+   !------------------------------------------------------------------------------------------------------!
+   
+
+ Nombre total de noeuds esclaves pour le contact: 33
+
+ Il n'y a pas d'état initial défini. On prend un état initial nul.
+  Le champ <DEPL> est initialisé a zéro
+  Le champ <SIEF_ELGA> est initialisé a zéro
+  Le champ <VARI_ELGA> est initialisé a zéro
+
+ Archivage de l'état initial
+
+  Archivage des champs
+    Champ stocké <DEPL> à l'instant -4.000000000000e+00 pour le numéro d'ordre 0
+    Champ stocké <SIEF_ELGA> à l'instant -4.000000000000e+00 pour le numéro d'ordre 0
+    Champ stocké <VARI_ELGA> à l'instant -4.000000000000e+00 pour le numéro d'ordre 0
+    Champ stocké <COMPORTEMENT> à l'instant -4.000000000000e+00 pour le numéro d'ordre 0
+    Champ stocké <CONT_NOEU> à l'instant -4.000000000000e+00 pour le numéro d'ordre 0
+------------------------------------------------------------------------------------------------------------------------
+
+ Instant de calcul: -3.000000000000e+00 - Niveau de découpe: 1
+------------------------------------------------------------------------------------------------------------------------
+|     CONTACT    |     NEWTON     |     RESIDU     |     RESIDU     |     OPTION     |     CONTACT    |     CONTACT    |
+|    BCL. GEOM.  |    ITERATION   |     RELATIF    |     ABSOLU     |   ASSEMBLAGE   |    DISCRET     |     CRITERE    |
+|    ITERATION   |                | RESI_GLOB_RELA | RESI_GLOB_MAXI |                |    NB. ITER    |    VALEUR      |
+------------------------------------------------------------------------------------------------------------------------
+|     1        X |     0        X | 1.00000E+00  X | 2.02540E+07    |TANGENTE        |     0          |                |
+|     1        X |     1        X | 1.04171E-01  X | 1.25005E+04    |TANGENTE        |     0          |                |
+|     1        X |     2        X | 2.02338E-01  X | 2.46820E+04    |TANGENTE        |     0          |                |
+|     1        X |     3        X | 4.57189E-02  X | 5.62395E+03    |TANGENTE        |     0          |                |
+|     1        X |     4        X | 2.46067E-01  X | 3.01927E+04    |TANGENTE        |     0          |                |
+|     1        X |     5        X | 1.90520E-02  X | 2.33717E+03    |TANGENTE        |     0          |                |
+|     1        X |     6        X | 1.54650E-02  X | 1.89800E+03    |TANGENTE        |     0          |                |
+|     1        X |     7        X | 6.79925E-03  X | 8.34296E+02    |TANGENTE        |     0          |                |
+|     1        X |     8        X | 1.44841E-03  X | 1.77733E+02    |TANGENTE        |     0          |                |
+|     1        X |     9        X | 1.32308E-04  X | 1.62352E+01    |TANGENTE        |     0          |                |
+|     1        X |    10        X | 4.70737E-05  X | 5.77630E+00    |TANGENTE        |     0          |                |
+|     1        X |    11          | 6.35298E-06    | 7.79559E-01    |TANGENTE        |     0          | 1.00000E-01    |
+------------------------------------------------------------------------------------------------------------------------
+|     2        X |    12        X | 2.32005E-04  X | 2.84688E+01    |TANGENTE        |     0          |                |
+|     2        X |    13        X | 3.36571E-04  X | 4.12995E+01    |TANGENTE        |     0          |                |
+|     2        X |    14        X | 1.68973E-04  X | 2.07343E+01    |TANGENTE        |     0          |                |
+|     2        X |    15        X | 5.89261E-05  X | 7.23066E+00    |TANGENTE        |     0          |                |
+|     2        X |    16        X | 1.15821E-05  X | 1.42121E+00    |TANGENTE        |     0          |                |
+|     2          |    17          | 1.00153E-06    | 1.22895E-01    |TANGENTE        |     0          | 3.72804E-06    |
+------------------------------------------------------------------------------------------------------------------------
+   
+   !--------------------------------------------------------------------------------------------------------------------------!
+   ! <A> <CONTACT3_98>                                                                                                        !
+   !                                                                                                                          !
+   ! Contact et détection de collision.                                                                                       !
+   !     Le contact semble "rasant", c'est-à-dire que le jeu est nul mais que la pression de contact est quasiment            !
+   !     nulle également.                                                                                                     !
+   !     -> Risque & Conseil :                                                                                                !
+   !       La découpe automatique du pas de temps ne sera probablement pas efficace. Si vous constatez de fortes oscillations !
+   !       de la vitesse ou du déplacement au point de contact pour cet instant de calcul malgré l'activation du mode de      !
+   !       traitement automatique de la collision, vous pouvez essayer d'éviter l'instant pour lequel le contact "rasant"     !
+   !       apparaît de deux manières différentes:                                                                             !
+   !        - changer la discrétisation en temps initiale                                                                     !
+   !        - changer la valeur de SUBD_INST                                                                                  !
+   !                                                                                                                          !
+   !                                                                                                                          !
+   ! Ceci est une alarme. Si vous ne comprenez pas le sens de cette                                                           !
+   ! alarme, vous pouvez obtenir des résultats inattendus !                                                                   !
+   !--------------------------------------------------------------------------------------------------------------------------!
+   
+
+  Critère(s) de convergence atteint(s)
+    Le résidu de type <RESI_GLOB_RELA> vaut  1.001528200790e-06 au noeud et degré de liberté <N392    DX>
+
+  Temps CPU consommé dans ce pas de temps    : 0.307 s
+    * Nombre d'itérations de Newton                     : 18
+    * Temps total intégration comportement              : 0.080 s (19 intégrations)
+    * Temps total factorisation matrice                 : 0.079 s (18 factorisations)
+    * Temps construction second membre                  : 0.034 s
+    * Temps total résolution K.U=F                      : 0.020 s (18 résolutions)
+    * Temps appariement contact                         : 0.009 s (2 appariements)
+    * Temps résolution contact                          : 0.042 s (18 itérations)
+    * Temps assemblage matrice                          : 0.015 s
+    * Nombre de liaisons de contact                     : 30
+    * Nombre de liaisons de frottement adhérentes       : 0
+    * Temps autres opérations                           : 0.027 s
+
+  Mémoire (Mo) :   900.51 /   898.19 /    45.26 /    35.51 (VmPeak / VmSize / Optimum / Minimum)
+
+  Archivage des champs
+    Champ stocké <DEPL> à l'instant -3.000000000000e+00 pour le numéro d'ordre 1
+    Champ stocké <SIEF_ELGA> à l'instant -3.000000000000e+00 pour le numéro d'ordre 1
+    Champ stocké <VARI_ELGA> à l'instant -3.000000000000e+00 pour le numéro d'ordre 1
+    Champ stocké <COMPORTEMENT> à l'instant -3.000000000000e+00 pour le numéro d'ordre 1
+    Champ stocké <CONT_NOEU> à l'instant -3.000000000000e+00 pour le numéro d'ordre 1
+------------------------------------------------------------------------------------------------------------------------
+
+ Instant de calcul: -2.000000000000e+00 - Niveau de découpe: 1
+------------------------------------------------------------------------------------------------------------------------
+|     CONTACT    |     NEWTON     |     RESIDU     |     RESIDU     |     OPTION     |     CONTACT    |     CONTACT    |
+|    BCL. GEOM.  |    ITERATION   |     RELATIF    |     ABSOLU     |   ASSEMBLAGE   |    DISCRET     |     CRITERE    |
+|    ITERATION   |                | RESI_GLOB_RELA | RESI_GLOB_MAXI |                |    NB. ITER    |    VALEUR      |
+------------------------------------------------------------------------------------------------------------------------
+|     1        X |     0        X | 1.00000E+00  X | 2.01080E+07    |TANGENTE        |     0          |                |
+|     1        X |     1        X | 1.04188E-01  X | 2.50050E+04    |TANGENTE        |     0          |                |
+|     1        X |     2        X | 2.04250E-01  X | 4.98190E+04    |TANGENTE        |     0          |                |
+|     1        X |     3        X | 3.53452E-02  X | 8.68968E+03    |TANGENTE        |     0          |                |
+|     1        X |     4        X | 1.76070E-01  X | 4.32048E+04    |TANGENTE        |     0          |                |
+|     1        X |     5        X | 1.27602E-02  X | 3.13099E+03    |TANGENTE        |     0          |                |
+|     1        X |     6        X | 5.89563E-03  X | 1.44640E+03    |TANGENTE        |     0          |                |
+|     1        X |     7        X | 1.88790E-03  X | 4.63137E+02    |TANGENTE        |     0          |                |
+|     1        X |     8        X | 3.58701E-04  X | 8.79959E+01    |TANGENTE        |     0          |                |
+|     1        X |     9        X | 4.98692E-05  X | 1.22338E+01    |TANGENTE        |     0          |                |
+|     1        X |    10          | 9.94258E-06    | 2.43910E+00    |TANGENTE        |     0          | 1.00000E-01    |
+------------------------------------------------------------------------------------------------------------------------
+|     2        X |    11        X | 2.21290E-04  X | 5.42865E+01    |TANGENTE        |     0          |                |
+|     2        X |    12        X | 3.22916E-04  X | 7.92168E+01    |TANGENTE        |     0          |                |
+|     2        X |    13        X | 1.61524E-04  X | 3.96248E+01    |TANGENTE        |     0          |                |
+|     2        X |    14        X | 5.56114E-05  X | 1.36425E+01    |TANGENTE        |     0          |                |
+|     2        X |    15        X | 1.07382E-05  X | 2.63428E+00    |TANGENTE        |     0          |                |
+|     2          |    16          | 9.32164E-07    | 2.28677E-01    |TANGENTE        |     0          | 1.31117E-05    |
+------------------------------------------------------------------------------------------------------------------------
+   
+   !--------------------------------------------------------------------------------------------------------------------------!
+   ! <A> <CONTACT3_98>                                                                                                        !
+   !                                                                                                                          !
+   ! Contact et détection de collision.                                                                                       !
+   !     Le contact semble "rasant", c'est-à-dire que le jeu est nul mais que la pression de contact est quasiment            !
+   !     nulle également.                                                                                                     !
+   !     -> Risque & Conseil :                                                                                                !
+   !       La découpe automatique du pas de temps ne sera probablement pas efficace. Si vous constatez de fortes oscillations !
+   !       de la vitesse ou du déplacement au point de contact pour cet instant de calcul malgré l'activation du mode de      !
+   !       traitement automatique de la collision, vous pouvez essayer d'éviter l'instant pour lequel le contact "rasant"     !
+   !       apparaît de deux manières différentes:                                                                             !
+   !        - changer la discrétisation en temps initiale                                                                     !
+   !        - changer la valeur de SUBD_INST                                                                                  !
+   !                                                                                                                          !
+   !                                                                                                                          !
+   ! Ceci est une alarme. Si vous ne comprenez pas le sens de cette                                                           !
+   ! alarme, vous pouvez obtenir des résultats inattendus !                                                                   !
+   !--------------------------------------------------------------------------------------------------------------------------!
+   
+
+  Critère(s) de convergence atteint(s)
+    Le résidu de type <RESI_GLOB_RELA> vaut  9.321637783742e-07 au noeud et degré de liberté <N5      DX>
+
+  Temps CPU consommé dans ce pas de temps    : 0.297 s
+    * Nombre d'itérations de Newton                     : 17
+    * Temps total intégration comportement              : 0.077 s (18 intégrations)
+    * Temps total factorisation matrice                 : 0.073 s (17 factorisations)
+    * Temps construction second membre                  : 0.036 s
+    * Temps total résolution K.U=F                      : 0.019 s (17 résolutions)
+    * Temps appariement contact                         : 0.010 s (2 appariements)
+    * Temps résolution contact                          : 0.041 s (17 itérations)
+    * Temps assemblage matrice                          : 0.015 s
+    * Nombre de liaisons de contact                     : 30
+    * Nombre de liaisons de frottement adhérentes       : 0
+    * Temps autres opérations                           : 0.026 s
+
+  Mémoire (Mo) :   900.65 /   898.34 /    45.26 /    35.51 (VmPeak / VmSize / Optimum / Minimum)
+
+  Archivage des champs
+    Champ stocké <DEPL> à l'instant -2.000000000000e+00 pour le numéro d'ordre 2
+    Champ stocké <SIEF_ELGA> à l'instant -2.000000000000e+00 pour le numéro d'ordre 2
+    Champ stocké <VARI_ELGA> à l'instant -2.000000000000e+00 pour le numéro d'ordre 2
+    Champ stocké <COMPORTEMENT> à l'instant -2.000000000000e+00 pour le numéro d'ordre 2
+    Champ stocké <CONT_NOEU> à l'instant -2.000000000000e+00 pour le numéro d'ordre 2
+------------------------------------------------------------------------------------------------------------------------
+
+ Instant de calcul: -1.000000000000e+00 - Niveau de découpe: 1
+------------------------------------------------------------------------------------------------------------------------
+|     CONTACT    |     NEWTON     |     RESIDU     |     RESIDU     |     OPTION     |     CONTACT    |     CONTACT    |
+|    BCL. GEOM.  |    ITERATION   |     RELATIF    |     ABSOLU     |   ASSEMBLAGE   |    DISCRET     |     CRITERE    |
+|    ITERATION   |                | RESI_GLOB_RELA | RESI_GLOB_MAXI |                |    NB. ITER    |    VALEUR      |
+------------------------------------------------------------------------------------------------------------------------
+|     1        X |     0        X | 1.00000E+00  X | 1.99634E+07    |TANGENTE        |     0          |                |
+|     1        X |     1        X | 1.04211E-01  X | 3.75160E+04    |TANGENTE        |     0          |                |
+|     1        X |     2        X | 2.10656E-01  X | 7.70640E+04    |TANGENTE        |     0          |                |
+|     1        X |     3        X | 5.00482E-02  X | 1.84499E+04    |TANGENTE        |     0          |                |
+|     1        X |     4        X | 1.03538E-01  X | 3.81080E+04    |TANGENTE        |     0          |                |
+|     1        X |     5        X | 2.59331E-02  X | 9.54247E+03    |TANGENTE        |     0          |                |
+|     1        X |     6        X | 1.68983E-02  X | 6.21688E+03    |TANGENTE        |     0          |                |
+|     1        X |     7        X | 4.87151E-03  X | 1.79196E+03    |TANGENTE        |     0          |                |
+|     1        X |     8        X | 1.28842E-03  X | 4.73924E+02    |TANGENTE        |     0          |                |
+|     1        X |     9        X | 4.15191E-04  X | 1.52720E+02    |TANGENTE        |     0          |                |
+|     1        X |    10        X | 9.80119E-05  X | 3.60518E+01    |TANGENTE        |     0          |                |
+|     1        X |    11          | 6.51055E-06    | 2.39478E+00    |TANGENTE        |     0          | 1.00000E-01    |
+------------------------------------------------------------------------------------------------------------------------
+|     2        X |    12        X | 2.14047E-04  X | 7.87331E+01    |TANGENTE        |     0          |                |
+|     2        X |    13        X | 3.12787E-04  X | 1.15052E+02    |TANGENTE        |     0          |                |
+|     2        X |    14        X | 1.57503E-04  X | 5.79343E+01    |TANGENTE        |     0          |                |
+|     2        X |    15        X | 5.42848E-05  X | 1.99676E+01    |TANGENTE        |     0          |                |
+|     2        X |    16        X | 1.04595E-05  X | 3.84733E+00    |TANGENTE        |     0          |                |
+|     2          |    17          | 9.10213E-07    | 3.34804E-01    |TANGENTE        |     0          | 9.62940E-06    |
+------------------------------------------------------------------------------------------------------------------------
+   
+   !--------------------------------------------------------------------------------------------------------------------------!
+   ! <A> <CONTACT3_98>                                                                                                        !
+   !                                                                                                                          !
+   ! Contact et détection de collision.                                                                                       !
+   !     Le contact semble "rasant", c'est-à-dire que le jeu est nul mais que la pression de contact est quasiment            !
+   !     nulle également.                                                                                                     !
+   !     -> Risque & Conseil :                                                                                                !
+   !       La découpe automatique du pas de temps ne sera probablement pas efficace. Si vous constatez de fortes oscillations !
+   !       de la vitesse ou du déplacement au point de contact pour cet instant de calcul malgré l'activation du mode de      !
+   !       traitement automatique de la collision, vous pouvez essayer d'éviter l'instant pour lequel le contact "rasant"     !
+   !       apparaît de deux manières différentes:                                                                             !
+   !        - changer la discrétisation en temps initiale                                                                     !
+   !        - changer la valeur de SUBD_INST                                                                                  !
+   !                                                                                                                          !
+   !                                                                                                                          !
+   ! Ceci est une alarme. Si vous ne comprenez pas le sens de cette                                                           !
+   ! alarme, vous pouvez obtenir des résultats inattendus !                                                                   !
+   !--------------------------------------------------------------------------------------------------------------------------!
+   
+
+  Critère(s) de convergence atteint(s)
+    Le résidu de type <RESI_GLOB_RELA> vaut  9.102130370709e-07 au noeud et degré de liberté <N392    DX>
+
+  Temps CPU consommé dans ce pas de temps    : 0.303 s
+    * Nombre d'itérations de Newton                     : 18
+    * Temps total intégration comportement              : 0.077 s (19 intégrations)
+    * Temps total factorisation matrice                 : 0.082 s (18 factorisations)
+    * Temps construction second membre                  : 0.033 s
+    * Temps total résolution K.U=F                      : 0.020 s (18 résolutions)
+    * Temps appariement contact                         : 0.009 s (2 appariements)
+    * Temps résolution contact                          : 0.041 s (18 itérations)
+    * Temps assemblage matrice                          : 0.015 s
+    * Nombre de liaisons de contact                     : 30
+    * Nombre de liaisons de frottement adhérentes       : 0
+    * Temps autres opérations                           : 0.026 s
+
+  Mémoire (Mo) :   900.80 /   898.50 /    45.26 /    35.51 (VmPeak / VmSize / Optimum / Minimum)
+
+  Archivage des champs
+    Champ stocké <DEPL> à l'instant -1.000000000000e+00 pour le numéro d'ordre 3
+    Champ stocké <SIEF_ELGA> à l'instant -1.000000000000e+00 pour le numéro d'ordre 3
+    Champ stocké <VARI_ELGA> à l'instant -1.000000000000e+00 pour le numéro d'ordre 3
+    Champ stocké <COMPORTEMENT> à l'instant -1.000000000000e+00 pour le numéro d'ordre 3
+    Champ stocké <CONT_NOEU> à l'instant -1.000000000000e+00 pour le numéro d'ordre 3
+------------------------------------------------------------------------------------------------------------------------
+
+ Instant de calcul:  0.000000000000e+00 - Niveau de découpe: 1
+------------------------------------------------------------------------------------------------------------------------
+|     CONTACT    |     NEWTON     |     RESIDU     |     RESIDU     |     OPTION     |     CONTACT    |     CONTACT    |
+|    BCL. GEOM.  |    ITERATION   |     RELATIF    |     ABSOLU     |   ASSEMBLAGE   |    DISCRET     |     CRITERE    |
+|    ITERATION   |                | RESI_GLOB_RELA | RESI_GLOB_MAXI |                |    NB. ITER    |    VALEUR      |
+------------------------------------------------------------------------------------------------------------------------
+|     1        X |     0        X | 1.00000E+00  X | 1.98203E+07    |TANGENTE        |     0          |                |
+|     1        X |     1        X | 1.04234E-01  X | 5.00323E+04    |TANGENTE        |     0          |                |
+|     1        X |     2        X | 2.18397E-01  X | 1.06520E+05    |TANGENTE        |     0          |                |
+|     1        X |     3        X | 5.74029E-02  X | 2.82096E+04    |TANGENTE        |     0          |                |
+|     1        X |     4        X | 2.77431E-02  X | 1.36162E+04    |TANGENTE        |     0          |                |
+|     1        X |     5        X | 1.80674E-01  X | 8.85832E+04    |TANGENTE        |     0          |                |
+|     1        X |     6        X | 1.27753E-02  X | 6.26448E+03    |TANGENTE        |     0          |                |
+|     1        X |     7        X | 6.07002E-03  X | 2.97609E+03    |TANGENTE        |     0          |                |
+|     1        X |     8        X | 2.46323E-03  X | 1.20761E+03    |TANGENTE        |     0          |                |
+|     1        X |     9        X | 9.11992E-04  X | 4.47100E+02    |TANGENTE        |     0          |                |
+|     1        X |    10        X | 2.47711E-04  X | 1.21439E+02    |TANGENTE        |     0          |                |
+|     1        X |    11        X | 1.96091E-05  X | 9.61320E+00    |TANGENTE        |     0          |                |
+|     1        X |    12          | 9.65520E-06    | 4.73339E+00    |TANGENTE        |     0          | 1.00000E-01    |
+------------------------------------------------------------------------------------------------------------------------
+|     2        X |    13        X | 2.01483E-04  X | 9.87756E+01    |TANGENTE        |     0          |                |
+|     2        X |    14        X | 2.93894E-04  X | 1.44079E+02    |TANGENTE        |     0          |                |
+|     2        X |    15        X | 1.48455E-04  X | 7.27788E+01    |TANGENTE        |     0          |                |
+|     2        X |    16        X | 5.07189E-05  X | 2.48645E+01    |TANGENTE        |     0          |                |
+|     2          |    17          | 9.58117E-06    | 4.69709E+00    |TANGENTE        |     0          | 3.36036E-05    |
+------------------------------------------------------------------------------------------------------------------------
+   
+   !--------------------------------------------------------------------------------------------------------------------------!
+   ! <A> <CONTACT3_98>                                                                                                        !
+   !                                                                                                                          !
+   ! Contact et détection de collision.                                                                                       !
+   !     Le contact semble "rasant", c'est-à-dire que le jeu est nul mais que la pression de contact est quasiment            !
+   !     nulle également.                                                                                                     !
+   !     -> Risque & Conseil :                                                                                                !
+   !       La découpe automatique du pas de temps ne sera probablement pas efficace. Si vous constatez de fortes oscillations !
+   !       de la vitesse ou du déplacement au point de contact pour cet instant de calcul malgré l'activation du mode de      !
+   !       traitement automatique de la collision, vous pouvez essayer d'éviter l'instant pour lequel le contact "rasant"     !
+   !       apparaît de deux manières différentes:                                                                             !
+   !        - changer la discrétisation en temps initiale                                                                     !
+   !        - changer la valeur de SUBD_INST                                                                                  !
+   !                                                                                                                          !
+   !                                                                                                                          !
+   ! Ceci est une alarme. Si vous ne comprenez pas le sens de cette                                                           !
+   ! alarme, vous pouvez obtenir des résultats inattendus !                                                                   !
+   !--------------------------------------------------------------------------------------------------------------------------!
+   
+
+  Critère(s) de convergence atteint(s)
+    Le résidu de type <RESI_GLOB_RELA> vaut  9.581174028661e-06 au noeud et degré de liberté <N393    DX>
+
+  Temps CPU consommé dans ce pas de temps    : 0.313 s
+    * Nombre d'itérations de Newton                     : 18
+    * Temps total intégration comportement              : 0.082 s (19 intégrations)
+    * Temps total factorisation matrice                 : 0.077 s (18 factorisations)
+    * Temps construction second membre                  : 0.035 s
+    * Temps total résolution K.U=F                      : 0.020 s (18 résolutions)
+    * Temps appariement contact                         : 0.010 s (2 appariements)
+    * Temps résolution contact                          : 0.044 s (18 itérations)
+    * Temps assemblage matrice                          : 0.015 s
+    * Nombre de liaisons de contact                     : 30
+    * Nombre de liaisons de frottement adhérentes       : 0
+    * Temps autres opérations                           : 0.027 s
+
+  Mémoire (Mo) :   900.98 /   898.59 /    45.26 /    35.51 (VmPeak / VmSize / Optimum / Minimum)
+
+  Archivage des champs
+    Champ stocké <DEPL> à l'instant  0.000000000000e+00 pour le numéro d'ordre 4
+    Champ stocké <SIEF_ELGA> à l'instant  0.000000000000e+00 pour le numéro d'ordre 4
+    Champ stocké <VARI_ELGA> à l'instant  0.000000000000e+00 pour le numéro d'ordre 4
+    Champ stocké <COMPORTEMENT> à l'instant  0.000000000000e+00 pour le numéro d'ordre 4
+    Champ stocké <CONT_NOEU> à l'instant  0.000000000000e+00 pour le numéro d'ordre 4
+------------------------------------------------------------------------------------------------------------------------
+
+ Instant de calcul:  1.000000000000e+00 - Niveau de découpe: 1
+------------------------------------------------------------------------------------------------------------------------
+|     CONTACT    |     NEWTON     |     RESIDU     |     RESIDU     |     OPTION     |     CONTACT    |     CONTACT    |
+|    BCL. GEOM.  |    ITERATION   |     RELATIF    |     ABSOLU     |   ASSEMBLAGE   |    DISCRET     |     CRITERE    |
+|    ITERATION   |                | RESI_GLOB_RELA | RESI_GLOB_MAXI |                |    NB. ITER    |    VALEUR      |
+------------------------------------------------------------------------------------------------------------------------
+|     1        X |     0        X | 1.00000E+00  X | 1.97197E+07    |TANGENTE        |     0          |                |
+|     1        X |     1        X | 1.04256E-01  X | 6.25536E+04    |TANGENTE        |     0          |                |
+|     1        X |     2        X | 2.26526E-01  X | 1.38097E+05    |TANGENTE        |     0          |                |
+|     1        X |     3        X | 1.37259E-01  X | 8.42180E+04    |TANGENTE        |     0          |                |
+|     1        X |     4        X | 4.26108E-02  X | 2.61272E+04    |TANGENTE        |     0          |                |
+|     1        X |     5        X | 1.58591E-01  X | 9.71632E+04    |TANGENTE        |     0          |                |
+|     1        X |     6        X | 2.28567E-02  X | 1.40054E+04    |TANGENTE        |     0          |                |
+|     1        X |     7        X | 8.71705E-03  X | 5.34051E+03    |TANGENTE        |     0          |                |
+|     1        X |     8        X | 3.64395E-03  X | 2.23224E+03    |TANGENTE        |     0          |                |
+|     1        X |     9        X | 1.39715E-03  X | 8.55848E+02    |TANGENTE        |     0          |                |
+|     1        X |    10        X | 4.05922E-04  X | 2.48653E+02    |TANGENTE        |     0          |                |
+|     1        X |    11        X | 9.52134E-05  X | 5.83241E+01    |TANGENTE        |     0          |                |
+|     1        X |    12          | 6.64972E-06    | 4.07337E+00    |TANGENTE        |     0          | 1.00000E-01    |
+------------------------------------------------------------------------------------------------------------------------
+|     2        X |    13        X | 1.94777E-04  X | 1.19313E+02    |TANGENTE        |     0          |                |
+|     2        X |    14        X | 2.83301E-04  X | 1.73539E+02    |TANGENTE        |     0          |                |
+|     2        X |    15        X | 1.41089E-04  X | 8.64259E+01    |TANGENTE        |     0          |                |
+|     2        X |    16        X | 4.70594E-05  X | 2.88268E+01    |TANGENTE        |     0          |                |
+|     2          |    17          | 8.57322E-06    | 5.25163E+00    |TANGENTE        |     0          | 1.74893E-05    |
+------------------------------------------------------------------------------------------------------------------------
+   
+   !--------------------------------------------------------------------------------------------------------------------------!
+   ! <A> <CONTACT3_98>                                                                                                        !
+   !                                                                                                                          !
+   ! Contact et détection de collision.                                                                                       !
+   !     Le contact semble "rasant", c'est-à-dire que le jeu est nul mais que la pression de contact est quasiment            !
+   !     nulle également.                                                                                                     !
+   !     -> Risque & Conseil :                                                                                                !
+   !       La découpe automatique du pas de temps ne sera probablement pas efficace. Si vous constatez de fortes oscillations !
+   !       de la vitesse ou du déplacement au point de contact pour cet instant de calcul malgré l'activation du mode de      !
+   !       traitement automatique de la collision, vous pouvez essayer d'éviter l'instant pour lequel le contact "rasant"     !
+   !       apparaît de deux manières différentes:                                                                             !
+   !        - changer la discrétisation en temps initiale                                                                     !
+   !        - changer la valeur de SUBD_INST                                                                                  !
+   !                                                                                                                          !
+   !                                                                                                                          !
+   ! Ceci est une alarme. Si vous ne comprenez pas le sens de cette                                                           !
+   ! alarme, vous pouvez obtenir des résultats inattendus !                                                                   !
+   !--------------------------------------------------------------------------------------------------------------------------!
+   
+   
+   !-------------------------------------------------------------------------------!
+   ! <A> <CATAMESS_41>                                                             !
+   !                                                                               !
+   ! Le message d'alarme 'CONTACT3_98' a été émis 5 fois, il ne sera plus affiché. !
+   !                                                                               !
+   !                                                                               !
+   ! Ceci est une alarme. Si vous ne comprenez pas le sens de cette                !
+   ! alarme, vous pouvez obtenir des résultats inattendus !                        !
+   !-------------------------------------------------------------------------------!
+   
+
+  Critère(s) de convergence atteint(s)
+    Le résidu de type <RESI_GLOB_RELA> vaut  8.573216775997e-06 au noeud et degré de liberté <N4      DX>
+
+  Temps CPU consommé dans ce pas de temps    : 0.313 s
+    * Nombre d'itérations de Newton                     : 18
+    * Temps total intégration comportement              : 0.083 s (19 intégrations)
+    * Temps total factorisation matrice                 : 0.078 s (18 factorisations)
+    * Temps construction second membre                  : 0.035 s
+    * Temps total résolution K.U=F                      : 0.021 s (18 résolutions)
+    * Temps appariement contact                         : 0.010 s (2 appariements)
+    * Temps résolution contact                          : 0.044 s (18 itérations)
+    * Temps assemblage matrice                          : 0.015 s
+    * Nombre de liaisons de contact                     : 30
+    * Nombre de liaisons de frottement adhérentes       : 0
+    * Temps autres opérations                           : 0.027 s
+
+  Mémoire (Mo) :   900.98 /   898.68 /    45.26 /    35.51 (VmPeak / VmSize / Optimum / Minimum)
+
+  Archivage des champs
+    Champ stocké <DEPL> à l'instant  1.000000000000e+00 pour le numéro d'ordre 5
+    Champ stocké <SIEF_ELGA> à l'instant  1.000000000000e+00 pour le numéro d'ordre 5
+    Champ stocké <VARI_ELGA> à l'instant  1.000000000000e+00 pour le numéro d'ordre 5
+    Champ stocké <COMPORTEMENT> à l'instant  1.000000000000e+00 pour le numéro d'ordre 5
+    Champ stocké <CONT_NOEU> à l'instant  1.000000000000e+00 pour le numéro d'ordre 5
+
+  Temps CPU consommé dans le calcul          : 1.565 s
+    dont temps CPU "perdu" dans les découpes            : 0.000 s
+    * Nombre de pas de temps                            : 5
+    * Nombre d'itérations de Newton                     : 89
+    * Temps dans l'archivage                            : 0.008 s
+    * Temps dans le post-traitement                     : 0.005 s
+    * Temps total intégration comportement              : 0.400 s (94 intégrations)
+    * Temps total factorisation matrice                 : 0.389 s (89 factorisations)
+    * Temps construction second membre                  : 0.173 s
+    * Temps total résolution K.U=F                      : 0.099 s (89 résolutions)
+    * Temps appariement contact                         : 0.050 s (10 appariements)
+    * Temps résolution contact                          : 0.214 s (89 itérations)
+    * Temps assemblage matrice                          : 0.075 s
+    * Nombre de liaisons de contact                     : 30
+    * Nombre de liaisons de frottement adhérentes       : 0
+#1      Resolution des systemes lineaires                 CPU (USER+SYST/SYST/ELAPS):      3.13      1.19      0.49
+#2      Calculs elementaires et assemblages               CPU (USER+SYST/SYST/ELAPS):      3.74      1.35      0.54
+  # Mémoire (Mo) :   900.98 /   897.36 /    45.26 /    35.51 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0012   user+syst:       10.92s (syst:        4.01s, elaps:        1.74s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_txt94
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0013            Concept de type : evol_noli
+  # ------------------------------------------------------------------------------------------
+  U3L = STAT_NON_LINE(CHAM_MATER=CHMAT,
+                      MODELE=MO,
+                      CONTACT=CHA3,
+                      EXCIT=_F(CHARGE=CHA1,
+                               FONC_MULT=RAMPE,
+                               TYPE_CHARGE='FIXE_CSTE',),
+                      INCREMENT=_F(LIST_INST=L_INST,
+                                   PRECISION=1.E-06,),
+                      CONVERGENCE=_F(ARRET='OUI',
+                                     RESI_GLOB_RELA=1.E-05,
+                                     ITER_GLOB_MAXI=200,
+                                     ITER_GLOB_ELAS=25,),
+                      COMPORTEMENT=_F(RELATION='ELAS',
+                                      ITER_INTE_MAXI=20,
+                                      RESI_INTE_RELA=1.E-06,
+                                      ITER_INTE_PAS=0,
+                                      RESI_CPLAN_RELA=1.E-06,
+                                      PARM_THETA=1.0,
+                                      SYME_MATR_TANG='OUI',
+                                      ITER_CPLAN_MAXI=1,
+                                      DEFORMATION='PETIT',
+                                      PARM_ALPHA=1.0,),
+                      SOLVEUR=_F(METHODE='LDLT',
+                                 RENUM='RCMK',
+                                 STOP_SINGULIER='OUI',
+                                 ELIM_LAGR='NON',
+                                 NPREC=8,),
+                      NEWTON=_F(REAC_ITER=1,
+                                REAC_INCR=1,
+                                MATRICE='TANGENTE',
+                                REAC_ITER_ELAS=0,
+                                MATR_RIGI_SYME='NON',),
+                      METHODE='NEWTON',
+                      ARCHIVAGE=_F(PRECISION=1.E-06,
+                                   CRITERE='RELATIF',),
+                      MESURE=_F(TABLE='NON',),
+                      )
+
+
+Liste des comportements
+Affecté sur 436 éléments
+  Relation                             : ELAS
+  Déformation                          : PETIT
+  Nombre total de variables internes   : 1
+         V1 : VIDE
+
+Le système linéaire à résoudre a 948 degrés de liberté:
+   - 792 sont des degrés de liberté physiques
+     (ils sont portés par 396 noeuds du maillage)
+   - 156 sont les couples de paramètres de Lagrange associés
+     aux 78 relations linéaires dualisées.
+
+La matrice est de taille 948 équations.
+Elle contient 7150 termes non nuls si elle est symétrique et 13352 termes non nuls si elle n'est pas symétrique.
+Soit un taux de remplissage de   1.486 %.
+   
+   !------------------------------------------------------------------------------------------------------!
+   ! <A> <CONTACT_1>                                                                                      !
+   !                                                                                                      !
+   ! Contact méthodes discrètes.                                                                          !
+   !  -> Les méthodes de contact discrètes supposent la symétrie de la matrice obtenue après assemblage.  !
+   !     Si votre modélisation produit une matrice non-symétrique, cela peut conduire à des difficultés   !
+   !     de convergence dans le processus de Newton mais en aucun cas il ne produit des résultats faux.   !
+   !                                                                                                      !
+   !     Si la matrice de rigidité de votre structure est symétrique, vous pouvez ignorer ce qui précède. !
+   !     Enfin, il est possible de supprimer l'affichage de cette alarme en renseignant                   !
+   !     MATR_RIGI_SYME  ='OUI' sous le mot-clé facteur NEWTON.                                           !
+   !                                                                                                      !
+   !                                                                                                      !
+   ! Ceci est une alarme. Si vous ne comprenez pas le sens de cette                                       !
+   ! alarme, vous pouvez obtenir des résultats inattendus !                                               !
+   !------------------------------------------------------------------------------------------------------!
+   
+
+ Nombre total de noeuds esclaves pour le contact: 33
+
+ Il n'y a pas d'état initial défini. On prend un état initial nul.
+  Le champ <DEPL> est initialisé a zéro
+  Le champ <SIEF_ELGA> est initialisé a zéro
+  Le champ <VARI_ELGA> est initialisé a zéro
+
+ Archivage de l'état initial
+
+  Archivage des champs
+    Champ stocké <DEPL> à l'instant -4.000000000000e+00 pour le numéro d'ordre 0
+    Champ stocké <SIEF_ELGA> à l'instant -4.000000000000e+00 pour le numéro d'ordre 0
+    Champ stocké <VARI_ELGA> à l'instant -4.000000000000e+00 pour le numéro d'ordre 0
+    Champ stocké <COMPORTEMENT> à l'instant -4.000000000000e+00 pour le numéro d'ordre 0
+    Champ stocké <CONT_NOEU> à l'instant -4.000000000000e+00 pour le numéro d'ordre 0
+------------------------------------------------------------------------------------------------------------------------
+
+ Instant de calcul: -3.000000000000e+00 - Niveau de découpe: 1
+------------------------------------------------------------------------------------------------------------------------
+|     CONTACT    |     NEWTON     |     RESIDU     |     RESIDU     |     OPTION     |     CONTACT    |     CONTACT    |
+|    BCL. GEOM.  |    ITERATION   |     RELATIF    |     ABSOLU     |   ASSEMBLAGE   |    DISCRET     |     CRITERE    |
+|    ITERATION   |                | RESI_GLOB_RELA | RESI_GLOB_MAXI |                |    NB. ITER    |    VALEUR      |
+------------------------------------------------------------------------------------------------------------------------
+ --- RENUMEROTATION DES NOEUDS DU MODELE (RCMK) :
+    --- NOMBRE DE COMPOSANTES CONNEXES DU MODELE :                    2
+    --- HAUTEUR DE COLONNE MOYENNE (EN NOEUDS)
+         (EN NE TENANT COMPTE QUE DES NOEUDS PHYSIQUES)
+         AVANT RENUMEROTATION: 3.322D+01
+         APRES RENUMEROTATION: 1.241D+01
+
+Le système linéaire à résoudre a 948 degrés de liberté:
+   - 792 sont des degrés de liberté physiques
+     (ils sont portés par 396 noeuds du maillage)
+   - 156 sont les couples de paramètres de Lagrange associés
+     aux 78 relations linéaires dualisées.
+|     1        X |     0        X | 1.00000E+00  X | 2.02540E+07    |TANGENTE        |     0          |                |
+|     1        X |     1        X | 1.04171E-01  X | 1.25005E+04    |TANGENTE        |     0          |                |
+|     1        X |     2        X | 2.02338E-01  X | 2.46820E+04    |TANGENTE        |     0          |                |
+|     1        X |     3        X | 4.57189E-02  X | 5.62395E+03    |TANGENTE        |     0          |                |
+|     1        X |     4        X | 2.46067E-01  X | 3.01927E+04    |TANGENTE        |     0          |                |
+|     1        X |     5        X | 1.90520E-02  X | 2.33717E+03    |TANGENTE        |     0          |                |
+|     1        X |     6        X | 1.54650E-02  X | 1.89800E+03    |TANGENTE        |     0          |                |
+|     1        X |     7        X | 6.79925E-03  X | 8.34296E+02    |TANGENTE        |     0          |                |
+|     1        X |     8        X | 1.44841E-03  X | 1.77733E+02    |TANGENTE        |     0          |                |
+|     1        X |     9        X | 1.32308E-04  X | 1.62352E+01    |TANGENTE        |     0          |                |
+|     1        X |    10        X | 4.70737E-05  X | 5.77630E+00    |TANGENTE        |     0          |                |
+|     1        X |    11          | 6.35298E-06    | 7.79559E-01    |TANGENTE        |     0          | 1.00000E-01    |
+------------------------------------------------------------------------------------------------------------------------
+|     2        X |    12        X | 2.32005E-04  X | 2.84688E+01    |TANGENTE        |     0          |                |
+|     2        X |    13        X | 3.36571E-04  X | 4.12995E+01    |TANGENTE        |     0          |                |
+|     2        X |    14        X | 1.68973E-04  X | 2.07343E+01    |TANGENTE        |     0          |                |
+|     2        X |    15        X | 5.89261E-05  X | 7.23066E+00    |TANGENTE        |     0          |                |
+|     2        X |    16        X | 1.15821E-05  X | 1.42121E+00    |TANGENTE        |     0          |                |
+|     2          |    17          | 1.00153E-06    | 1.22895E-01    |TANGENTE        |     0          | 3.72804E-06    |
+------------------------------------------------------------------------------------------------------------------------
+   
+   !--------------------------------------------------------------------------------------------------------------------------!
+   ! <A> <CONTACT3_98>                                                                                                        !
+   !                                                                                                                          !
+   ! Contact et détection de collision.                                                                                       !
+   !     Le contact semble "rasant", c'est-à-dire que le jeu est nul mais que la pression de contact est quasiment            !
+   !     nulle également.                                                                                                     !
+   !     -> Risque & Conseil :                                                                                                !
+   !       La découpe automatique du pas de temps ne sera probablement pas efficace. Si vous constatez de fortes oscillations !
+   !       de la vitesse ou du déplacement au point de contact pour cet instant de calcul malgré l'activation du mode de      !
+   !       traitement automatique de la collision, vous pouvez essayer d'éviter l'instant pour lequel le contact "rasant"     !
+   !       apparaît de deux manières différentes:                                                                             !
+   !        - changer la discrétisation en temps initiale                                                                     !
+   !        - changer la valeur de SUBD_INST                                                                                  !
+   !                                                                                                                          !
+   !                                                                                                                          !
+   ! Ceci est une alarme. Si vous ne comprenez pas le sens de cette                                                           !
+   ! alarme, vous pouvez obtenir des résultats inattendus !                                                                   !
+   !--------------------------------------------------------------------------------------------------------------------------!
+   
+
+  Critère(s) de convergence atteint(s)
+    Le résidu de type <RESI_GLOB_RELA> vaut  1.001528200813e-06 au noeud et degré de liberté <N392    DX>
+
+  Temps CPU consommé dans ce pas de temps    : 0.218 s
+    * Nombre d'itérations de Newton                     : 18
+    * Temps total intégration comportement              : 0.065 s (19 intégrations)
+    * Temps total factorisation matrice                 : 0.047 s (18 factorisations)
+    * Temps construction second membre                  : 0.029 s
+    * Temps total résolution K.U=F                      : 0.003 s (18 résolutions)
+    * Temps appariement contact                         : 0.008 s (2 appariements)
+    * Temps résolution contact                          : 0.034 s (18 itérations)
+    * Temps assemblage matrice                          : 0.011 s
+    * Nombre de liaisons de contact                     : 30
+    * Nombre de liaisons de frottement adhérentes       : 0
+    * Temps autres opérations                           : 0.022 s
+
+  Mémoire (Mo) :   900.98 /   897.96 /    45.26 /    35.51 (VmPeak / VmSize / Optimum / Minimum)
+
+  Archivage des champs
+    Champ stocké <DEPL> à l'instant -3.000000000000e+00 pour le numéro d'ordre 1
+    Champ stocké <SIEF_ELGA> à l'instant -3.000000000000e+00 pour le numéro d'ordre 1
+    Champ stocké <VARI_ELGA> à l'instant -3.000000000000e+00 pour le numéro d'ordre 1
+    Champ stocké <COMPORTEMENT> à l'instant -3.000000000000e+00 pour le numéro d'ordre 1
+    Champ stocké <CONT_NOEU> à l'instant -3.000000000000e+00 pour le numéro d'ordre 1
+------------------------------------------------------------------------------------------------------------------------
+
+ Instant de calcul: -2.000000000000e+00 - Niveau de découpe: 1
+------------------------------------------------------------------------------------------------------------------------
+|     CONTACT    |     NEWTON     |     RESIDU     |     RESIDU     |     OPTION     |     CONTACT    |     CONTACT    |
+|    BCL. GEOM.  |    ITERATION   |     RELATIF    |     ABSOLU     |   ASSEMBLAGE   |    DISCRET     |     CRITERE    |
+|    ITERATION   |                | RESI_GLOB_RELA | RESI_GLOB_MAXI |                |    NB. ITER    |    VALEUR      |
+------------------------------------------------------------------------------------------------------------------------
+|     1        X |     0        X | 1.00000E+00  X | 2.01080E+07    |TANGENTE        |     0          |                |
+|     1        X |     1        X | 1.04188E-01  X | 2.50050E+04    |TANGENTE        |     0          |                |
+|     1        X |     2        X | 2.04250E-01  X | 4.98190E+04    |TANGENTE        |     0          |                |
+|     1        X |     3        X | 3.53452E-02  X | 8.68968E+03    |TANGENTE        |     0          |                |
+|     1        X |     4        X | 1.76070E-01  X | 4.32048E+04    |TANGENTE        |     0          |                |
+|     1        X |     5        X | 1.27602E-02  X | 3.13099E+03    |TANGENTE        |     0          |                |
+|     1        X |     6        X | 5.89563E-03  X | 1.44640E+03    |TANGENTE        |     0          |                |
+|     1        X |     7        X | 1.88790E-03  X | 4.63137E+02    |TANGENTE        |     0          |                |
+|     1        X |     8        X | 3.58701E-04  X | 8.79959E+01    |TANGENTE        |     0          |                |
+|     1        X |     9        X | 4.98692E-05  X | 1.22338E+01    |TANGENTE        |     0          |                |
+|     1        X |    10          | 9.94258E-06    | 2.43910E+00    |TANGENTE        |     0          | 1.00000E-01    |
+------------------------------------------------------------------------------------------------------------------------
+|     2        X |    11        X | 2.21290E-04  X | 5.42865E+01    |TANGENTE        |     0          |                |
+|     2        X |    12        X | 3.22916E-04  X | 7.92168E+01    |TANGENTE        |     0          |                |
+|     2        X |    13        X | 1.61524E-04  X | 3.96248E+01    |TANGENTE        |     0          |                |
+|     2        X |    14        X | 5.56114E-05  X | 1.36425E+01    |TANGENTE        |     0          |                |
+|     2        X |    15        X | 1.07382E-05  X | 2.63428E+00    |TANGENTE        |     0          |                |
+|     2          |    16          | 9.32164E-07    | 2.28677E-01    |TANGENTE        |     0          | 1.31117E-05    |
+------------------------------------------------------------------------------------------------------------------------
+   
+   !--------------------------------------------------------------------------------------------------------------------------!
+   ! <A> <CONTACT3_98>                                                                                                        !
+   !                                                                                                                          !
+   ! Contact et détection de collision.                                                                                       !
+   !     Le contact semble "rasant", c'est-à-dire que le jeu est nul mais que la pression de contact est quasiment            !
+   !     nulle également.                                                                                                     !
+   !     -> Risque & Conseil :                                                                                                !
+   !       La découpe automatique du pas de temps ne sera probablement pas efficace. Si vous constatez de fortes oscillations !
+   !       de la vitesse ou du déplacement au point de contact pour cet instant de calcul malgré l'activation du mode de      !
+   !       traitement automatique de la collision, vous pouvez essayer d'éviter l'instant pour lequel le contact "rasant"     !
+   !       apparaît de deux manières différentes:                                                                             !
+   !        - changer la discrétisation en temps initiale                                                                     !
+   !        - changer la valeur de SUBD_INST                                                                                  !
+   !                                                                                                                          !
+   !                                                                                                                          !
+   ! Ceci est une alarme. Si vous ne comprenez pas le sens de cette                                                           !
+   ! alarme, vous pouvez obtenir des résultats inattendus !                                                                   !
+   !--------------------------------------------------------------------------------------------------------------------------!
+   
+
+  Critère(s) de convergence atteint(s)
+    Le résidu de type <RESI_GLOB_RELA> vaut  9.321637793196e-07 au noeud et degré de liberté <N5      DX>
+
+  Temps CPU consommé dans ce pas de temps    : 0.195 s
+    * Nombre d'itérations de Newton                     : 17
+    * Temps total intégration comportement              : 0.059 s (18 intégrations)
+    * Temps total factorisation matrice                 : 0.041 s (17 factorisations)
+    * Temps construction second membre                  : 0.025 s
+    * Temps total résolution K.U=F                      : 0.002 s (17 résolutions)
+    * Temps appariement contact                         : 0.008 s (2 appariements)
+    * Temps résolution contact                          : 0.031 s (17 itérations)
+    * Temps assemblage matrice                          : 0.010 s
+    * Nombre de liaisons de contact                     : 30
+    * Nombre de liaisons de frottement adhérentes       : 0
+    * Temps autres opérations                           : 0.019 s
+
+  Mémoire (Mo) :   900.98 /   898.06 /    45.26 /    35.51 (VmPeak / VmSize / Optimum / Minimum)
+
+  Archivage des champs
+    Champ stocké <DEPL> à l'instant -2.000000000000e+00 pour le numéro d'ordre 2
+    Champ stocké <SIEF_ELGA> à l'instant -2.000000000000e+00 pour le numéro d'ordre 2
+    Champ stocké <VARI_ELGA> à l'instant -2.000000000000e+00 pour le numéro d'ordre 2
+    Champ stocké <COMPORTEMENT> à l'instant -2.000000000000e+00 pour le numéro d'ordre 2
+    Champ stocké <CONT_NOEU> à l'instant -2.000000000000e+00 pour le numéro d'ordre 2
+------------------------------------------------------------------------------------------------------------------------
+
+ Instant de calcul: -1.000000000000e+00 - Niveau de découpe: 1
+------------------------------------------------------------------------------------------------------------------------
+|     CONTACT    |     NEWTON     |     RESIDU     |     RESIDU     |     OPTION     |     CONTACT    |     CONTACT    |
+|    BCL. GEOM.  |    ITERATION   |     RELATIF    |     ABSOLU     |   ASSEMBLAGE   |    DISCRET     |     CRITERE    |
+|    ITERATION   |                | RESI_GLOB_RELA | RESI_GLOB_MAXI |                |    NB. ITER    |    VALEUR      |
+------------------------------------------------------------------------------------------------------------------------
+|     1        X |     0        X | 1.00000E+00  X | 1.99634E+07    |TANGENTE        |     0          |                |
+|     1        X |     1        X | 1.04211E-01  X | 3.75160E+04    |TANGENTE        |     0          |                |
+|     1        X |     2        X | 2.10656E-01  X | 7.70640E+04    |TANGENTE        |     0          |                |
+|     1        X |     3        X | 5.00482E-02  X | 1.84499E+04    |TANGENTE        |     0          |                |
+|     1        X |     4        X | 1.03538E-01  X | 3.81080E+04    |TANGENTE        |     0          |                |
+|     1        X |     5        X | 2.59331E-02  X | 9.54247E+03    |TANGENTE        |     0          |                |
+|     1        X |     6        X | 1.68983E-02  X | 6.21688E+03    |TANGENTE        |     0          |                |
+|     1        X |     7        X | 4.87151E-03  X | 1.79196E+03    |TANGENTE        |     0          |                |
+|     1        X |     8        X | 1.28842E-03  X | 4.73924E+02    |TANGENTE        |     0          |                |
+|     1        X |     9        X | 4.15191E-04  X | 1.52720E+02    |TANGENTE        |     0          |                |
+|     1        X |    10        X | 9.80119E-05  X | 3.60518E+01    |TANGENTE        |     0          |                |
+|     1        X |    11          | 6.51055E-06    | 2.39478E+00    |TANGENTE        |     0          | 1.00000E-01    |
+------------------------------------------------------------------------------------------------------------------------
+|     2        X |    12        X | 2.14047E-04  X | 7.87331E+01    |TANGENTE        |     0          |                |
+|     2        X |    13        X | 3.12787E-04  X | 1.15052E+02    |TANGENTE        |     0          |                |
+|     2        X |    14        X | 1.57503E-04  X | 5.79343E+01    |TANGENTE        |     0          |                |
+|     2        X |    15        X | 5.42848E-05  X | 1.99676E+01    |TANGENTE        |     0          |                |
+|     2        X |    16        X | 1.04595E-05  X | 3.84733E+00    |TANGENTE        |     0          |                |
+|     2          |    17          | 9.10213E-07    | 3.34804E-01    |TANGENTE        |     0          | 9.62940E-06    |
+------------------------------------------------------------------------------------------------------------------------
+   
+   !--------------------------------------------------------------------------------------------------------------------------!
+   ! <A> <CONTACT3_98>                                                                                                        !
+   !                                                                                                                          !
+   ! Contact et détection de collision.                                                                                       !
+   !     Le contact semble "rasant", c'est-à-dire que le jeu est nul mais que la pression de contact est quasiment            !
+   !     nulle également.                                                                                                     !
+   !     -> Risque & Conseil :                                                                                                !
+   !       La découpe automatique du pas de temps ne sera probablement pas efficace. Si vous constatez de fortes oscillations !
+   !       de la vitesse ou du déplacement au point de contact pour cet instant de calcul malgré l'activation du mode de      !
+   !       traitement automatique de la collision, vous pouvez essayer d'éviter l'instant pour lequel le contact "rasant"     !
+   !       apparaît de deux manières différentes:                                                                             !
+   !        - changer la discrétisation en temps initiale                                                                     !
+   !        - changer la valeur de SUBD_INST                                                                                  !
+   !                                                                                                                          !
+   !                                                                                                                          !
+   ! Ceci est une alarme. Si vous ne comprenez pas le sens de cette                                                           !
+   ! alarme, vous pouvez obtenir des résultats inattendus !                                                                   !
+   !--------------------------------------------------------------------------------------------------------------------------!
+   
+
+  Critère(s) de convergence atteint(s)
+    Le résidu de type <RESI_GLOB_RELA> vaut  9.102130369423e-07 au noeud et degré de liberté <N392    DX>
+
+  Temps CPU consommé dans ce pas de temps    : 0.207 s
+    * Nombre d'itérations de Newton                     : 18
+    * Temps total intégration comportement              : 0.061 s (19 intégrations)
+    * Temps total factorisation matrice                 : 0.045 s (18 factorisations)
+    * Temps construction second membre                  : 0.027 s
+    * Temps total résolution K.U=F                      : 0.003 s (18 résolutions)
+    * Temps appariement contact                         : 0.008 s (2 appariements)
+    * Temps résolution contact                          : 0.033 s (18 itérations)
+    * Temps assemblage matrice                          : 0.010 s
+    * Nombre de liaisons de contact                     : 30
+    * Nombre de liaisons de frottement adhérentes       : 0
+    * Temps autres opérations                           : 0.020 s
+
+  Mémoire (Mo) :   900.98 /   898.23 /    45.26 /    35.51 (VmPeak / VmSize / Optimum / Minimum)
+
+  Archivage des champs
+    Champ stocké <DEPL> à l'instant -1.000000000000e+00 pour le numéro d'ordre 3
+    Champ stocké <SIEF_ELGA> à l'instant -1.000000000000e+00 pour le numéro d'ordre 3
+    Champ stocké <VARI_ELGA> à l'instant -1.000000000000e+00 pour le numéro d'ordre 3
+    Champ stocké <COMPORTEMENT> à l'instant -1.000000000000e+00 pour le numéro d'ordre 3
+    Champ stocké <CONT_NOEU> à l'instant -1.000000000000e+00 pour le numéro d'ordre 3
+------------------------------------------------------------------------------------------------------------------------
+
+ Instant de calcul:  0.000000000000e+00 - Niveau de découpe: 1
+------------------------------------------------------------------------------------------------------------------------
+|     CONTACT    |     NEWTON     |     RESIDU     |     RESIDU     |     OPTION     |     CONTACT    |     CONTACT    |
+|    BCL. GEOM.  |    ITERATION   |     RELATIF    |     ABSOLU     |   ASSEMBLAGE   |    DISCRET     |     CRITERE    |
+|    ITERATION   |                | RESI_GLOB_RELA | RESI_GLOB_MAXI |                |    NB. ITER    |    VALEUR      |
+------------------------------------------------------------------------------------------------------------------------
+|     1        X |     0        X | 1.00000E+00  X | 1.98203E+07    |TANGENTE        |     0          |                |
+|     1        X |     1        X | 1.04234E-01  X | 5.00323E+04    |TANGENTE        |     0          |                |
+|     1        X |     2        X | 2.18397E-01  X | 1.06520E+05    |TANGENTE        |     0          |                |
+|     1        X |     3        X | 5.74029E-02  X | 2.82096E+04    |TANGENTE        |     0          |                |
+|     1        X |     4        X | 2.77431E-02  X | 1.36162E+04    |TANGENTE        |     0          |                |
+|     1        X |     5        X | 1.80674E-01  X | 8.85832E+04    |TANGENTE        |     0          |                |
+|     1        X |     6        X | 1.27753E-02  X | 6.26448E+03    |TANGENTE        |     0          |                |
+|     1        X |     7        X | 6.07002E-03  X | 2.97609E+03    |TANGENTE        |     0          |                |
+|     1        X |     8        X | 2.46323E-03  X | 1.20761E+03    |TANGENTE        |     0          |                |
+|     1        X |     9        X | 9.11992E-04  X | 4.47100E+02    |TANGENTE        |     0          |                |
+|     1        X |    10        X | 2.47711E-04  X | 1.21439E+02    |TANGENTE        |     0          |                |
+|     1        X |    11        X | 1.96091E-05  X | 9.61320E+00    |TANGENTE        |     0          |                |
+|     1        X |    12          | 9.65520E-06    | 4.73339E+00    |TANGENTE        |     0          | 1.00000E-01    |
+------------------------------------------------------------------------------------------------------------------------
+|     2        X |    13        X | 2.01483E-04  X | 9.87756E+01    |TANGENTE        |     0          |                |
+|     2        X |    14        X | 2.93894E-04  X | 1.44079E+02    |TANGENTE        |     0          |                |
+|     2        X |    15        X | 1.48455E-04  X | 7.27788E+01    |TANGENTE        |     0          |                |
+|     2        X |    16        X | 5.07189E-05  X | 2.48645E+01    |TANGENTE        |     0          |                |
+|     2          |    17          | 9.58117E-06    | 4.69709E+00    |TANGENTE        |     0          | 3.36036E-05    |
+------------------------------------------------------------------------------------------------------------------------
+   
+   !--------------------------------------------------------------------------------------------------------------------------!
+   ! <A> <CONTACT3_98>                                                                                                        !
+   !                                                                                                                          !
+   ! Contact et détection de collision.                                                                                       !
+   !     Le contact semble "rasant", c'est-à-dire que le jeu est nul mais que la pression de contact est quasiment            !
+   !     nulle également.                                                                                                     !
+   !     -> Risque & Conseil :                                                                                                !
+   !       La découpe automatique du pas de temps ne sera probablement pas efficace. Si vous constatez de fortes oscillations !
+   !       de la vitesse ou du déplacement au point de contact pour cet instant de calcul malgré l'activation du mode de      !
+   !       traitement automatique de la collision, vous pouvez essayer d'éviter l'instant pour lequel le contact "rasant"     !
+   !       apparaît de deux manières différentes:                                                                             !
+   !        - changer la discrétisation en temps initiale                                                                     !
+   !        - changer la valeur de SUBD_INST                                                                                  !
+   !                                                                                                                          !
+   !                                                                                                                          !
+   ! Ceci est une alarme. Si vous ne comprenez pas le sens de cette                                                           !
+   ! alarme, vous pouvez obtenir des résultats inattendus !                                                                   !
+   !--------------------------------------------------------------------------------------------------------------------------!
+   
+
+  Critère(s) de convergence atteint(s)
+    Le résidu de type <RESI_GLOB_RELA> vaut  9.581174028670e-06 au noeud et degré de liberté <N393    DX>
+
+  Temps CPU consommé dans ce pas de temps    : 0.207 s
+    * Nombre d'itérations de Newton                     : 18
+    * Temps total intégration comportement              : 0.062 s (19 intégrations)
+    * Temps total factorisation matrice                 : 0.044 s (18 factorisations)
+    * Temps construction second membre                  : 0.027 s
+    * Temps total résolution K.U=F                      : 0.003 s (18 résolutions)
+    * Temps appariement contact                         : 0.008 s (2 appariements)
+    * Temps résolution contact                          : 0.033 s (18 itérations)
+    * Temps assemblage matrice                          : 0.011 s
+    * Nombre de liaisons de contact                     : 30
+    * Nombre de liaisons de frottement adhérentes       : 0
+    * Temps autres opérations                           : 0.021 s
+
+  Mémoire (Mo) :   900.98 /   898.23 /    45.26 /    35.51 (VmPeak / VmSize / Optimum / Minimum)
+
+  Archivage des champs
+    Champ stocké <DEPL> à l'instant  0.000000000000e+00 pour le numéro d'ordre 4
+    Champ stocké <SIEF_ELGA> à l'instant  0.000000000000e+00 pour le numéro d'ordre 4
+    Champ stocké <VARI_ELGA> à l'instant  0.000000000000e+00 pour le numéro d'ordre 4
+    Champ stocké <COMPORTEMENT> à l'instant  0.000000000000e+00 pour le numéro d'ordre 4
+    Champ stocké <CONT_NOEU> à l'instant  0.000000000000e+00 pour le numéro d'ordre 4
+------------------------------------------------------------------------------------------------------------------------
+
+ Instant de calcul:  1.000000000000e+00 - Niveau de découpe: 1
+------------------------------------------------------------------------------------------------------------------------
+|     CONTACT    |     NEWTON     |     RESIDU     |     RESIDU     |     OPTION     |     CONTACT    |     CONTACT    |
+|    BCL. GEOM.  |    ITERATION   |     RELATIF    |     ABSOLU     |   ASSEMBLAGE   |    DISCRET     |     CRITERE    |
+|    ITERATION   |                | RESI_GLOB_RELA | RESI_GLOB_MAXI |                |    NB. ITER    |    VALEUR      |
+------------------------------------------------------------------------------------------------------------------------
+|     1        X |     0        X | 1.00000E+00  X | 1.97197E+07    |TANGENTE        |     0          |                |
+|     1        X |     1        X | 1.04256E-01  X | 6.25536E+04    |TANGENTE        |     0          |                |
+|     1        X |     2        X | 2.26526E-01  X | 1.38097E+05    |TANGENTE        |     0          |                |
+|     1        X |     3        X | 1.37259E-01  X | 8.42180E+04    |TANGENTE        |     0          |                |
+|     1        X |     4        X | 4.26108E-02  X | 2.61272E+04    |TANGENTE        |     0          |                |
+|     1        X |     5        X | 1.58591E-01  X | 9.71632E+04    |TANGENTE        |     0          |                |
+|     1        X |     6        X | 2.28567E-02  X | 1.40054E+04    |TANGENTE        |     0          |                |
+|     1        X |     7        X | 8.71705E-03  X | 5.34051E+03    |TANGENTE        |     0          |                |
+|     1        X |     8        X | 3.64395E-03  X | 2.23224E+03    |TANGENTE        |     0          |                |
+|     1        X |     9        X | 1.39715E-03  X | 8.55848E+02    |TANGENTE        |     0          |                |
+|     1        X |    10        X | 4.05922E-04  X | 2.48653E+02    |TANGENTE        |     0          |                |
+|     1        X |    11        X | 9.52134E-05  X | 5.83241E+01    |TANGENTE        |     0          |                |
+|     1        X |    12          | 6.64972E-06    | 4.07337E+00    |TANGENTE        |     0          | 1.00000E-01    |
+------------------------------------------------------------------------------------------------------------------------
+|     2        X |    13        X | 1.94777E-04  X | 1.19313E+02    |TANGENTE        |     0          |                |
+|     2        X |    14        X | 2.83301E-04  X | 1.73539E+02    |TANGENTE        |     0          |                |
+|     2        X |    15        X | 1.41089E-04  X | 8.64259E+01    |TANGENTE        |     0          |                |
+|     2        X |    16        X | 4.70594E-05  X | 2.88268E+01    |TANGENTE        |     0          |                |
+|     2          |    17          | 8.57322E-06    | 5.25163E+00    |TANGENTE        |     0          | 1.74893E-05    |
+------------------------------------------------------------------------------------------------------------------------
+   
+   !--------------------------------------------------------------------------------------------------------------------------!
+   ! <A> <CONTACT3_98>                                                                                                        !
+   !                                                                                                                          !
+   ! Contact et détection de collision.                                                                                       !
+   !     Le contact semble "rasant", c'est-à-dire que le jeu est nul mais que la pression de contact est quasiment            !
+   !     nulle également.                                                                                                     !
+   !     -> Risque & Conseil :                                                                                                !
+   !       La découpe automatique du pas de temps ne sera probablement pas efficace. Si vous constatez de fortes oscillations !
+   !       de la vitesse ou du déplacement au point de contact pour cet instant de calcul malgré l'activation du mode de      !
+   !       traitement automatique de la collision, vous pouvez essayer d'éviter l'instant pour lequel le contact "rasant"     !
+   !       apparaît de deux manières différentes:                                                                             !
+   !        - changer la discrétisation en temps initiale                                                                     !
+   !        - changer la valeur de SUBD_INST                                                                                  !
+   !                                                                                                                          !
+   !                                                                                                                          !
+   ! Ceci est une alarme. Si vous ne comprenez pas le sens de cette                                                           !
+   ! alarme, vous pouvez obtenir des résultats inattendus !                                                                   !
+   !--------------------------------------------------------------------------------------------------------------------------!
+   
+   
+   !-------------------------------------------------------------------------------!
+   ! <A> <CATAMESS_41>                                                             !
+   !                                                                               !
+   ! Le message d'alarme 'CONTACT3_98' a été émis 5 fois, il ne sera plus affiché. !
+   !                                                                               !
+   !                                                                               !
+   ! Ceci est une alarme. Si vous ne comprenez pas le sens de cette                !
+   ! alarme, vous pouvez obtenir des résultats inattendus !                        !
+   !-------------------------------------------------------------------------------!
+   
+
+  Critère(s) de convergence atteint(s)
+    Le résidu de type <RESI_GLOB_RELA> vaut  8.573216775129e-06 au noeud et degré de liberté <N4      DX>
+
+  Temps CPU consommé dans ce pas de temps    : 0.220 s
+    * Nombre d'itérations de Newton                     : 18
+    * Temps total intégration comportement              : 0.063 s (19 intégrations)
+    * Temps total factorisation matrice                 : 0.048 s (18 factorisations)
+    * Temps construction second membre                  : 0.028 s
+    * Temps total résolution K.U=F                      : 0.003 s (18 résolutions)
+    * Temps appariement contact                         : 0.008 s (2 appariements)
+    * Temps résolution contact                          : 0.036 s (18 itérations)
+    * Temps assemblage matrice                          : 0.011 s
+    * Nombre de liaisons de contact                     : 30
+    * Nombre de liaisons de frottement adhérentes       : 0
+    * Temps autres opérations                           : 0.023 s
+
+  Mémoire (Mo) :   900.98 /   898.23 /    45.26 /    35.51 (VmPeak / VmSize / Optimum / Minimum)
+
+  Archivage des champs
+    Champ stocké <DEPL> à l'instant  1.000000000000e+00 pour le numéro d'ordre 5
+    Champ stocké <SIEF_ELGA> à l'instant  1.000000000000e+00 pour le numéro d'ordre 5
+    Champ stocké <VARI_ELGA> à l'instant  1.000000000000e+00 pour le numéro d'ordre 5
+    Champ stocké <COMPORTEMENT> à l'instant  1.000000000000e+00 pour le numéro d'ordre 5
+    Champ stocké <CONT_NOEU> à l'instant  1.000000000000e+00 pour le numéro d'ordre 5
+
+  Temps CPU consommé dans le calcul          : 1.079 s
+    dont temps CPU "perdu" dans les découpes            : 0.000 s
+    * Nombre de pas de temps                            : 5
+    * Nombre d'itérations de Newton                     : 89
+    * Temps dans l'archivage                            : 0.008 s
+    * Temps dans le post-traitement                     : 0.004 s
+    * Temps total intégration comportement              : 0.310 s (94 intégrations)
+    * Temps total factorisation matrice                 : 0.225 s (89 factorisations)
+    * Temps construction second membre                  : 0.136 s
+    * Temps total résolution K.U=F                      : 0.013 s (89 résolutions)
+    * Temps appariement contact                         : 0.039 s (10 appariements)
+    * Temps résolution contact                          : 0.167 s (89 itérations)
+    * Temps assemblage matrice                          : 0.052 s
+    * Nombre de liaisons de contact                     : 30
+    * Nombre de liaisons de frottement adhérentes       : 0
+#1      Resolution des systemes lineaires                 CPU (USER+SYST/SYST/ELAPS):      0.33      0.06      0.24
+#2      Calculs elementaires et assemblages               CPU (USER+SYST/SYST/ELAPS):      0.55      0.06      0.42
+  # Mémoire (Mo) :   900.98 /   898.78 /    45.26 /    35.51 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0013   user+syst:        1.55s (syst:        0.27s, elaps:        1.23s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_txt98
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0014            Concept de type : evol_noli
+  # ------------------------------------------------------------------------------------------
+  U3M = CALC_CHAMP(reuse=U3M,
+                   RESULTAT=U3M,
+                   PRECISION=1.E-06,
+                   CONTRAINTE=('SIGM_ELNO', ),
+                   VARI_INTERNE=('VARI_ELNO', ),
+                   INFO=1,
+                   CRITERE='RELATIF',)
+
+#2      Calculs elementaires et assemblages               CPU (USER+SYST/SYST/ELAPS):      0.08      0.04      0.02
+  # Mémoire (Mo) :   900.98 /   899.04 /    45.26 /    35.51 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0014   user+syst:        0.54s (syst:        0.25s, elaps:        0.23s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_txt106
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0015            Concept de type : cham_no_sdaster
+  # ------------------------------------------------------------------------------------------
+  DEPL3M = CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',
+                      OPERATION='EXTR',
+                      RESULTAT=U3M,
+                      NOM_CHAM='DEPL',
+                      PRECISION=1.E-06,
+                      INST=1.0,
+                      INTERPOL='NON',
+                      CRITERE='RELATIF',
+                      INFO=1,)
+
+  # Mémoire (Mo) :   900.98 /   899.04 /    45.26 /    35.51 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0015   user+syst:        0.03s (syst:        0.01s, elaps:        0.02s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_txt110
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0016            Concept de type : evol_noli
+  # ------------------------------------------------------------------------------------------
+  U3L = CALC_CHAMP(reuse=U3L,
+                   RESULTAT=U3L,
+                   PRECISION=1.E-06,
+                   CONTRAINTE=('SIGM_ELNO', ),
+                   VARI_INTERNE=('VARI_ELNO', ),
+                   INFO=1,
+                   CRITERE='RELATIF',)
+
+#2      Calculs elementaires et assemblages               CPU (USER+SYST/SYST/ELAPS):      0.04      0.02      0.02
+  # Mémoire (Mo) :   900.98 /   899.68 /    45.26 /    35.51 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0016   user+syst:        0.45s (syst:        0.20s, elaps:        0.16s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_txt118
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0017            Concept de type : cham_no_sdaster
+  # ------------------------------------------------------------------------------------------
+  DEPL3L = CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',
+                      OPERATION='EXTR',
+                      RESULTAT=U3L,
+                      NOM_CHAM='DEPL',
+                      PRECISION=1.E-06,
+                      INST=1.0,
+                      INTERPOL='NON',
+                      CRITERE='RELATIF',
+                      INFO=1,)
+
+  # Mémoire (Mo) :   900.98 /   899.68 /    45.26 /    35.51 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0017   user+syst:        0.02s (syst:        0.00s, elaps:        0.02s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_txt129
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0018            Concept de type : table_sdaster
+  # ------------------------------------------------------------------------------------------
+  TCONT = POST_RELEVE_T(ACTION=_F(INTITULE='CONT',
+                                  RESULTAT=U3L,
+                                  OPERATION=('EXTRACTION', ),
+                                  GROUP_NO=('LCONTA', ),
+                                  TOUT_CMP='OUI',
+                                  REPERE='GLOBAL',
+                                  MOYE_NOEUD='OUI',
+                                  NOM_CHAM='CONT_NOEU',
+                                  INST=(1.0, ),
+                                  PRECISION=1.E-06,
+                                  CRITERE='RELATIF',
+                                  FORMAT_C='MODULE',),
+                        INFO=1,)
+
+  # Mémoire (Mo) :   900.98 /   899.68 /    45.26 /    35.51 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0018   user+syst:        0.03s (syst:        0.00s, elaps:        0.02s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_txt133
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0019            Concept de type : -
+  # ------------------------------------------------------------------------------------------
+  IMPR_TABLE(TABLE=TCONT,
+             UNITE=8,
+             FIN_TABLE='',
+             COMMENTAIRE='#',
+             DEBUT_LIGNE='',
+             SEPARATEUR=' ',
+             FIN_LIGNE='\n',
+             COMM_PARA='',
+             INFO=1,
+             IMPR_FONCTION='NON',
+             FORMAT_R='E12.5',
+             FORMAT='TABLEAU',)
+
+  # Mémoire (Mo) :   900.98 /   899.68 /    45.26 /    35.51 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0019   user+syst:        0.02s (syst:        0.00s, elaps:        0.02s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_txt186
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0026            Concept de type : -
+  # ------------------------------------------------------------------------------------------
+  TEST_RESU(RESU=(_F(NOM_CMP='DX',
+                     GROUP_NO=('PPA', ),
+                     INST=1.0,
+                     NOM_CHAM='DEPL',
+                     RESULTAT=U3M,
+                     REFERENCE='SOURCE_EXTERNE',
+                     VALE_CALC=(2.8648839013E-05, ),
+                     VALE_REFE=(2.86E-05, ),
+                     PRECISION=0.05,
+                     VALE_ABS='NON',),
+                  _F(NOM_CMP='DX',
+                     GROUP_NO=('PPB', ),
+                     INST=1.0,
+                     NOM_CHAM='DEPL',
+                     RESULTAT=U3M,
+                     REFERENCE='SOURCE_EXTERNE',
+                     VALE_CALC=(2.72686641895E-05, ),
+                     VALE_REFE=(2.72E-05, ),
+                     PRECISION=0.05,
+                     VALE_ABS='NON',),
+                  _F(NOM_CMP='DX',
+                     GROUP_NO=('PPC', ),
+                     INST=1.0,
+                     NOM_CHAM='DEPL',
+                     RESULTAT=U3M,
+                     REFERENCE='SOURCE_EXTERNE',
+                     VALE_CALC=(2.29235577257E-05, ),
+                     VALE_REFE=(2.28E-05, ),
+                     PRECISION=0.05,
+                     VALE_ABS='NON',),
+                  _F(NOM_CMP='DX',
+                     GROUP_NO=('PPD', ),
+                     INST=1.0,
+                     NOM_CHAM='DEPL',
+                     RESULTAT=U3M,
+                     REFERENCE='SOURCE_EXTERNE',
+                     VALE_CALC=(1.99288812011E-05, ),
+                     VALE_REFE=(1.98E-05, ),
+                     PRECISION=0.05,
+                     VALE_ABS='NON',),
+                  _F(NOM_CMP='DX',
+                     GROUP_NO=('PPE', ),
+                     INST=1.0,
+                     NOM_CHAM='DEPL',
+                     RESULTAT=U3M,
+                     REFERENCE='SOURCE_EXTERNE',
+                     VALE_CALC=(1.56084651799E-05, ),
+                     VALE_REFE=(1.5E-05, ),
+                     PRECISION=0.05,
+                     VALE_ABS='NON',),
+                  ),
+            TEST_NAN='NON',)
+
+  # Mémoire (Mo) :   900.98 /   899.68 /    45.26 /    35.51 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0026   user+syst:        0.01s (syst:        0.00s, elaps:        0.01s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_txt242
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0027            Concept de type : -
+  # ------------------------------------------------------------------------------------------
+  TEST_RESU(RESU=(_F(NOM_CMP='DX',
+                     GROUP_NO=('PPA', ),
+                     INST=1.0,
+                     NOM_CHAM='DEPL',
+                     RESULTAT=U3L,
+                     REFERENCE='SOURCE_EXTERNE',
+                     VALE_CALC=(2.8648839013E-05, ),
+                     VALE_REFE=(2.86E-05, ),
+                     PRECISION=0.05,
+                     VALE_ABS='NON',),
+                  _F(NOM_CMP='DX',
+                     GROUP_NO=('PPB', ),
+                     INST=1.0,
+                     NOM_CHAM='DEPL',
+                     RESULTAT=U3L,
+                     REFERENCE='SOURCE_EXTERNE',
+                     VALE_CALC=(2.72686641895E-05, ),
+                     VALE_REFE=(2.72E-05, ),
+                     PRECISION=0.05,
+                     VALE_ABS='NON',),
+                  _F(NOM_CMP='DX',
+                     GROUP_NO=('PPC', ),
+                     INST=1.0,
+                     NOM_CHAM='DEPL',
+                     RESULTAT=U3L,
+                     REFERENCE='SOURCE_EXTERNE',
+                     VALE_CALC=(2.29235577257E-05, ),
+                     VALE_REFE=(2.28E-05, ),
+                     PRECISION=0.05,
+                     VALE_ABS='NON',),
+                  _F(NOM_CMP='DX',
+                     GROUP_NO=('PPD', ),
+                     INST=1.0,
+                     NOM_CHAM='DEPL',
+                     RESULTAT=U3L,
+                     REFERENCE='SOURCE_EXTERNE',
+                     VALE_CALC=(1.99288812011E-05, ),
+                     VALE_REFE=(1.98E-05, ),
+                     PRECISION=0.05,
+                     VALE_ABS='NON',),
+                  _F(NOM_CMP='DX',
+                     GROUP_NO=('PPE', ),
+                     INST=1.0,
+                     NOM_CHAM='DEPL',
+                     RESULTAT=U3L,
+                     REFERENCE='SOURCE_EXTERNE',
+                     VALE_CALC=(1.56084651799E-05, ),
+                     VALE_REFE=(1.5E-05, ),
+                     PRECISION=0.05,
+                     VALE_ABS='NON',),
+                  ),
+            TEST_NAN='NON',)
+
+  # Mémoire (Mo) :   900.98 /   899.68 /    45.26 /    35.51 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0027   user+syst:        0.00s (syst:        0.00s, elaps:        0.01s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_txt257
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0028            Concept de type : -
+  # ------------------------------------------------------------------------------------------
+  TEST_RESU(RESU=_F(
+                    NOM_CMP='PROJ_X',
+                    INST=1.0,
+                    NOM_CHAM='CONT_NOEU',
+                    RESULTAT=U3L,
+                    REFERENCE='ANALYTIQUE',
+                    VALE_CALC=(0.03875, ),
+                    VALE_REFE=(0.03875, ),
+                    PRECISION=1.E-08,
+                    VALE_ABS='NON',),
+            TEST_NAN='NON',)
+
+  # Mémoire (Mo) :   900.98 /   899.68 /    45.26 /    35.51 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0028   user+syst:        0.00s (syst:        0.00s, elaps:        0.00s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_txt272
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0029            Concept de type : -
+  # ------------------------------------------------------------------------------------------
+  TEST_RESU(RESU=_F(
+                    NOM_CMP='PROJ_Y',
+                    INST=1.0,
+                    NOM_CHAM='CONT_NOEU',
+                    RESULTAT=U3L,
+                    CRITERE=('ABSOLU', ),
+                    REFERENCE='ANALYTIQUE',
+                    VALE_CALC=(0.0, ),
+                    VALE_REFE=(0.0, ),
+                    PRECISION=1.E-08,
+                    VALE_ABS='NON',),
+            TEST_NAN='NON',)
+
+   
+   !-------------------------------------------------------------------------------------------!
+   ! <A> <TEST0_12>                                                                            !
+   !                                                                                           !
+   ! Pour les tests de non régression de valeurs nulles, il faut définir un ordre de grandeur. !
+   ! Dans le cas contraire, le test de non régression est ignoré.                              !
+   !                                                                                           !
+   !                                                                                           !
+   ! Ceci est une alarme. Si vous ne comprenez pas le sens de cette                            !
+   ! alarme, vous pouvez obtenir des résultats inattendus !                                    !
+   !-------------------------------------------------------------------------------------------!
+   
+  # Mémoire (Mo) :   900.98 /   899.68 /    45.26 /    35.51 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0029   user+syst:        0.00s (syst:        0.00s, elaps:        0.00s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_txt310
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0030            Concept de type : -
+  # ------------------------------------------------------------------------------------------
+  FIN(INFO_RESU='OUI',
+      RETASSAGE='NON',
+      FORMAT_HDF='NON',
+      PROC0='OUI',)
+
+   
+   !-------------------------------------------------------------------------!
+   ! <I> <CATAMESS_89>                                                       !
+   !                                                                         !
+   !     Liste des alarmes émises lors de l'exécution du calcul.             !
+   !                                                                         !
+   !     Les alarmes que vous avez choisies d'ignorer sont précédées de (*). !
+   !     Nombre d'occurrences pour chacune des alarmes :                     !
+   !            CONTACT3_98          émise   10 fois                         !
+   !            CONTACT_1            émise    2 fois                         !
+   !        (*) MODELE1_63           émise   32 fois                         !
+   !            TEST0_12             émise    1 fois                         !
+   !-------------------------------------------------------------------------!
+   
+
+ ======>
+
+ STRUCTURE DU CONCEPT U3L      CALCULE POUR          6 NUMEROS D'ORDRE
+
+ LISTE DES NOMS SYMBOLIQUES:
+ ! ---------- !----------------!----------------!----------------!----------------!----------------!----------------!----------------!
+ ! NUME_ORDRE !      DEPL      !   SIEF_ELGA    !   SIGM_ELNO    !   VARI_ELGA    !   VARI_ELNO    !  COMPORTEMENT  !   CONT_NOEU    !
+ ! ---------- !----------------!----------------!----------------!----------------!----------------!----------------!----------------!
+ !          0 !     DEPL_R     !     SIEF_R     !     SIEF_R     !     VARI_R     !     VARI_R     !     COMPOR     !     INFC_R     !
+ !        ... !      ...       !      ...       !      ...       !      ...       !      ...       !      ...       !      ...       !
+ !          5 !     DEPL_R     !     SIEF_R     !     SIEF_R     !     VARI_R     !     VARI_R     !     COMPOR     !     INFC_R     !
+ ! ---------- !----------------!----------------!----------------!----------------!----------------!----------------!----------------!
+
+ LISTE DES NOMS DE VARIABLES D'ACCES:
+                                      INST             DE TYPE  R
+
+ LISTE DES NOMS DE PARAMETRES:
+ ! ---------- !----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!
+ ! NUME_ORDRE !    CARAELEM    !    CHAMPMAT    !     MODELE     !     EXCIT      !  ETA_PILOTAGE  !   ITER_GLOB    !   CHAR_MINI    ! TRAN_GENE_NOLI !
+ ! ---------- !----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!
+ !          0 !       K8       !       K8       !       K8       !      K24       !       R        !       I        !       R        !      K24       !
+ !        ... !      ...       !      ...       !      ...       !      ...       !      ...       !      ...       !      ...       !      ...       !
+ !          5 !       K8       !       K8       !       K8       !      K24       !       R        !       I        !       R        !      K24       !
+ ! ---------- !----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!
+
+ ======>
+
+ STRUCTURE DU CONCEPT U3M      CALCULE POUR          6 NUMEROS D'ORDRE
+
+ LISTE DES NOMS SYMBOLIQUES:
+ ! ---------- !----------------!----------------!----------------!----------------!----------------!----------------!----------------!
+ ! NUME_ORDRE !      DEPL      !   SIEF_ELGA    !   SIGM_ELNO    !   VARI_ELGA    !   VARI_ELNO    !  COMPORTEMENT  !   CONT_NOEU    !
+ ! ---------- !----------------!----------------!----------------!----------------!----------------!----------------!----------------!
+ !          0 !     DEPL_R     !     SIEF_R     !     SIEF_R     !     VARI_R     !     VARI_R     !     COMPOR     !     INFC_R     !
+ !        ... !      ...       !      ...       !      ...       !      ...       !      ...       !      ...       !      ...       !
+ !          5 !     DEPL_R     !     SIEF_R     !     SIEF_R     !     VARI_R     !     VARI_R     !     COMPOR     !     INFC_R     !
+ ! ---------- !----------------!----------------!----------------!----------------!----------------!----------------!----------------!
+
+ LISTE DES NOMS DE VARIABLES D'ACCES:
+                                      INST             DE TYPE  R
+
+ LISTE DES NOMS DE PARAMETRES:
+ ! ---------- !----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!
+ ! NUME_ORDRE !    CARAELEM    !    CHAMPMAT    !     MODELE     !     EXCIT      !  ETA_PILOTAGE  !   ITER_GLOB    !   CHAR_MINI    ! TRAN_GENE_NOLI !
+ ! ---------- !----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!
+ !          0 !       K8       !       K8       !       K8       !      K24       !       R        !       I        !       R        !      K24       !
+ !        ... !      ...       !      ...       !      ...       !      ...       !      ...       !      ...       !      ...       !      ...       !
+ !          5 !       K8       !       K8       !       K8       !      K24       !       R        !       I        !       R        !      K24       !
+ ! ---------- !----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!
+ ---------------------------------------------------------------------------
+ Concepts de la base: G
+    Nom       Type                 Taille (Mo)         Nombre      Nombre de
+                                                     d'objets       segments
+    TOTAL                                31.21            654            884
+  
+    MA         MAILLAGE_SDASTER           0.06             36             78
+    MO         MODELE_SDASTER             0.03              8             13
+    MATPLA     MATER_SDASTER              0.00              5              5
+    CHMAT      CHAM_MATER                 0.00              6             11
+    RAMPE      FONCTION_SDASTER           0.00              4              4
+    L_INST     LISTR8_SDASTER             0.00              6              6
+    CHA1       CHAR_MECA                  0.05             28             53
+    CHA3       CHAR_CONTACT               0.03             29             29
+    U3M        EVOL_NOLI                  1.42            192            233
+    U3L        EVOL_NOLI                  1.42            192            233
+    DEPL3M     CHAM_NO_SDASTER            0.06              9             14
+    DEPL3L     CHAM_NO_SDASTER            0.06              9             14
+    TCONT      TABLE_SDASTER              0.03             85             85
+    &FOZERO                               0.00              2              2
+    &&_NUM_C                              0.00              1              1
+    &CATA.AC                              0.00              2              4
+    &CATA.CL                              0.87              1              3
+    &CATA.GD                              0.14              4             11
+    &CATA.ME                              0.20              2              4
+    &CATA.OP                              0.32              4             19
+    &CATA.PH                              0.00              1              1
+    &CATA.PR                              0.00              2              4
+    &CATA.TE                             26.49             17             42
+    &CATA.TH                              0.01              2              4
+    &CATA.TM                              0.01              7             11
+ ---------------------------------------------------------------------------
+
+
+     Nom de la base                          :  GLOBALE
+     Nombre d'enregistrements utilisés       :  52
+     Nombre d'enregistrements maximum        :  62914
+     Longueur d'enregistrement (octets)      :  819200
+     Nombre total d'accès en lecture         :  7
+     Volume des accès en lecture             :          5.47 Mo.
+     Nombre total d'accès en écriture        :  68
+     Volume des accès en écriture            :         53.12 Mo.
+     Nombre d'identificateurs utilisés       :  904
+     Taille maximum du répertoire            :  2000
+     Pourcentage d'utilisation du répertoire :  45 %
+
+
+     Nom de la base                          :  VOLATILE
+     Nombre d'enregistrements utilisés       :  17
+     Nombre d'enregistrements maximum        :  62914
+     Longueur d'enregistrement (octets)      :  819200
+     Nombre total d'accès en lecture         :  37
+     Volume des accès en lecture             :         28.91 Mo.
+     Nombre total d'accès en écriture        :  35
+     Volume des accès en écriture            :         27.34 Mo.
+     Nombre d'identificateurs utilisés       :  1428
+     Taille maximum du répertoire            :  2000
+     Pourcentage d'utilisation du répertoire :  71 %
+
+ <FIN> Arrêt normal dans "FIN".
+
+
+     Nom de la base                          :  ELEMBASE
+     Nombre d'enregistrements utilisés       :  44
+     Nombre d'enregistrements maximum        :  512
+     Longueur d'enregistrement (octets)      :  819200
+     Nombre total d'accès en lecture         :  62
+     Volume des accès en lecture             :         48.44 Mo.
+     Nombre total d'accès en écriture        :  0
+     Volume des accès en écriture            :          0.00 Mo.
+     Nombre d'identificateurs utilisés       :  123
+     Taille maximum du répertoire            :  300
+     Pourcentage d'utilisation du répertoire :  41 %
+  
+ <I>       FERMETURE DES BASES EFFECTUEE
+  
+   STATISTIQUES CONCERNANT L'ALLOCATION DYNAMIQUE :
+     TAILLE CUMULEE MAXIMUM            :                   45  Mo.
+     TAILLE CUMULEE LIBEREE            :                  111  Mo.
+     NOMBRE TOTAL D'ALLOCATIONS        :               488304
+     NOMBRE TOTAL DE LIBERATIONS       :               488284
+     APPELS AU MECANISME DE LIBERATION :                    0
+     TAILLE MEMOIRE CUMULEE RECUPEREE  :                    0  Mo.
+     VOLUME DES LECTURES               :                    0  Mo.
+     VOLUME DES ECRITURES              :                   11  Mo.
+  
+   MEMOIRE JEVEUX MINIMALE REQUISE POUR L'EXECUTION :      35.51 Mo
+     - IMPOSE DE NOMBREUX ACCES DISQUE
+     - RALENTIT LA VITESSE D'EXECUTION
+   MEMOIRE JEVEUX OPTIMALE REQUISE POUR L'EXECUTION :      45.26 Mo
+     - LIMITE LES ACCES DISQUE
+     - AMELIORE LA VITESSE D'EXECUTION
+   MAXIMUM DE MEMOIRE UTILISEE PAR LE PROCESSUS     :     900.98 Mo
+     - COMPREND LA MEMOIRE CONSOMMEE PAR  JEVEUX, 
+       LE SUPERVISEUR PYTHON, LES LIBRAIRIES EXTERNES
+  
+ <I>       FIN D'EXECUTION LE : LU-15-JANV-2018 16:27:17
+
+
+  <I> Informations sur les temps d'exécution
+      Temps cpu user total                    9.60 s
+      Temps cpu systeme total                 5.07 s
+      Temps elapsed total                     4.23 s
+      Temps restant                         885.77 s
+
+
+  La signature de la base sauvegardée est (à l'adresse 0) :
+    2396695022a2a63525a76e77cdb74b4a334ed28d
+try to add new values in the .comm file...
+0 ('OK', 'XXXX', '2.8648839013E-05', '2.8648839013E-05', '3.093791E-11%', '0.0001%')
+1 ('OK', 'XXXX', '2.72686641895E-05', '2.72686641895E-05', '1.143100E-10%', '0.0001%')
+2 ('OK', 'XXXX', '2.29235577257E-05', '2.29235577257E-05', '6.600806E-11%', '0.0001%')
+3 ('OK', 'XXXX', '1.99288812011E-05', '1.99288812011E-05', '1.659649E-10%', '0.0001%')
+4 ('OK', 'XXXX', '1.56084651799E-05', '1.56084651799E-05', '1.683596E-10%', '0.0001%')
+5 ('OK', 'XXXX', '2.8648839013E-05', '2.8648839013E-05', '3.092609E-11%', '0.0001%')
+6 ('OK', 'XXXX', '2.72686641895E-05', '2.72686641895E-05', '1.142976E-10%', '0.0001%')
+7 ('OK', 'XXXX', '2.29235577257E-05', '2.29235577257E-05', '6.605240E-11%', '0.0001%')
+8 ('OK', 'XXXX', '1.99288812011E-05', '1.99288812011E-05', '1.659989E-10%', '0.0001%')
+9 ('OK', 'XXXX', '1.56084651799E-05', '1.56084651799E-05', '1.684030E-10%', '0.0001%')
+10 ('OK', 'XXXX', '0.03875', '0.03875', '0.0%', '0.0001%')
+11 ('SKIP', '-', '-', '-', '-', '-')
+0 {'start': 3209, 'end': 3235, 'val': '2.8648839013e-05', 'key': 'VALE_CALC'}
+1 {'start': 3494, 'end': 3521, 'val': '2.72686641895e-05', 'key': 'VALE_CALC'}
+2 {'start': 3780, 'end': 3807, 'val': '2.29235577257e-05', 'key': 'VALE_CALC'}
+3 {'start': 4066, 'end': 4093, 'val': '1.99288812011e-05', 'key': 'VALE_CALC'}
+4 {'start': 4352, 'end': 4379, 'val': '1.56084651799e-05', 'key': 'VALE_CALC'}
+5 {'start': 4675, 'end': 4701, 'val': '2.8648839013e-05', 'key': 'VALE_CALC'}
+6 {'start': 4960, 'end': 4987, 'val': '2.72686641895e-05', 'key': 'VALE_CALC'}
+7 {'start': 5246, 'end': 5273, 'val': '2.29235577257e-05', 'key': 'VALE_CALC'}
+8 {'start': 5532, 'end': 5559, 'val': '1.99288812011e-05', 'key': 'VALE_CALC'}
+9 {'start': 5818, 'end': 5845, 'val': '1.56084651799e-05', 'key': 'VALE_CALC'}
+10 {'start': 6102, 'end': 6119, 'val': '0.03875', 'key': 'VALE_CALC'}
+11 {'start': 6388, 'end': 6401, 'val': '0.0', 'key': 'VALE_CALC'}
+
+HOWTO:
+
+To extract automatically the new command files, use:
+
+   python bibpyt/Contrib/testcase_tools.py extract RESDIR NEWDIR "*.mess"
+
+Replace RESDIR by the directory containing the .mess files
+and NEWDIR by a directory in which the new comm files will be written
+("*.mess" may be omitted).
+
+---delimiter---
+DEBUT(
+    CODE=_F(NIV_PUB_WEB='INTERNET'),
+    DEBUG=_F(SDVERI='OUI'),
+    IGNORE_ALARM='MODELE1_63'
+)
+
+MA = LIRE_MAILLAGE(FORMAT='MED', UNITE=20, VERI_MAIL=_F(VERIF='OUI'))
+
+MA = MODI_MAILLAGE(
+    reuse=MA,
+    MAILLAGE=MA,
+    ORIE_PEAU_2D=(_F(GROUP_MA='LPRESV'), _F(GROUP_MA='LPRESH'))
+)
+
+MA = DEFI_GROUP(
+    reuse=MA, CREA_GROUP_NO=_F(GROUP_MA='LCONTA', NOM='LCONTA'), MAILLAGE=MA
+)
+
+MO = AFFE_MODELE(
+    AFFE=_F(MODELISATION='D_PLAN', PHENOMENE='MECANIQUE', TOUT='OUI'),
+    MAILLAGE=MA
+)
+
+MATPLA = DEFI_MATERIAU(ELAS=_F(E=1.3e+11, NU=0.2))
+
+CHMAT = AFFE_MATERIAU(AFFE=_F(MATER=MATPLA, TOUT='OUI'), MAILLAGE=MA)
+
+RAMPE = DEFI_FONCTION(
+    NOM_PARA='INST',
+    PROL_DROITE='LINEAIRE',
+    PROL_GAUCHE='LINEAIRE',
+    VALE=(-4.0, 0.0, 1.0, 1.0)
+)
+
+L_INST = DEFI_LIST_REEL(
+    DEBUT=-4.0,
+    INTERVALLE=(_F(JUSQU_A=0.0, NOMBRE=4), _F(JUSQU_A=1.0, NOMBRE=1))
+)
+
+CHA1 = AFFE_CHAR_MECA(
+    DDL_IMPO=(
+        _F(DX=0.0, DY=0.0, GROUP_MA='LBATI'),
+        _F(DX=0.0, DY=0.0, GROUP_NO='PPS'), _F(DX=0.0, GROUP_MA='LBLOCX')
+    ),
+    MODELE=MO,
+    PRES_REP=(
+        _F(GROUP_MA='LPRESV', PRES=50000000.0),
+        _F(GROUP_MA='LPRESH', PRES=150000000.0)
+    )
+)
+
+CHA3 = DEFI_CONTACT(
+    FORMULATION='DISCRETE',
+    FROTTEMENT='COULOMB',
+    MODELE=MO,
+    NB_ITER_GEOM=2,
+    REAC_GEOM='CONTROLE',
+    ZONE=_F(
+        ALGO_CONT='PENALISATION',
+        ALGO_FROT='PENALISATION',
+        APPARIEMENT='NODAL',
+        COEF_MATR_FROT=0.8,
+        COULOMB=1.0,
+        E_N=1e+12,
+        E_T=1e+11,
+        GROUP_MA_ESCL='LCONTA',
+        GROUP_MA_MAIT='LBATI',
+        NORMALE='MAIT_ESCL'
+    )
+)
+
+U3M = STAT_NON_LINE(
+    CHAM_MATER=CHMAT,
+    COMPORTEMENT=_F(RELATION='ELAS'),
+    CONTACT=CHA3,
+    CONVERGENCE=_F(ARRET='OUI', ITER_GLOB_MAXI=200, RESI_GLOB_RELA=1e-05),
+    EXCIT=_F(CHARGE=CHA1, FONC_MULT=RAMPE),
+    INCREMENT=_F(LIST_INST=L_INST),
+    INFO=1,
+    MODELE=MO,
+    NEWTON=_F(REAC_ITER=1),
+    SOLVEUR=_F()
+)
+
+U3L = STAT_NON_LINE(
+    CHAM_MATER=CHMAT,
+    COMPORTEMENT=_F(RELATION='ELAS'),
+    CONTACT=CHA3,
+    CONVERGENCE=_F(ARRET='OUI', ITER_GLOB_MAXI=200, RESI_GLOB_RELA=1e-05),
+    EXCIT=_F(CHARGE=CHA1, FONC_MULT=RAMPE),
+    INCREMENT=_F(LIST_INST=L_INST),
+    MODELE=MO,
+    NEWTON=_F(REAC_ITER=1),
+    SOLVEUR=_F(METHODE='LDLT')
+)
+
+U3M = CALC_CHAMP(
+    reuse=U3M, CONTRAINTE='SIGM_ELNO', RESULTAT=U3M, VARI_INTERNE='VARI_ELNO'
+)
+
+DEPL3M = CREA_CHAMP(
+    INST=1.0,
+    NOM_CHAM='DEPL',
+    OPERATION='EXTR',
+    RESULTAT=U3M,
+    TYPE_CHAM='NOEU_DEPL_R'
+)
+
+U3L = CALC_CHAMP(
+    reuse=U3L, CONTRAINTE='SIGM_ELNO', RESULTAT=U3L, VARI_INTERNE='VARI_ELNO'
+)
+
+DEPL3L = CREA_CHAMP(
+    INST=1.0,
+    NOM_CHAM='DEPL',
+    OPERATION='EXTR',
+    RESULTAT=U3L,
+    TYPE_CHAM='NOEU_DEPL_R'
+)
+
+TCONT = POST_RELEVE_T(
+    ACTION=_F(
+        GROUP_NO='LCONTA',
+        INST=1.0,
+        INTITULE='CONT',
+        NOM_CHAM='CONT_NOEU',
+        OPERATION='EXTRACTION',
+        RESULTAT=U3L,
+        TOUT_CMP='OUI'
+    )
+)
+
+IMPR_TABLE(TABLE=TCONT)
+
+TEST_RESU(
+    RESU=(
+        _F(
+            GROUP_NO='PPA',
+            INST=1.0,
+            NOM_CHAM='DEPL',
+            NOM_CMP='DX',
+            PRECISION=0.05,
+            REFERENCE='SOURCE_EXTERNE',
+            RESULTAT=U3M,
+            VALE_CALC=2.8648839013E-05,
+            VALE_REFE=2.86e-05
+        ), _F(
+            GROUP_NO='PPB',
+            INST=1.0,
+            NOM_CHAM='DEPL',
+            NOM_CMP='DX',
+            PRECISION=0.05,
+            REFERENCE='SOURCE_EXTERNE',
+            RESULTAT=U3M,
+            VALE_CALC=2.72686641895E-05,
+            VALE_REFE=2.72e-05
+        ), _F(
+            GROUP_NO='PPC',
+            INST=1.0,
+            NOM_CHAM='DEPL',
+            NOM_CMP='DX',
+            PRECISION=0.05,
+            REFERENCE='SOURCE_EXTERNE',
+            RESULTAT=U3M,
+            VALE_CALC=2.29235577257E-05,
+            VALE_REFE=2.28e-05
+        ), _F(
+            GROUP_NO='PPD',
+            INST=1.0,
+            NOM_CHAM='DEPL',
+            NOM_CMP='DX',
+            PRECISION=0.05,
+            REFERENCE='SOURCE_EXTERNE',
+            RESULTAT=U3M,
+            VALE_CALC=1.99288812011E-05,
+            VALE_REFE=1.98e-05
+        ), _F(
+            GROUP_NO='PPE',
+            INST=1.0,
+            NOM_CHAM='DEPL',
+            NOM_CMP='DX',
+            PRECISION=0.05,
+            REFERENCE='SOURCE_EXTERNE',
+            RESULTAT=U3M,
+            VALE_CALC=1.56084651799E-05,
+            VALE_REFE=1.5e-05
+        )
+    )
+)
+
+TEST_RESU(
+    RESU=(
+        _F(
+            GROUP_NO='PPA',
+            INST=1.0,
+            NOM_CHAM='DEPL',
+            NOM_CMP='DX',
+            PRECISION=0.05,
+            REFERENCE='SOURCE_EXTERNE',
+            RESULTAT=U3L,
+            VALE_CALC=2.8648839013E-05,
+            VALE_REFE=2.86e-05
+        ), _F(
+            GROUP_NO='PPB',
+            INST=1.0,
+            NOM_CHAM='DEPL',
+            NOM_CMP='DX',
+            PRECISION=0.05,
+            REFERENCE='SOURCE_EXTERNE',
+            RESULTAT=U3L,
+            VALE_CALC=2.72686641895E-05,
+            VALE_REFE=2.72e-05
+        ), _F(
+            GROUP_NO='PPC',
+            INST=1.0,
+            NOM_CHAM='DEPL',
+            NOM_CMP='DX',
+            PRECISION=0.05,
+            REFERENCE='SOURCE_EXTERNE',
+            RESULTAT=U3L,
+            VALE_CALC=2.29235577257E-05,
+            VALE_REFE=2.28e-05
+        ), _F(
+            GROUP_NO='PPD',
+            INST=1.0,
+            NOM_CHAM='DEPL',
+            NOM_CMP='DX',
+            PRECISION=0.05,
+            REFERENCE='SOURCE_EXTERNE',
+            RESULTAT=U3L,
+            VALE_CALC=1.99288812011E-05,
+            VALE_REFE=1.98e-05
+        ), _F(
+            GROUP_NO='PPE',
+            INST=1.0,
+            NOM_CHAM='DEPL',
+            NOM_CMP='DX',
+            PRECISION=0.05,
+            REFERENCE='SOURCE_EXTERNE',
+            RESULTAT=U3L,
+            VALE_CALC=1.56084651799E-05,
+            VALE_REFE=1.5e-05
+        )
+    )
+)
+
+TEST_RESU(
+    RESU=_F(
+        INST=1.0,
+        NOEUD='N32',
+        NOM_CHAM='CONT_NOEU',
+        NOM_CMP='PROJ_X',
+        PRECISION=1e-08,
+        REFERENCE='ANALYTIQUE',
+        RESULTAT=U3L,
+        VALE_CALC=0.03875,
+        VALE_REFE=0.03875
+    )
+)
+
+TEST_RESU(
+    RESU=_F(
+        CRITERE='ABSOLU',
+        INST=1.0,
+        NOEUD='N32',
+        NOM_CHAM='CONT_NOEU',
+        NOM_CMP='PROJ_Y',
+        PRECISION=1e-08,
+        REFERENCE='ANALYTIQUE',
+        RESULTAT=U3L,
+        VALE_CALC=0.,
+        VALE_REFE=0.0
+    )
+)
+
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+# 
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+# CAS_TEST__:SSNV128A
+# TEST DU GRECO CALCUL 2D
+# MODELE
+# MAILLAGE : ELEMENT 2D QUADRANGLE A 4 NOEUDS
+# UNITES   : NEWTON , METRE , SECONDE (N,M,S)
+# <MODELE1_63> : DANS UN MODELE, IL EXISTE DES ELEMENTS DE TYPE "BORD" QUI N'ONT PAS DE VOISIN AVEC RIGIDITE
+#  LE MODELE PROVOQUANT CES ALARMES CONTIENT UNE SURFACE RIGIDE POUR LE CONTACT
+# ......................................................................
+#  CALCUL TEST ELEMENTS FINIS DE CONTACT 2D QUAD4
+#  PLAQUE AVEC CONTACT ET FROTTEMENT SUR UN PLAN RIGIDE
+# ......................................................................
+# 
+# -----------------------------------------------------------
+# 
+# -----------------------------------------------------------
+# VERIF PROJECTION  (AVANT-DERNIER NOEUD A DROITE)
+FIN()
+
+---delimiter---
+EXECUTION_CODE_ASTER_EXIT_12769=0
+<INFO> Exécution Code_Aster terminée, diagnostic : <A>_ALARM
+
+--------------------------------------------------------------------------------
+ Contenu de /local00/tmp/G79848-dsp0837509-interactif_12769 après l'exécution
+
+.:
+total 60576
+drwx------   3 G79848 rdusers     4096 janv. 15 16:27 .
+drwxrwxrwt 221 root   root       65536 janv. 15 16:27 ..
+-rw-r--r--   1 G79848 rdusers      749 janv. 15 16:27 12769.export
+-rw-r--r--   1 G79848 rdusers     2955 janv. 15 16:27 config.txt
+-rw-r--r--   1 G79848 rdusers     8095 janv. 15 16:27 fort.1
+-rw-r--r--   1 G79848 rdusers     8095 janv. 15 16:27 fort.1.1
+-rw-r--r--   1 G79848 rdusers   112102 janv. 15 16:27 fort.15
+-rw-r--r--   1 G79848 rdusers   111033 janv. 15 16:27 fort.20
+-rw-r--r--   1 G79848 rdusers   151381 janv. 15 16:27 fort.6
+-rw-r--r--   1 G79848 rdusers    59730 janv. 15 16:27 fort.8
+-rw-r--r--   1 G79848 rdusers     2748 janv. 15 16:27 fort.9
+-rw-r--r--   1 G79848 rdusers 42598408 janv. 15 16:27 glob.1
+-rw-r--r--   1 G79848 rdusers       44 janv. 15 16:27 info_cpu
+-rw-r--r--   1 G79848 rdusers  4940438 janv. 15 16:27 pick.1
+drwxr-xr-x   2 G79848 rdusers     4096 janv. 15 16:27 REPE_OUT
+-rw-r--r--   1 G79848 rdusers 13926408 janv. 15 16:27 vola.1
+
+REPE_OUT:
+total 8
+drwxr-xr-x 2 G79848 rdusers 4096 janv. 15 16:27 .
+drwx------ 3 G79848 rdusers 4096 janv. 15 16:27 ..
+
+
+--------------------------------------------------------------------------------
+ Taille des bases
+
+<INFO> taille de vola.1 :     13926408 octets
+<INFO> taille de glob.1 :     42598408 octets
+<INFO> taille de pick.1 :      4940438 octets
+
+--------------------------------------------------------------------------------
+ Copie des résultats
+
+copie de .../fort.6...                                                  [  OK  ]
+compression de glob.1                                                   [  OK  ]
+compression de pick.1                                                   [  OK  ]
+copie de .../glob.1.gz...                                               [  OK  ]
+copie de .../pick.1.gz...                                               [  OK  ]
+
+<A>_ALARM          Exécution de Code_Aster terminée
+
+
+ 
+ ---------------------------------------------------------------------------------
+                                            cpu    système    cpu+sys     écoulé
+ ---------------------------------------------------------------------------------
+   Préparation de l'environnement          0.00       0.00       0.00       0.00
+   Copie des données                       0.02       0.01       0.03       0.03
+   Exécution de Code_Aster                10.48       5.45      15.93       5.18
+   Copie des résultats                     0.87       0.03       0.90       0.91
+ ---------------------------------------------------------------------------------
+   Total                                  11.45       5.50      16.95       6.29
+ ---------------------------------------------------------------------------------
+
+as_run 2017.0
+
+------------------------------------------------------------
+--- DIAGNOSTIC JOB : <A>_ALARM
+------------------------------------------------------------
+
+
+EXIT_CODE=0

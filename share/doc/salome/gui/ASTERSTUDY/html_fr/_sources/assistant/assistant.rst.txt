@@ -1,0 +1,22 @@
+.. _assistant:
+
+###########################
+Calculation Assistant Guide
+###########################
+
+This is a reference guide for the **Calculation Assistant** utility of
+*AsterStudy* application.
+
+.. toctree::
+    :maxdepth: 2
+
+    intro
+    general
+    template_file
+    decl_file
+    wizard_file
+    cfg_file
+    example
+    cmd_line_tool
+    integration
+    translation

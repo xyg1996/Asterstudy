@@ -1,0 +1,301 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Known issues &#8212; AsterStudy v0.11 Documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Calculation Assistant Guide" href="../assistant/assistant.html" />
+    <link rel="prev" title="Frequently asked questions" href="FAQ.html" />
+<script type="text/javascript" src="../_static/switchers.js"></script>
+ 
+
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../assistant/assistant.html" title="Calculation Assistant Guide"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="FAQ.html" title="Frequently asked questions"
+             accesskey="P">previous</a> |</li>
+  <span class="language_switcher_placeholder">en</span>
+  
+        <li class="nav-item nav-item-0"><a href="../index.html">AsterStudy v0.11 Documentation</a> &#187;</li>
+
+          <li class="nav-item nav-item-1"><a href="userguide.html" accesskey="U">User’s Guide</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="known-issues">
+<span id="userguide-known-issues"></span><h1>Known issues<a class="headerlink" href="#known-issues" title="Permalink to this headline">¶</a></h1>
+<p>This section lists the known issues that are not yet fixed at the time of
+delivery of this version.</p>
+<div class="section" id="in-the-management-of-the-study">
+<h2>In the management of the study<a class="headerlink" href="#in-the-management-of-the-study" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="use-of-special-characters-in-filenames">
+<h3>Use of special characters in filenames<a class="headerlink" href="#use-of-special-characters-in-filenames" title="Permalink to this headline">¶</a></h3>
+<p>It is advised not to use special characters (blanks, accentuated characters,
+non ASCII characters, such as &#64;, !, /, #, %, $ etc…) in filenames, be it for the name of the study (<em>.hdf</em> file)
+or the input and output files.
+This may indeed lead to difficulties in:</p>
+<ul class="simple">
+<li>launching of calculations (blanks);</li>
+<li>saving of the study (accents);</li>
+<li>opening of results in the <em>ParaViS</em> module (accents).</li>
+</ul>
+<p>The application emits a warning if you select an incorrectly named file.</p>
+</div>
+<div class="section" id="loading-a-study">
+<h3>Loading a study<a class="headerlink" href="#loading-a-study" title="Permalink to this headline">¶</a></h3>
+<p>When one reloads a study (<em>File &gt; Open</em>, with a <em>.hdf</em> file), the interface does
+not switch immediately to <em>AsterStudy</em>.
+One just needs to click on the <em>AsterStudy</em> icon.</p>
+</div>
+</div>
+<div class="section" id="in-the-data-settings">
+<h2>In the data settings<a class="headerlink" href="#in-the-data-settings" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="post-releve-t-command">
+<h3><code class="docutils literal notranslate"><span class="pre">POST_RELEVE_T</span></code> command<a class="headerlink" href="#post-releve-t-command" title="Permalink to this headline">¶</a></h3>
+<p>During the edition of the <code class="docutils literal notranslate"><span class="pre">POST_RELEVE_T</span></code> command, the link with the mesh is not
+activated until the modifications of the <code class="docutils literal notranslate"><span class="pre">ACTION</span></code> factor keyword or the whole command
+are validated.</p>
+</div>
+<div class="section" id="include-materiau-command">
+<h3><code class="docutils literal notranslate"><span class="pre">INCLUDE_MATERIAU</span></code> command<a class="headerlink" href="#include-materiau-command" title="Permalink to this headline">¶</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">FICHIER</span></code> keyword accepts a filename to be included as a string.
+The application can not know anything about this file.</p>
+<p><strong>Workaround</strong>: Insert a <em>Stage</em> in text mode above the <em>Stage</em> that uses the
+<code class="docutils literal notranslate"><span class="pre">INCLUDE_MATERIAU</span></code> command and declare the file as input, choose a free
+logical unit number. Then modify the value of <code class="docutils literal notranslate"><span class="pre">FICHIER</span></code> by <code class="docutils literal notranslate"><span class="pre">fort.NN</span></code> with
+the choosen unit number.</p>
+</div>
+<div class="section" id="commands-data-settings">
+<h3>Commands data settings<a class="headerlink" href="#commands-data-settings" title="Permalink to this headline">¶</a></h3>
+<p>For a better user experience (especially for mesh interaction), it is necessary
+to make sure that all compulsory keywords of the first level of edition are filled
+before editing a keyword with a second level of edition.</p>
+<p>Beware that mandatory keywords may sometimes be located at the bottom of the edition panel
+(for instance the keyword <code class="docutils literal notranslate"><span class="pre">MODELE</span></code> in <code class="docutils literal notranslate"><span class="pre">AFFE_CHAR_MECA</span></code> command).</p>
+</div>
+<div class="section" id="performance-of-mesh-view">
+<h3>Performance of mesh view<a class="headerlink" href="#performance-of-mesh-view" title="Permalink to this headline">¶</a></h3>
+<p>Mesh-related commands display a mesh and selected groups in the central area of
+the application window. For large mesh files, with big number of groups, the
+visualization of mesh data can be quite time-consuming.</p>
+<p><strong>Workaround</strong>: it is possible to disable visualization operations by switching
+mesh view off. This can be done by unpressing <em>Show Mesh View</em> button in the
+toolbar.</p>
+</div>
+</div>
+<div class="section" id="in-the-management-of-data-files">
+<h2>In the management of data files<a class="headerlink" href="#in-the-management-of-data-files" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="adding-files-in-data-files-panel">
+<h3>Adding files in <em>Data Files</em> panel<a class="headerlink" href="#adding-files-in-data-files-panel" title="Permalink to this headline">¶</a></h3>
+<p>When manually adding a file in text mode, it is necessary to validate the
+right panel with the <strong>OK</strong> button after selecting the file in the dialog box.</p>
+</div>
+<div class="section" id="adding-files-host-on-remote-server">
+<h3>Adding files host on remote server<a class="headerlink" href="#adding-files-host-on-remote-server" title="Permalink to this headline">¶</a></h3>
+<p>For EDF users, the cluster EOLE and ATHOS are automatically mounted when opening the <em>AsterStudy</em> module.
+When specifying a remote file, the sidebar of the file explorer opens the root directory “/”.
+After selecting the wanted cluster, the user must enter “home/NNI” or “scratch/NNI” in the text field
+at the top to access directly his usual directories.</p>
+</div>
+</div>
+<div class="section" id="in-the-management-of-calculations">
+<h2>In the management of calculations<a class="headerlink" href="#in-the-management-of-calculations" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="parametric-studies-and-uncertainties">
+<h3>Parametric studies and uncertainties<a class="headerlink" href="#parametric-studies-and-uncertainties" title="Permalink to this headline">¶</a></h3>
+<p>To be exported to <em>OpenTurns</em> a case must define some Python variables for the inputs
+and a table in the <em>numpy</em> format for the outputs. A such table is created by
+<code class="docutils literal notranslate"><span class="pre">IMPR_TABLE/FORMAT='NUMPY'</span></code>. It must contains exactly one line and the outputs
+parameters are named using <code class="docutils literal notranslate"><span class="pre">NOM_PARA</span></code>.</p>
+<p>An <em>AsterStudy</em> study is exported as a YACS schema. The Python can be edited in <em>OpenTurns</em>
+interface, execution parameters define the version used, time limit, etc.</p>
+<p>QuickStart for <em>OpenTurns</em>:</p>
+<ul class="simple">
+<li><em>Block size</em>: number of executions submitted in a job.</li>
+<li><em>Parallel executions</em>: number of calculations executed in parallel in a job.</li>
+<li><em>Number of processors/nodes</em>: resources used by a job, shared by the parallel executions.</li>
+</ul>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Please note that the <em>OpenTurns</em> module can not start several MPI executions
+in parallel in this release.</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">In the <em>OpenTurns</em> run panel, when the server is changed, the parameters are
+automatically reset to default values. Especially the wckey is reset to an
+invalid one.</p>
+</div>
+<p>See OpenTurns documentation for more details about the jobs submission.</p>
+</div>
+</div>
+<div class="section" id="other-issues">
+<h2>Other issues<a class="headerlink" href="#other-issues" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="in-case-of-error-in-the-application-recovery-mode">
+<span id="userguide-known-issues-recovery-mode"></span><h3>In case of error in the application - Recovery Mode<a class="headerlink" href="#in-case-of-error-in-the-application-recovery-mode" title="Permalink to this headline">¶</a></h3>
+<p>If an error occurs in the application, a dialog box opens with the message
+<em>Unexpected error</em>. The study may not be saved properly (in the <em>.hdf</em> file)
+following that. So, in a such case, prefer use <em>File &gt; Save As</em> not to erase
+the previous content.</p>
+<p>When the study is subsequently reloaded, it may be empty in <em>AsterStudy</em>.</p>
+<p><strong>Recovery mode</strong>: If the study cannot be restored from the <em>.hdf</em> file,
+one will automatically try to use the <em>recovery mode</em> to restore
+the <strong>Current Case</strong> with its <strong>Stages</strong>.</p>
+<p>Each time the Study is saved, an additional file is written in the <code class="docutils literal notranslate"><span class="pre">xxx_Files</span></code>
+directory of the Study named <code class="docutils literal notranslate"><span class="pre">data.ajs</span></code>. If the <em>.hdf</em> file is corrupted,
+you can use the <strong>Recovery Mode</strong> manually from the <em>Operations &gt; Recovery Mode</em>
+menu entry. Just select the <code class="docutils literal notranslate"><span class="pre">data.ajs</span></code> file to recover.</p>
+<p><strong>Another workaround</strong>: in the <em>History view</em>, navigate in the menus to
+<em>Operations &gt; Import Case</em>, and select the file named <em>backup.export</em> in the
+<em>Personal folder</em> (<code class="docutils literal notranslate"><span class="pre">$HOME</span></code>), then <code class="docutils literal notranslate"><span class="pre">.asterstudy/backup</span></code>.
+This folder always contains the data at the time of the last saving; the
+folder <code class="docutils literal notranslate"><span class="pre">backup.1</span></code> those at the previous one and so on.
+The study must therefore have been saved regularly to retrieve this state.
+By default, the directories starting with a dot are hidden. In this case,
+just type <em>.asterstudy</em> in the text area (if the text area is not visible,
+type <em>Ctrl+L</em> to show it).</p>
+</div>
+<div class="section" id="possible-hang-up-of-the-lock-screen">
+<h3>Possible hang up of the lock screen<a class="headerlink" href="#possible-hang-up-of-the-lock-screen" title="Permalink to this headline">¶</a></h3>
+<p>For EDF users, changing network while salome_meca is running may result in
+difficulties to log back in. Please be sure to close salome_meca before
+changing networks.</p>
+<p><strong>Workaround</strong>: if the user encounters a locking of the log screen, he may
+circumvent the problem by killing the process <cite>gvfsd</cite>. This may be done by
+logging in a TTY (CTRL+ALT+F1) and then killing the process manually
+(<cite>pkill gvfsd</cite>).</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+<p/>
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Known issues</a><ul>
+<li><a class="reference internal" href="#in-the-management-of-the-study">In the management of the study</a><ul>
+<li><a class="reference internal" href="#use-of-special-characters-in-filenames">Use of special characters in filenames</a></li>
+<li><a class="reference internal" href="#loading-a-study">Loading a study</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#in-the-data-settings">In the data settings</a><ul>
+<li><a class="reference internal" href="#post-releve-t-command"><code class="docutils literal notranslate"><span class="pre">POST_RELEVE_T</span></code> command</a></li>
+<li><a class="reference internal" href="#include-materiau-command"><code class="docutils literal notranslate"><span class="pre">INCLUDE_MATERIAU</span></code> command</a></li>
+<li><a class="reference internal" href="#commands-data-settings">Commands data settings</a></li>
+<li><a class="reference internal" href="#performance-of-mesh-view">Performance of mesh view</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#in-the-management-of-data-files">In the management of data files</a><ul>
+<li><a class="reference internal" href="#adding-files-in-data-files-panel">Adding files in <em>Data Files</em> panel</a></li>
+<li><a class="reference internal" href="#adding-files-host-on-remote-server">Adding files host on remote server</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#in-the-management-of-calculations">In the management of calculations</a><ul>
+<li><a class="reference internal" href="#parametric-studies-and-uncertainties">Parametric studies and uncertainties</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#other-issues">Other issues</a><ul>
+<li><a class="reference internal" href="#in-case-of-error-in-the-application-recovery-mode">In case of error in the application - Recovery Mode</a></li>
+<li><a class="reference internal" href="#possible-hang-up-of-the-lock-screen">Possible hang up of the lock screen</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="FAQ.html"
+                        title="previous chapter">Frequently asked questions</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../assistant/assistant.html"
+                        title="next chapter">Calculation Assistant Guide</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/userguide/known_issues.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../assistant/assistant.html" title="Calculation Assistant Guide"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="FAQ.html" title="Frequently asked questions"
+             >previous</a> |</li>
+  <span class="language_switcher_placeholder">en</span>
+  
+        <li class="nav-item nav-item-0"><a href="../index.html">AsterStudy v0.11 Documentation</a> &#187;</li>
+
+          <li class="nav-item nav-item-1"><a href="userguide.html" >User’s Guide</a> &#187;</li> 
+      </ul>
+    </div>
+ 
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2016-2019 EDF R&amp;D.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.6.
+    </div>
+  </body>
+</html>

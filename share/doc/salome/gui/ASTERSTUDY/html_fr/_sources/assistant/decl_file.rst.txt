@@ -1,0 +1,493 @@
+.. _assistant-declaration:
+
+****************
+Declaration file
+****************
+
+As soon as :ref:`template file <assistant-template>` is written, it's time
+to configure GUI behavior of the *Calculation Assistant* by writing a
+**declaration file**.
+
+A *declaration file* is a plain text file in **JSON** format; it provides
+description of the pages which will constitute the wizard dialog, the parameters
+to be shown on each page, the constraints for particular GUI controls, as well
+as general assistant's attributes.
+
+Structure of declaration file
+=============================
+
+In general, the *declaration file* has the following structure:
+
+.. code-block:: none
+
+    {
+      "title": "Title of calculation assistant",
+      "pages": [
+        {
+          "title": "Title of page 1",
+          "parameters": [
+            {
+              "name": "PARAMETER_1_IN_TEMPLATE_FILE",
+              "attribute_1": "Value of attribute_1",
+              "attribute_2": "Value of attribute_2",
+              ...
+            }
+          ]
+        },
+        {
+          "title": "Title of page 2",
+          "parameters": [
+            {
+              "title": "Title of group 1 on page 2",
+              "parameters": [
+                {
+                  "name": "PARAMETER_2_IN_TEMPLATE_FILE",
+                  "attribute_1": "Value of attribute_1",
+                  ...
+                },
+                {
+                  "name": "PARAMETER_3_IN_TEMPLATE_FILE",
+                  "attribute_1": "Value of attribute_1",
+                  ...
+                }
+              ]
+            },
+            {
+              "title": "Title of group 2 on page 2",
+              "parameters": [
+                {
+                  "name": "PARAMETER_4_IN_TEMPLATE_FILE",
+                  "attribute_1": "Value of attribute_1",
+                  ...
+                },
+                {
+                  "name": "PARAMETER_5_IN_TEMPLATE_FILE",
+                  "attribute_1": "Value of attribute_1",
+                  ...
+                }
+              ]
+            },
+            ...
+          ]
+        },
+        ...
+      ]
+    }
+
+The structure of the *declaration file* is shown in the table below. Each
+element is described as a dictionary with the set of named parameters. The
+sequences representing a set of entities within some item are represented as
+lists. Root item represents a wizard itself.
+
+Groups of controls can be nested; top-level groups represent wizard pages.
+
+.. table::
+
+    ========== ============ ============ =============
+    **Wizard**
+    --------------------------------------------------
+    *pages*    **Page 1**
+    ---------- ---------------------------------------
+    ..         *parameters* **Param 1**
+    ---------- ------------ --------------------------
+    ..                      **Param 2**
+    ---------- ------------ --------------------------
+    ..                      ...
+    ---------- ------------ --------------------------
+    ..         **Page 2**
+    ---------- ---------------------------------------
+    ..         *parameters* **Group 1**
+    ---------- ------------ --------------------------
+    ..                      *parameters* **Param K**
+    ---------- ------------ ------------ -------------
+    ..                                   **Param K+1**
+    ---------- ------------ ------------ -------------
+    ..                                   ...
+    ---------- ------------ ------------ -------------
+    ..                      **Group 2**
+    ---------- ------------ --------------------------
+    ..                      *parameters* ...
+    ---------- ------------ ------------ -------------
+    ..                      **Param N**
+    ---------- ------------ --------------------------
+    ..                      **Param N+1**
+    ---------- ------------ --------------------------
+    ..                      ...
+    ---------- ------------ --------------------------
+    ..         ...
+    ========== ============ ============ =============
+
+The attributes supported for each item are shown in the tables below.
+
+.. table:: **Wizard attributes**
+
+    ============= ======== ============================================== =============
+    **Attribute** **Type** **Description**                                **Mandatory**
+    ============= ======== ============================================== =============
+    *format*      string   Version of format (currently supported format  **yes**
+                           is 2.1)
+
+    *title*       string   Main title of the wizard; shown at the top of  **yes**
+                           each page.
+
+    *class*       string   The name of the generated wizard               no
+                           class.
+
+                           *Default*: *"Wizard"*.
+
+    *description* string   Additional description of the calculation      no
+                           assistant.
+
+                           *Default*: *none*.
+
+    *pages*       list     Set of pages describing user input steps.      **yes**
+    ============= ======== ============================================== =============
+
+|
+
+.. table:: **Page attributes**
+
+    ============= ======== ============================================== =============
+    **Attribute** **Type** **Description**                                **Mandatory**
+    ============= ======== ============================================== =============
+    *title*       string   Page title; shown as a sub-title of the page,  no
+                           under the main title.
+
+                           *Default*: *none*.
+
+    *description* string   Additional description of the page, shown as   no
+                           a tooltip.
+
+                           *Default*: *none*.
+
+    *parameters*  list     Set of parameters for the user input. May be   **yes**
+                           nested to create groups of widgets.
+    ============= ======== ============================================== =============
+
+|
+
+.. table:: **Group attributes**
+
+    ============= ======== ============================================== =============
+    **Attribute** **Type** **Description**                                **Mandatory**
+    ============= ======== ============================================== =============
+    *title*       string   Group box title. If not given, an untitled     no
+                           group box is created.
+
+                           *Default*: *none*.
+
+    *description* string   Additional description of the group, shown as  no
+                           a tooltip.
+
+                           *Default*: *none*.
+
+    *parameters*  list     Set of parameters for the user input. May be   **yes**
+                           nested to create sub-groups of widgets.
+
+    *name*        string   Only applied for *choices* parameter type (see **yes**
+                           below). Specifies unique identifier bound to
+                           particular choice.
+    ============= ======== ============================================== =============
+
+|
+
+.. table:: **Parameter attributes**
+
+    ============= ======== ============================================== =============
+    **Attribute** **Type** **Description**                                **Mandatory**
+    ============= ======== ============================================== =============
+    *name*        string   Parameter's name. This is a unique             **yes**
+                           parameter's identifier that is mapped to the
+                           stage template.
+
+    *title*       string   Parameter's title.                             no
+
+                           *Default*: *none*
+
+    *description* string   Additional description of the parameter,       no
+                           shown as a tooltip.
+
+                           *Default*: *none*.
+
+    *typ*         string   Type of the widget:                            no
+
+                           - "int": show drop-down selector widget if
+                             *into* attribute is specified (see below),
+                             or simple line editor otherwise;
+
+                           - "float": show drop-down selector widget if
+                             *into* attribute is specified (see below),
+                             or simple line editor otherwise;
+
+                           - "bool": show check-box widget;
+
+                           - "string": show drop-down selector widget if
+                             *into* attribute is specified (see below),
+                             or simple line editor otherwise;
+
+                           - "table": show table widget, which content
+                             is specified via *columns* attribute (see
+                             below);
+
+                           - "file": show file selector widget;
+
+                           - "mesh": show mesh file selector widget;
+
+                           - "group_ma": show mesh group selector widget
+                             to choose single group of elements;
+
+                           - "group_no": show mesh group selector widget
+                             to choose single group of nodes;
+
+                           - "choice": show several choices in form of
+                             a set of radio-buttons: only one choice can
+                             be selected; each separate choice can show
+                             additional widgets;
+
+                           - "text": show a readonly text area, useful
+                             for a long description.
+
+                           - "hidden": show nothing, used for choice with
+                             no parameter.
+
+                           *Default*: *"string"*.
+
+    *default*     *any*    Default value for the widget. Value type       no
+                           depends on the input type (*int*, *float*,
+                           *bool*, etc.).
+
+                           *Default*: *none*.
+
+    *into*        list     Available if *typ* is *int*, *float* or        no
+                           *string*. When given, generates a drop-down
+                           selector widget for the parameter which
+                           contains specified values as possible
+                           choices.
+                           Value type in the list depends on the input
+                           type (*int*, *float*, *string*).
+
+                           *Default*: *none*.
+
+    *val_min*     int,     Available if *typ* is *int* or *float* and     no
+                  float    *into* is not specified. Specifies the minimal
+                           allowed value of the parameter.
+
+                           *Default*: *none*.
+
+    *val_max*     int,     Available if *typ* is *int* or *float* and     no
+                  float    *into* is not specified. Specifies the maximal
+                           allowed value of the parameter.
+
+                           *Default*: *none*.
+
+    *regex*       string   Available if *typ* is *string* and *into* is   no
+                           not specified. Specifies the format of the
+                           parameter's value as a regular expression,
+                           e.g. *"[a-zA-Z]\\w{1,7}"*.
+
+                           .. note::
+                               backslash characters '\' should be
+                               additionally escaped to provide correct
+                               processing of json file.
+
+                           *Default*: *none*.
+
+    *length*      string   Available if *typ* is *string* and *into* is   no
+                           not specified. Specifies value's length.
+
+                           .. note::
+                               *length* has lower priority than
+                               *regex* attribute.
+
+                           *Default*: *none*.
+
+    *len_min*     int      Available if *typ* is *string* and *into* is   no
+                           not specified. Specifies minimum value's
+                           length.
+
+                           .. note::
+                               *len_min* and *len_max* (see below)
+                               attributes have lower priority than
+                               *regex* and *length* attributes.
+
+                           *Default*: *none*.
+
+    *len_max*     int      Available if *typ* is *string* and *into* is   no
+                           not specified. Specifies maximum value's
+                           length.
+
+                           .. note::
+                               *len_min* (see above) and *len_max*
+                               attributes have lower priority than
+                               *regex* and *length* attributes.
+
+                           *Default*: *none*.
+
+    *text*        string   Available if *typ* is *text*. The text is      no
+                           given as a *string* or a list of *string* for
+                           long and multi-lines description.
+
+    *columns*     list     Available if *typ* is *table*. Specifies       **yes**
+                           table's column data. Each column is specified
+                           in the same way as a *parameter*: all the same
+                           attributes are supported.
+
+                           The following types of values are supported
+                           as input in table columns:
+
+                           - "int"
+                           - "float"
+                           - "string"
+                           - "group_ma"
+                           - "group_no"
+
+                           Also, two additional types are available:
+
+                           - "groups_ma": allows selecting several
+                             groups of elements;
+
+                           - "groups_no": allows selecting several
+                             groups of nodes.
+
+    *mode*        string   Available if *typ* is *file*. Specifies file   no
+                           mode to be used in the file selector widget.
+                           Allowed values:
+
+                           - *in*: for input files; *Open File* dialog is
+                             shown, file should exist;
+                           - *out*: for output files; *Save File* dialog
+                             is shown, the file might not exist.
+
+                           *Default*: *"in"*
+
+    *filters*     string   Available if *typ* is *file*. Specifies file   no
+                           filters for *Open File* / *Save File* dialogs.
+                           Multiple filters are separated by double
+                           semicolor (";;").
+
+                           *Default*: *none*.
+
+    *unit*        int      Available if *typ* is *file* or *mesh*. It is  no
+                           a default unit value to be associated with the
+                           file entity.
+
+                           *Default*: *none*.
+
+    *mesh*        string   Available if *typ* is *group_ma*, *group_no*   **yes**
+                           or *table* (for latter case only available for
+                           column which typ is *group_ma*, *group_no*,
+                           *groups_ma* or *groups_no*). Specifies name of
+                           mesh parameter where to get list of groups.
+                           If not specified, first found mesh parameter
+                           is used.
+
+                           This attribute is mandatory but it can not be
+                           checked in *table* parameters.
+
+                           *Default*: *none*.
+
+    *rule*        string   Available if *typ* is *table*. Specifies       no
+                           custom validation rule for each table row.
+
+                           *Default*: *none*.
+
+    *choices*     list     Available if *typ* is *choice*. Specifies      **yes**
+                           list of choices to be managed as alternatives.
+                           Each choice is represented as a radio button.
+                           When selected, radio button can activate
+                           additional parameters. Thus, *choices* type
+                           is a special case of a *group*.
+
+    *mandatory*   bool     Only applied for table columns. When set to    no
+                           *true*, requires the corresponding column
+                           to be explicitly filled in by the user.
+
+                           *Default*: *true*.
+    ============= ======== ============================================== =============
+
+Sample *declaration file* can be found in :ref:`Examples section <assistant-example>`.
+
+Link to catalogue
+=================
+
+.. warning::
+    This is an extension to the base implementation of *Calculation Assistant*
+    feature; it is not implemented yet. This paragraph should be considered as
+    a preview of the future functionality.
+
+With general approach, creation of *declaration file* requires much efforts,
+and it may become quite big, since all needed attributes have to be specified
+for each calculation assistant's parameter.
+
+To simplify the creation of the *declaration file*, it is possible to link any
+parameter directly to the **Code_Aster** catalogue.
+
+This can be done by means of additional string attribute *url*:
+
+.. table::
+
+    ============= ======== ============================================== =============
+    **Attribute** **Type** **Description**                                **Mandatory**
+    ============= ======== ============================================== =============
+    *url*         string   Link to catalogue, in form of a path to the    **yes**
+                           particular keyword within the catalogue
+                           command.
+
+                           Example: AFFE_MODELE/AFFE/PHENOMENE
+    ============= ======== ============================================== =============
+
+This attribute allow automatically extract all other attributes needed to
+configure the GUI control within wizard dialog (minimum, maximum and default
+values, list of allowed items for enumerator, value type, etc).
+
+.. note::
+    It is still possible to override parameter's description extracted from
+    catalogue by using attributes described in previous paragraph.
+
+**Example**:
+
+.. code-block:: none
+
+    ...
+    "parameters": [
+      {
+        "name": "UNITE",
+        "url": "LIRE_MAILLAGE/UNITE"
+      },
+      {
+        "name": "PHENOMENE",
+        "url": "AFFE_MODELE/AFFE/PHENOMENE",
+        "into": ["MECANIQUE", "THERMIQUE"]
+      }
+    ]
+    ...
+
+In this example, the attributes of *UNITE* parameter of the wizard dialog are
+automatically extracted from the *Code Aster* catalogue's command *LIRE_MAILLAGE*.
+
+Similarly, the attributes of *PHENOMENE* parameter will be extracted from the
+corresponding keyword of the catalogue's command *AFFE_MODELE*; however, since
+"into" attribute is redefined in the *declaration file*, the range of possible
+values will be limited to *MECANIQUE* and *THERMIQUE* only (other possible values
+given in the catalogue will be ignored).
+
+See more detailed example in :ref:`Examples section <assistant-example>`.
+
+Extract description from template
+=================================
+
+.. warning::
+    This is an extension to the base implementation of *Calculation Assistant*
+    feature; it is not implemented yet. This paragraph should be considered as
+    a preview of the future functionality.
+
+Another extension to the base functionality provides the possibility to specify
+the calculation assistant's parameters without describing any attributes in the
+*declaration file*. In this case the calculation assistant will automatically
+detect the **Code_Aster** command and a keyword for each parameter by parsing
+the *template file*.
+
+The *declaration file* is still required to specify the distribution of the
+wizard's parameters between pages and groups of controls.
+
+See example in :ref:`Examples section <assistant-example>`.

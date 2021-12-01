@@ -1,0 +1,89 @@
+.. _userguide-FAQ:
+
+**************************
+Frequently asked questions
+**************************
+
+
+Is it possible to import command files which include Python instructions?
+=========================================================================
+
+Yes, it's possible in text mode. The command files that are loaded this way
+can't be edited using the graphical features.
+
+However, text stages and graphical stages
+may be mixed up. This enables the loading of Python intensive command files.
+In order to use existing concepts in the next graphical stages,
+one must use the :ref:`concept editor <userguide-edit-text-stage>`.
+
+Mathematical expressions written with Python (``math`` module) do not prevent
+the edition in graphical mode.
+
+What does the *reusable* option mean in *History view* panel?
+==============================================================
+
+.. |stage_keep| image:: /images/rt_keep.png
+    :height: 24px
+
+When the *reusable* option |stage_keep| is switched on for a *stage*, this means
+that the calculation may be restarted after such a *stage*.
+
+The last executed stage is set to *reusable* by default. However, one can decide
+whether to keep the *databases* or not. It affects the way
+the computations are launched (the calculation is faster when *reusable* is not
+checked on intermediate stages as only one run of **Code_Aster** is launched).
+
+Why do the combo-box sometimes offer several instances of the same object with names of commands between braces?
+================================================================================================================
+
+When an object is enriched (e.g. a mesh to which additional groups are added), this
+causes it to appear several times in the combo-box with the name of the command which
+created it between braces.
+
+When objects appear several times, the sort is done in decreasing order: the first
+item is the last modified one (result of the last enrichment).
+
+Why are some features *translated* in the language used by SALOME?
+==================================================================
+
+It is an optional feature. One can choose whether to activate this feature globally in
+the :ref:`Preferences <userguide-preferences>`, it may also be changed manually in each
+command edition panel (see :ref:`User manual <business-translations>`).
+
+When this feature is enabled, the keywords used in **Code_Aster** command language are
+replaced with more understandable translation.
+
+Why is the text in *History view/console* not updated during a calculation?
+===========================================================================
+
+The content of this panel is refreshed with the textual output during calculations.
+This requires a *ssh* connection with the server, including when the calculation
+is run locally. In this case, the *ssh* connection to the local host as
+declared in *JobManager* (generally ``localhost``) module must work without
+being asked for a password. When running computation on remote servers, the users must
+refresh the dashboard manually.
+
+Can I select a data file or a result file on a remote server?
+=============================================================
+
+Yes, it is possible if you are using the Gnome desktop environment.
+The connection to servers at startup can be enabled/disabled in
+*File > Preferences* menu.
+See :ref:`userguide-files_tab` for details.
+
+I cannot reload my Study / My Study is empty
+============================================
+
+If the Study cannot be reloaded or if the application failed, do not save the
+Study as is but prefer using the *File > Save As* menu to create a new file.
+See :ref:`userguide-known-issues-recovery-mode` to use the **Recovery Mode**.
+
+How can I report bugs in the application?
+=========================================
+
+When encountering a bug, it is necessary to define a scenario to reproduce the problem.
+Please report the bug by describing the scenario and by attaching the needed
+files at https://bitbucket.org/code_aster/codeaster-src/issues, with reference to
+the *asterstudy* component.
+
+For EDF users and partners, please use the usual *bugtracker*.

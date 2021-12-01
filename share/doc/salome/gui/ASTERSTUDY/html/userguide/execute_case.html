@@ -1,0 +1,271 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Run case &#8212; AsterStudy v0.11 Documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Case Management" href="case_management.html" />
+    <link rel="prev" title="Data Files" href="files_tab.html" />
+<script type="text/javascript" src="../_static/switchers.js"></script>
+ 
+
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="case_management.html" title="Case Management"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="files_tab.html" title="Data Files"
+             accesskey="P">previous</a> |</li>
+  <span class="language_switcher_placeholder">en</span>
+  
+        <li class="nav-item nav-item-0"><a href="../index.html">AsterStudy v0.11 Documentation</a> &#187;</li>
+
+          <li class="nav-item nav-item-1"><a href="userguide.html" accesskey="U">User’s Guide</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="run-case">
+<span id="userguide-execute-case"></span><h1>Run case<a class="headerlink" href="#run-case" title="Permalink to this headline">¶</a></h1>
+<p>To execute a case, you have to go to the <em>History View</em>.</p>
+<div class="section" id="select-stages-to-execute">
+<h2>Select stages to execute<a class="headerlink" href="#select-stages-to-execute" title="Permalink to this headline">¶</a></h2>
+<p>Before starting the calculation, the user must choose the stages to perform.
+To do this, he must click on the icons of the stages he wants to execute in his
+calculation:</p>
+<ul class="simple">
+<li><a class="reference internal" href="../_images/rt_run.png"><img alt="stage_run" src="../_images/rt_run.png" style="height: 24px;" /></a> to execute a stage,</li>
+<li><a class="reference internal" href="../_images/rt_skip.png"><img alt="stage_skip" src="../_images/rt_skip.png" style="height: 24px;" /></a> to skip a stage,</li>
+<li><a class="reference internal" href="../_images/rt_reuse.png"><img alt="stage_reuse" src="../_images/rt_reuse.png" style="height: 24px;" /></a> to reuse results of the previous calculation for a stage (see
+below).</li>
+</ul>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>If a stage is selected for execution, the previous stages are also
+automatically selected.</p>
+<p>Likewise, if a stage is skipped, the following stages are skipped as well.</p>
+<p class="last">By default, if there are previous results, they are reused.</p>
+</div>
+<p>The <a class="reference internal" href="../_images/rt_keep.png"><img alt="stage_keep" src="../_images/rt_keep.png" style="height: 24px;" /></a> button allows the user to specify whether or not to collect
+results from a previous calculation.
+When this button is pressed, the results for given stage are stored separately;
+otherwise, they are appended to the results of next stage.</p>
+<p><em>Run Parameters</em> panel allows the user defining the execution parameters,
+such as a server to use, a maximum memory size, a maximum execution time…</p>
+<div class="figure align-center" id="id1">
+<img alt="Execution parameters" src="../_images/execute_case.png" />
+<p class="caption"><span class="caption-text"><strong>Execution parameters</strong></span></p>
+</div>
+<p>To start the calculation, the user has to</p>
+<ul class="simple">
+<li>Select <em>CurrentCase</em> item in the <em>Cases</em> panel,</li>
+<li>Select run options for each stage (as described above),</li>
+<li>Specify the parameters of execution in the <em>Run parameters</em> panel,</li>
+<li>Press <strong>Run</strong> button.</li>
+</ul>
+<p>The selected stages are then executed one after another.
+Animated hourglass icon indicates a stage (or stages) being calculated.</p>
+<div class="figure align-center" id="id2">
+<img alt="Case execution" src="../_images/case_execution.png" />
+<p class="caption"><span class="caption-text"><strong>Case execution</strong></span></p>
+</div>
+<p>The stages are represented with:</p>
+<ul class="simple">
+<li><a class="reference internal" href="../_images/state_ok.png"><img alt="state_ok" src="../_images/state_ok.png" style="height: 24px;" /></a> for successful execution,</li>
+<li><a class="reference internal" href="../_images/state_error.png"><img alt="state_error" src="../_images/state_error.png" style="height: 24px;" /></a> for failed execution,</li>
+<li><a class="reference internal" href="../_images/state_interrupted.png"><img alt="state_interrupted" src="../_images/state_interrupted.png" style="height: 24px;" /></a> for interrupted execution (time limit for example),</li>
+<li><a class="reference internal" href="../_images/state_nook.png"><img alt="state_nook" src="../_images/state_nook.png" style="height: 24px;" /></a> for testcases with inexact results (<code class="docutils literal notranslate"><span class="pre">NOOK_TEST_RESU</span></code>).</li>
+</ul>
+<p>Stages for which previous results have been kept are displayed in a darker
+color, and with the <em>ok</em> icon.</p>
+<div class="figure align-center" id="id3">
+<img alt="Calculation results" src="../_images/case_execution2.png" />
+<p class="caption"><span class="caption-text"><strong>Calculation results</strong></span></p>
+</div>
+</div>
+<div class="section" id="execution-parameters">
+<h2>Execution parameters<a class="headerlink" href="#execution-parameters" title="Permalink to this headline">¶</a></h2>
+<p>Commonly used parameters can be changed in the <em>Basic</em> tab.
+The <em>User description</em> is a free text to identify a calculation.</p>
+<p>The other tab contains <em>Advanced</em> parameters. Some of them are dedicated
+to the submission of jobs on clusters (<em>partition</em>, <em>qos</em>, …) and are
+the same as those that can be found in <strong>JobManager</strong>.</p>
+<p><em>Extra parameters</em> are passed “as is” to the job scheduler.
+For example: <code class="docutils literal notranslate"><span class="pre">#SBATCH</span> <span class="pre">--begin=now+1hour</span></code> for <em>Slurm</em>. See your batch
+scheduler documentation for details.</p>
+</div>
+<div class="section" id="track-calculations">
+<h2>Track calculations<a class="headerlink" href="#track-calculations" title="Permalink to this headline">¶</a></h2>
+<p>The user can follow the execution using the tools located in the lower part of
+the window.</p>
+<div class="figure align-center" id="id4">
+<img alt="Track calculations toolbar" src="../_images/results.png" />
+<p class="caption"><span class="caption-text"><strong>Track calculations toolbar</strong></span></p>
+</div>
+</div>
+<div class="section" id="output-and-messages">
+<h2>Output and messages<a class="headerlink" href="#output-and-messages" title="Permalink to this headline">¶</a></h2>
+<p>The lower part of the window provides access to the output files of the
+execution and messages issued during the calculation (informations, alerts,
+errors).</p>
+<p>The <em>Output</em> panel allows viewing the log output produced for each run case.</p>
+<p>The drop-down list allows displaying a message file generated during the
+execution.</p>
+<p>The search box on the right allows you searching the text.
+The searched text is highlighted, and the user can browse its occurrences with
+the previous / next buttons.</p>
+<div class="figure align-center" id="id5">
+<img alt="Output panel" src="../_images/execution_output.png" />
+<p class="caption"><span class="caption-text"><strong>Output panel</strong></span></p>
+</div>
+<p>The <em>Messages</em> panel allows viewing the error, warning or information messages
+generated during the execution.</p>
+<p>The user can filter out the messages by categories by activating the buttons
+corresponding to each of the types of messages. It can also filter out
+messages by stages or by source by selecting the desired elements from the
+drop-down lists.</p>
+<div class="figure align-center" id="id6">
+<img alt="Messages panel" src="../_images/execution_messages.png" />
+<p class="caption"><span class="caption-text"><strong>Messages panel</strong></span></p>
+</div>
+</div>
+<div class="section" id="re-run-case">
+<h2>Re-run case<a class="headerlink" href="#re-run-case" title="Permalink to this headline">¶</a></h2>
+<p>It is possible to re-run a case by re-executing only some of its stages and
+starting from the results of previous executions.</p>
+<p>To do this, the user must select the run of which he wishes to reuse the
+results, then select from the context menu <em>Copy As Current</em>.</p>
+<div class="figure align-center" id="id7">
+<img alt="Reuse case results" src="../_images/reuse_case.png" />
+<p class="caption"><span class="caption-text"><strong>Reuse case results</strong></span></p>
+</div>
+<p>The user can then choose to re-use the results of the first stages by choosing
+the option <em>reuse</em> <a class="reference internal" href="../_images/rt_reuse.png"><img alt="stage_reuse" src="../_images/rt_reuse.png" style="height: 24px;" /></a>.</p>
+<div class="figure align-center" id="id8">
+<img alt="Run case with reusing previous results" src="../_images/reuse_case2.png" />
+<p class="caption"><span class="caption-text"><strong>Run case with reusing previous results</strong></span></p>
+</div>
+<p>It is thus possible to make several successive calculations.</p>
+<div class="figure align-center" id="id9">
+<img alt="Successive executions" src="../_images/reuse_case3.png" />
+<p class="caption"><span class="caption-text"><strong>Successive executions</strong></span></p>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">You must <strong>always select</strong> the <em>Current Case</em> (first node of the tree)
+to start a calculation.</p>
+</div>
+<p>The <em>Operations &gt; Re-run</em> main menu (<em>Case View</em>) allows quickly re-executing
+the <em>Current case</em> with the same parameters as were used in the previous
+execution.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+<p/>
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Run case</a><ul>
+<li><a class="reference internal" href="#select-stages-to-execute">Select stages to execute</a></li>
+<li><a class="reference internal" href="#execution-parameters">Execution parameters</a></li>
+<li><a class="reference internal" href="#track-calculations">Track calculations</a></li>
+<li><a class="reference internal" href="#output-and-messages">Output and messages</a></li>
+<li><a class="reference internal" href="#re-run-case">Re-run case</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="files_tab.html"
+                        title="previous chapter">Data Files</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="case_management.html"
+                        title="next chapter">Case Management</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/userguide/execute_case.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="case_management.html" title="Case Management"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="files_tab.html" title="Data Files"
+             >previous</a> |</li>
+  <span class="language_switcher_placeholder">en</span>
+  
+        <li class="nav-item nav-item-0"><a href="../index.html">AsterStudy v0.11 Documentation</a> &#187;</li>
+
+          <li class="nav-item nav-item-1"><a href="userguide.html" >User’s Guide</a> &#187;</li> 
+      </ul>
+    </div>
+ 
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2016-2019 EDF R&amp;D.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.6.
+    </div>
+  </body>
+</html>

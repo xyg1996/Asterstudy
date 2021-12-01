@@ -1,0 +1,26 @@
+mod_E = 210000.e6
+
+Fy = 1.e3 / 1.e-2
+
+mesh = LIRE_MAILLAGE(UNITE=20)
+
+model = AFFE_MODELE(
+    AFFE=_F(MODELISATION=('3D', ), PHENOMENE='MECANIQUE', TOUT='OUI'),
+    MAILLAGE=mesh
+)
+
+mater = DEFI_MATERIAU(ELAS=_F(E=mod_E, NU=0.3))
+
+fieldmat = AFFE_MATERIAU(AFFE=_F(MATER=(mater, ), TOUT='OUI'), MODELE=model)
+
+block = AFFE_CHAR_CINE(
+    MECA_IMPO=_F(DX=0.0, DY=0.0, DZ=0.0, GROUP_MA=('base', )), MODELE=model
+)
+
+load = AFFE_CHAR_MECA(FORCE_FACE=_F(FY=Fy, GROUP_MA=('extr', )), MODELE=model)
+
+result = MECA_STATIQUE(
+    CHAM_MATER=fieldmat,
+    EXCIT=(_F(CHARGE=block), _F(CHARGE=load)),
+    MODELE=model
+)

@@ -1,0 +1,155 @@
+beammesh = LIRE_MAILLAGE(FORMAT='MED', UNITE=%INPUTPOU%)
+sectmesh = LIRE_MAILLAGE(FORMAT='MED', UNITE=%INPUTSEC%)
+
+concrete = DEFI_MATER_GC(
+    MAZARS=_F(CODIFICATION ='EC2', UNITE_CONTRAINTE ='Pa', CLASSE = %CBETON%,),
+    RHO=2400.0,
+)
+
+steel=DEFI_MATER_GC(
+   ACIER=_F( E = 2.1e11, D_SIGM_EPSI=1200.0E+6, SY=%SIGY_ACIER%,),
+   RHO=7800.0,
+)
+
+mator=DEFI_MATERIAU(ELAS=_F(E=2.0E11,  NU=0.0, RHO=7800.0,), )
+
+fibgrp=DEFI_GEOM_FIBRE(
+   INFO=1,
+   FIBRE = (
+      _F(GROUP_FIBRE='SACIER', CARA = 'DIAMETRE', COOR_AXE_POUTRE = (0.0,0.0,),
+         VALE =%VALE_TRIPLET%, ),
+   ),
+   SECTION=_F(GROUP_FIBRE='SBETON', COOR_AXE_POUTRE = (0., 0.,),
+              MAILLAGE_SECT = sectmesh, TOUT_SECT = 'OUI', ),
+)
+fibmesh=CREA_MAILLAGE(GEOM_FIBRE=fibgrp)
+
+beammod=AFFE_MODELE(
+   MAILLAGE=beammesh,
+   AFFE=_F(TOUT='OUI', PHENOMENE='MECANIQUE', MODELISATION='POU_D_EM',), )
+
+pmfmazar=DEFI_COMPOR(
+   GEOM_FIBRE=fibgrp,
+   MATER_SECT=mator,
+   MULTIFIBRE=(
+      _F(GROUP_FIBRE='SACIER',  MATER=steel,  RELATION='VMIS_CINE_GC'),
+      _F(GROUP_FIBRE='SBETON',  MATER=concrete,  RELATION='MAZARS_GC'),),
+)
+
+matmazar=AFFE_MATERIAU(
+   MAILLAGE=beammesh,
+   AFFE=_F(GROUP_MA=%GROUP_BEAM%, MATER=(steel, concrete, mator),),
+   AFFE_COMPOR=_F(GROUP_MA=%GROUP_BEAM%,COMPOR=pmfmazar),
+)
+
+beamel=AFFE_CARA_ELEM(
+   MODELE=beammod, INFO=1,
+   POUTRE=_F(GROUP_MA=%GROUP_BEAM%, SECTION='RECTANGLE',
+             CARA=('HY','HZ'), VALE=(0.2,0.5),),
+   ORIENTATION=_F(GROUP_MA=%GROUP_BEAM%, CARA='ANGL_VRIL', VALE=-90.0,),
+   GEOM_FIBRE=fibgrp,
+   MULTIFIBRE=_F(GROUP_MA=%GROUP_BEAM%, GROUP_FIBRE=('SBETON','SACIER',),
+                 PREC_AIRE=2.0E-02, PREC_INERTIE=2.5E-01,),
+)
+
+csief=CREA_CHAMP(
+   TYPE_CHAM='ELGA_SIEF_R',
+   OPERATION="AFFE",
+   MODELE=beammod,
+   AFFE_SP=_F(CARA_ELEM = beamel,),
+   PROL_ZERO='OUI',
+   AFFE=_F(TOUT="OUI", NOM_CMP=('SIXX',), VALE=(0.0,),),)
+
+cresu=CREA_RESU(
+   TYPE_RESU="EVOL_NOLI",
+   OPERATION="AFFE",
+   NOM_CHAM='SIEF_ELGA',
+   AFFE= _F(CHAM_GD =csief, MODELE =beammod, CARA_ELEM =beamel, INST =0.0,),)
+
+IMPR_RESU(
+   FORMAT='MED',
+   UNITE=%OUTPUTFIBSEC%,
+   RESU=_F(MAILLAGE=fibmesh))
+
+IMPR_RESU(
+  FORMAT='MED',
+  RESU=_F(
+    CARA_ELEM=beamel,
+    NOM_CHAM=('SIEF_ELGA', ),
+    RESULTAT=cresu
+  ),
+  UNITE=%OUTPUTFIBPOS%
+)
+
+IMPR_CONCEPT(
+  CONCEPT=_F(
+    CARA_ELEM=beamel,
+    MODELE=beammod,
+    REPERE_LOCAL='ELNO'
+  ),
+  FORMAT='MED',
+  UNITE=%OUTPUTREPLOC%
+)
+
+block= AFFE_CHAR_MECA(DDL_IMPO=%BC%,
+                      MODELE=beammod)
+
+displ= AFFE_CHAR_MECA(MODELE=beammod,
+                      DDL_IMPO=%LOAD%)
+
+fomult=DEFI_FONCTION(
+   NOM_PARA='INST',
+   VALE=%FOMULT%,
+   PROL_DROITE='EXCLU',
+   PROL_GAUCHE='EXCLU',
+)
+
+linstd=DEFI_LIST_REEL(
+   DEBUT=0.0,
+   INTERVALLE=%INTERVALLE%,
+)
+
+%SUBD=YES_SUBD{
+linst1 = DEFI_LIST_INST(
+   DEFI_LIST=_F( LIST_INST =  linstd, ),
+   METHODE='MANUEL',
+   ECHEC=_F(
+      EVENEMENT       = 'ERREUR',
+      ACTION          = 'DECOUPE',
+      SUBD_METHODE    = 'MANUEL',
+      SUBD_PAS        = %SUBD_PAS1%,
+      SUBD_PAS_MINI   = 1.0E-10,
+      SUBD_NIVEAU     = %SUBD_NIVEAU1%,
+   ),
+)
+
+resumaz=STAT_NON_LINE(
+   MODELE=beammod,
+   CHAM_MATER=matmazar,
+   CARA_ELEM=beamel,
+   EXCIT=(_F(CHARGE=block,),_F(CHARGE=displ, FONC_MULT=fomult,),),
+   COMPORTEMENT=_F(RELATION='MULTIFIBRE'),
+   INCREMENT=_F(LIST_INST=linst1, INST_FIN=%INSTFIN%),
+   NEWTON=_F(MATRICE='TANGENTE',REAC_ITER=1),
+   CONVERGENCE=_F(RESI_GLOB_RELA=1.0E-5, ITER_GLOB_MAXI=10,),)
+}%
+
+%SUBD=NO_SUBD{
+resumaz=STAT_NON_LINE(
+   MODELE=beammod,
+   CHAM_MATER=matmazar,
+   CARA_ELEM=beamel,
+   EXCIT=(_F(CHARGE=block,),_F(CHARGE=displ, FONC_MULT=fomult,),),
+   COMPORTEMENT=_F(RELATION='MULTIFIBRE'),
+   INCREMENT=_F(LIST_INST=linstd, INST_FIN=%INSTFIN%),
+   NEWTON=_F(MATRICE='TANGENTE',REAC_ITER=1),
+   CONVERGENCE=_F(RESI_GLOB_RELA=1.0E-5, ITER_GLOB_MAXI=10,),)
+}%
+
+resumaz=CALC_CHAMP(FORCE='REAC_NODA', reuse =resumaz, RESULTAT=resumaz, );
+resumaz=CALC_CHAMP(reuse=resumaz, RESULTAT=resumaz, DEFORMATION=('EPSI_ELGA'), )
+
+IMPR_RESU(FORMAT='MED', UNITE=%OUTPUT%,
+	RESU=_F(RESULTAT=resumaz, CARA_ELEM=beamel,
+	NOM_CHAM=("SIEF_ELGA", "EPSI_ELGA","VARI_ELGA",),
+	),)

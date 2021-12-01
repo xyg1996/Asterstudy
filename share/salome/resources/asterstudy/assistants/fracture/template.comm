@@ -1,0 +1,103 @@
+mesh = LIRE_MAILLAGE(FORMAT='MED', UNITE=%INPUT%)
+
+%MODELISATION=3DSYM{
+model = AFFE_MODELE(AFFE=_F(MODELISATION=('3D', ),
+                            PHENOMENE='MECANIQUE',
+                            TOUT='OUI'),
+                    MAILLAGE=mesh)
+
+FISS = DEFI_FOND_FISS(FOND_FISS=%FISS3DSYM%,
+                      LEVRE_SUP=%LEVRE3D%,
+                      MAILLAGE=mesh,
+                      SYME='OUI')
+}%
+
+%MODELISATION=2DSYM{
+model = AFFE_MODELE(AFFE=_F(MODELISATION=%MODEL2DSYM%,
+                            PHENOMENE='MECANIQUE',
+                            TOUT='OUI'),
+                    MAILLAGE=mesh)
+
+FISS = DEFI_FOND_FISS(FOND_FISS=%FISS2DSYM%,
+                      LEVRE_SUP=%LEVRE2D%,
+                      MAILLAGE=mesh,
+                      SYME='OUI')
+}%
+
+%MODELISATION=3DNOSYM{
+model = AFFE_MODELE(AFFE=_F(MODELISATION=('3D', ),
+                            PHENOMENE='MECANIQUE',
+                            TOUT='OUI'),
+                    MAILLAGE=mesh)
+
+FISS = DEFI_FOND_FISS(FOND_FISS=%FISS3DNOSYM%,
+                      LEVRE_SUP=%LEV_SUP3D%,
+                      LEVRE_INF=%LEV_INF3D%,
+                      MAILLAGE=mesh,
+                      SYME='NON')
+}%
+
+%MODELISATION=2DNOSYM{
+model = AFFE_MODELE(AFFE=_F(MODELISATION=%MODEL2DNOSYM%,
+                            PHENOMENE='MECANIQUE',
+                            TOUT='OUI'),
+                    MAILLAGE=mesh)
+
+FISS = DEFI_FOND_FISS(FOND_FISS=%FISS2DNOSYM%,
+                      LEVRE_SUP=%LEV_SUP2D%,
+                      LEVRE_INF=%LEV_INF2D%,
+                      MAILLAGE=mesh,
+                      SYME='NON')
+}%
+
+
+mater = DEFI_MATERIAU(ELAS=_F(E=%E%,
+                              NU=%NU%))
+
+materfl = AFFE_MATERIAU(AFFE=_F(MATER=(mater, ),
+                                TOUT='OUI'),
+                        MODELE=model)
+
+mecabc = AFFE_CHAR_MECA(DDL_IMPO=%BC%,
+                        MODELE=model)
+
+mecach = AFFE_CHAR_MECA(MODELE=model,
+                        PRES_REP=%LOAD%)
+
+times = DEFI_LIST_INST(
+  DEFI_LIST=_F(VALE=(0.0, 1.0))
+)
+
+result = STAT_NON_LINE(
+  CHAM_MATER=materfl,
+  EXCIT=(_F(CHARGE=mecabc),
+  _F(CHARGE=mecach)),
+  INCREMENT=_F(
+    LIST_INST=times
+  ),
+  MODELE=model
+)
+
+G = CALC_G(OPTION='CALC_G',
+           RESULTAT=result,
+           THETA=_F(FOND_FISS=FISS,
+                    R_INF=%RINF%,
+                    R_SUP=%RSUP%))
+
+IMPR_TABLE(TABLE=G,
+           UNITE=%OUTPUTG%)
+
+IMPR_RESU(FORMAT='MED',
+          RESU=_F(RESULTAT=result),
+          UNITE=%OUTPUTRES%)
+
+%POSTK=YES_POSTK{
+table = POST_K1_K2_K3(
+  ABSC_CURV_MAXI = %ABSC_CURV_MAXI%,
+  FOND_FISS = FISS,
+  RESULTAT=result
+)
+IMPR_TABLE(TABLE=table,
+           UNITE=%OUTPUTPOSTK%)
+
+}%

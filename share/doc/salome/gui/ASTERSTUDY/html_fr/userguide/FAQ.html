@@ -1,0 +1,181 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="fr">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Foire aux questions &#8212; AsterStudy v0.11 Documentation</title>
+    <link rel="stylesheet" href="../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Recherche" href="../search.html" />
+    <link rel="next" title="Problèmes connus" href="known_issues.html" />
+    <link rel="prev" title="Préférences de l’application" href="preferences.html" />
+<script type="text/javascript" src="../_static/switchers.js"></script>
+ 
+
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="Index général"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="known_issues.html" title="Problèmes connus"
+             accesskey="N">suivant</a> |</li>
+        <li class="right" >
+          <a href="preferences.html" title="Préférences de l’application"
+             accesskey="P">précédent</a> |</li>
+  <span class="language_switcher_placeholder">fr</span>
+  
+        <li class="nav-item nav-item-0"><a href="../index.html">AsterStudy v0.11 Documentation</a> &#187;</li>
+
+          <li class="nav-item nav-item-1"><a href="userguide.html" accesskey="U">Manuel utilisateur</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="frequently-asked-questions">
+<span id="userguide-faq"></span><h1>Foire aux questions<a class="headerlink" href="#frequently-asked-questions" title="Lien permanent vers ce titre">¶</a></h1>
+<div class="section" id="is-it-possible-to-import-command-files-which-include-python-instructions">
+<h2>Peut-on lire des fichiers de commandes contenant du Python ?<a class="headerlink" href="#is-it-possible-to-import-command-files-which-include-python-instructions" title="Lien permanent vers ce titre">¶</a></h2>
+<p>Oui, c’est possible en mode texte. Les fichiers de commandes ainsi chargés ne bénéficient pas des fonctionnalités d’édition graphiques.</p>
+<p>Cependant, il est possible de mélanger les étapes graphiques et les étapes textes. Cela permet de charger des études complexes comportant beaucoup de Python. Pour être en mesure de réutiliser les concepts produits par les étapes en mode texte dans les étapes graphiques suivantes, il est nécessaire d’utiliser <a class="reference internal" href="commands.html#userguide-edit-text-stage"><span class="std std-ref">l’éditeur de concept</span></a>. Cet éditeur est joint à l’éditeur embarqué ou disponible en stand alone dans la barre d’outils.</p>
+<p>Les expressions mathématiques en Python (module <code class="docutils literal notranslate"><span class="pre">math</span></code>) ne constituent pas un obstacle à l’édition en mode graphique.</p>
+</div>
+<div class="section" id="what-does-the-reusable-option-mean-in-history-view-panel">
+<h2>À quoi sert l’attribut <em>reusable</em> dans l’onglet <em>History view</em> ?<a class="headerlink" href="#what-does-the-reusable-option-mean-in-history-view-panel" title="Lien permanent vers ce titre">¶</a></h2>
+<p>Lorsque l’attribut <a class="reference internal" href="../_images/rt_keep.png"><img alt="stage_keep" src="../_images/rt_keep.png" style="height: 24px;" /></a> <em>reusable</em> est coché pour une <em>Étape</em>, cela signifie que l’on pourra poursuivre le calcul à partir d’un telle <em>Étape</em>.</p>
+<p>La dernière <em>Étape</em> utilise le paramètre <em>reusable</em> par défaut. Mais il est possible de choisir de garder les résultats (les <em>bases</em>) ou pas. Cela change la manière dont le calcul est exécuté (le calcul est plus rapide quand <em>reusable</em> n’est pas coché sur les <em>Étapes</em> intermédiaires car on ne fait qu’une seule exécution de <em>code_aster</em>).</p>
+</div>
+<div class="section" id="why-do-the-combo-box-sometimes-offer-several-instances-of-the-same-object-with-names-of-commands-between-braces">
+<h2>Pourquoi est-ce que les listes déroulantes proposent parfois le même objet plusieurs fois avec des noms de commandes entre parenthèses ?<a class="headerlink" href="#why-do-the-combo-box-sometimes-offer-several-instances-of-the-same-object-with-names-of-commands-between-braces" title="Lien permanent vers ce titre">¶</a></h2>
+<p>Lorsqu’un objet est enrichi (par exemple un maillage auquel on ajoute des groupes), il apparaîtra plusieurs fois dans les listes déroulantes avec le nom de la commande qui l’a créé entre parenthèses.</p>
+<p>Lorsque des objets apparaissent plusieurs fois, le tri est fait de manière décroissante : le premier item est le dernier modifié (résultat du dernier enrichissement).</p>
+</div>
+<div class="section" id="why-are-some-features-translated-in-the-language-used-by-salome">
+<h2>Pourquoi certaines fonctionnalités apparaissent «&nbsp;traduites&nbsp;» dans la langue utilisée par SALOME ?<a class="headerlink" href="#why-are-some-features-translated-in-the-language-used-by-salome" title="Lien permanent vers ce titre">¶</a></h2>
+<p>Il s’agit d’une fonctionnalité pilotable soit de manière globale dans les <a class="reference internal" href="preferences.html#userguide-preferences"><span class="std std-ref">Préférences</span></a>, soit manuellement au niveau de chaque panneau d’édition d’une commande (voir la <a class="reference internal" href="commands.html#business-translations"><span class="std std-ref">documentation d’utilisation</span></a>).</p>
+<p>Lorsque cette fonctionnalité est activée, les mots-clés du langage de commandes Aster sont remplacés par une traduction plus parlante.</p>
+</div>
+<div class="section" id="why-is-the-text-in-history-view-console-not-updated-during-a-calculation">
+<h2>Pourquoi le texte de l’onglet <em>History view/console</em> n’est pas actualisé pendant un calcul ?<a class="headerlink" href="#why-is-the-text-in-history-view-console-not-updated-during-a-calculation" title="Lien permanent vers ce titre">¶</a></h2>
+<p>Le contenu de cet onglet est actualisé avec la sortie textuelle en cours de calcul. Ceci nécessite une connexion <em>ssh</em> avec le serveur, y compris quand le calcul est lancé en local. Dans ce cas, il faut que la connexion <em>ssh</em> vers le nom de la machine locale telle que déclarée dans le module  <em>JobManager</em> (généralement <code class="docutils literal notranslate"><span class="pre">localhost</span></code>) fonctionne sans demander un mot de passe. Lors du lancement de calcul sur ressource distante, l’utilisateur doit rafraîchir l’état du calcul dans le <em>Dashboard</em> manuellement.</p>
+</div>
+<div class="section" id="can-i-select-a-data-file-or-a-result-file-on-a-remote-server">
+<h2>Est-ce que je peux sélectionner un fichier de données ou de résultats sur un serveur distant ?<a class="headerlink" href="#can-i-select-a-data-file-or-a-result-file-on-a-remote-server" title="Lien permanent vers ce titre">¶</a></h2>
+<p>Oui, c’est possible si vous utilisez l’environnement de bureau Gnome. La connexion aux serveurs au démarrage peut être activée/désactivée dans le menu <em>Fichier &gt; Préférences</em>. Voir <a class="reference internal" href="files_tab.html#userguide-files-tab"><span class="std std-ref">Onglet Fichiers</span></a> pour plus de détails.</p>
+</div>
+<div class="section" id="i-cannot-reload-my-study-my-study-is-empty">
+<h2>Je ne peux pas relire mon Étude / Mon étude est vide<a class="headerlink" href="#i-cannot-reload-my-study-my-study-is-empty" title="Lien permanent vers ce titre">¶</a></h2>
+<p>Si l’étude ne peut pas être relue ou si l’application échoue, n’enregistrez pas l’étude telle quelle et utilisez de préférence <em>Fichier &gt; Enregistrer sous</em> pour créer un nouveau fichier. Voir <a class="reference internal" href="known_issues.html#userguide-known-issues-recovery-mode"><span class="std std-ref">En cas d’erreur de l’application - Mode de récupération</span></a> pour utiliser le <strong>Mode de récupération</strong>.</p>
+</div>
+<div class="section" id="how-can-i-report-bugs-in-the-application">
+<h2>Que faire en cas d’anomalie avec l’application ?<a class="headerlink" href="#how-can-i-report-bugs-in-the-application" title="Lien permanent vers ce titre">¶</a></h2>
+<p>En cas d’anomalie, il est nécessaire de définir un scénario pour reproduire le problème. Merci de signaler ces anomalies en décrivant le scénario et en joignant les fichiers nécessaires sur <a class="reference external" href="https://bitbucket.org/code_aster/codeaster-src/issues">https://bitbucket.org/code_aster/codeaster-src/issues</a>, associé au composant <em>asterstudy</em>.</p>
+<p>Pour les utilisateurs EDF et partenaires, utilisez le <em>bugtracker</em> habituel.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+
+<div id="searchbox" style="display: none" role="search">
+  <h3>Recherche rapide</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+<p/>
+  <h3><a href="../index.html">Table des Matières</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Foire aux questions</a><ul>
+<li><a class="reference internal" href="#is-it-possible-to-import-command-files-which-include-python-instructions">Peut-on lire des fichiers de commandes contenant du Python ?</a></li>
+<li><a class="reference internal" href="#what-does-the-reusable-option-mean-in-history-view-panel">À quoi sert l’attribut <em>reusable</em> dans l’onglet <em>History view</em> ?</a></li>
+<li><a class="reference internal" href="#why-do-the-combo-box-sometimes-offer-several-instances-of-the-same-object-with-names-of-commands-between-braces">Pourquoi est-ce que les listes déroulantes proposent parfois le même objet plusieurs fois avec des noms de commandes entre parenthèses ?</a></li>
+<li><a class="reference internal" href="#why-are-some-features-translated-in-the-language-used-by-salome">Pourquoi certaines fonctionnalités apparaissent «&nbsp;traduites&nbsp;» dans la langue utilisée par SALOME ?</a></li>
+<li><a class="reference internal" href="#why-is-the-text-in-history-view-console-not-updated-during-a-calculation">Pourquoi le texte de l’onglet <em>History view/console</em> n’est pas actualisé pendant un calcul ?</a></li>
+<li><a class="reference internal" href="#can-i-select-a-data-file-or-a-result-file-on-a-remote-server">Est-ce que je peux sélectionner un fichier de données ou de résultats sur un serveur distant ?</a></li>
+<li><a class="reference internal" href="#i-cannot-reload-my-study-my-study-is-empty">Je ne peux pas relire mon Étude / Mon étude est vide</a></li>
+<li><a class="reference internal" href="#how-can-i-report-bugs-in-the-application">Que faire en cas d’anomalie avec l’application ?</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Sujet précédent</h4>
+  <p class="topless"><a href="preferences.html"
+                        title="Chapitre précédent">Préférences de l’application</a></p>
+  <h4>Sujet suivant</h4>
+  <p class="topless"><a href="known_issues.html"
+                        title="Chapitre suivant">Problèmes connus</a></p>
+  <div role="note" aria-label="source link">
+    <h3>Cette page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/userguide/FAQ.rst.txt"
+            rel="nofollow">Montrer le code source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Recherche rapide</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="Index général"
+             >index</a></li>
+        <li class="right" >
+          <a href="known_issues.html" title="Problèmes connus"
+             >suivant</a> |</li>
+        <li class="right" >
+          <a href="preferences.html" title="Préférences de l’application"
+             >précédent</a> |</li>
+  <span class="language_switcher_placeholder">fr</span>
+  
+        <li class="nav-item nav-item-0"><a href="../index.html">AsterStudy v0.11 Documentation</a> &#187;</li>
+
+          <li class="nav-item nav-item-1"><a href="userguide.html" >Manuel utilisateur</a> &#187;</li> 
+      </ul>
+    </div>
+ 
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2016-2019 EDF R&amp;D.
+      Créé avec <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.6.
+    </div>
+  </body>
+</html>

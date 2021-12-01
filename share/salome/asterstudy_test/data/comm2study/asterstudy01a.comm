@@ -1,0 +1,91 @@
+
+Mesh=LIRE_MAILLAGE(UNITE=20,
+                   FORMAT='MED',);
+
+Mesh=MODI_MAILLAGE(reuse =Mesh,
+                   MAILLAGE=Mesh,
+                   ORIE_PEAU_2D=_F(GROUP_MA=('Cont_mast','Cont_slav',),),);
+
+Model=AFFE_MODELE(MAILLAGE=Mesh,
+                  AFFE=_F(TOUT='OUI',
+                          PHENOMENE='MECANIQUE',
+                          MODELISATION='C_PLAN',),);
+
+Mat01=DEFI_MATERIAU(ELAS=_F(E=2000.0,
+                            NU=0.3,),);
+
+Mat02=DEFI_MATERIAU(ELAS=_F(E=2000.0,
+                            NU=0.0,),);
+
+MatF=AFFE_MATERIAU(MAILLAGE=Mesh,
+                   MODELE=Model,
+                   AFFE=(_F(GROUP_MA='Upper',
+                            MATER=Mat01,),
+                         _F(GROUP_MA='Lower',
+                            MATER=Mat02,),),);
+
+Load1=AFFE_CHAR_CINE(MODELE=Model,
+                     MECA_IMPO=(_F(GROUP_MA='Sym_x',
+                                   DX=0.0,),
+                                _F(GROUP_NO='Sym_y',
+                                   DY=0.0,),),);
+
+Load2=AFFE_CHAR_MECA(MODELE=Model,
+                     PRES_REP=_F(GROUP_MA='Upper_face',
+                                 PRES=25.0,),);
+
+Cont1=DEFI_CONTACT(MODELE=Model,
+                   FORMULATION='CONTINUE',
+                   LISSAGE='OUI',
+                   ALGO_RESO_CONT='POINT_FIXE',
+                   ITER_CONT_MAXI=15,
+                   ZONE=_F(GROUP_MA_MAIT='Cont_mast',
+                           GROUP_MA_ESCL='Cont_slav',),);
+
+List_r=DEFI_LIST_REEL(DEBUT=0.0,
+                      INTERVALLE=_F(JUSQU_A=1.0,
+                                    PAS=1.0,),);
+
+List_i=DEFI_LIST_INST(DEFI_LIST=_F(LIST_INST=List_r,),
+                      ECHEC=_F(EVENEMENT='ERREUR',
+                               ACTION='DECOUPE',),
+                      METHODE='MANUEL');
+
+F_mult=DEFI_FONCTION(
+                     NOM_PARA='INST',
+                     VALE=(0.0 ,0.0 ,
+                           1.0 ,1.0 ,),);
+
+NL_res=STAT_NON_LINE(MODELE=Model,
+                     CHAM_MATER=MatF,
+                     EXCIT=(_F(CHARGE=Load1,),
+                            _F(CHARGE=Load2,),),
+                     CONTACT=Cont1,
+                     INCREMENT=_F(LIST_INST=List_i,),
+                     NEWTON=_F(REAC_ITER=1,),);
+
+NL_res=CALC_CHAMP(reuse =NL_res,
+                  RESULTAT=NL_res,
+                  CONTRAINTE='SIEF_NOEU',);
+
+Displ=CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',
+                 OPERATION='EXTR',
+                 RESULTAT=NL_res,
+                 NOM_CHAM='DEPL',
+                 INST=1.0,);
+
+Mesh=MODI_MAILLAGE(reuse =Mesh,
+                   MAILLAGE=Mesh,
+                   DEFORME=_F(OPTION='TRAN',
+                              DEPL=Displ,),);
+
+IMPR_RESU(FORMAT='MED',
+          RESU=_F(RESULTAT=NL_res,
+                  NOM_CHAM='DEPL',),);
+
+TEST_RESU(RESU=_F(RESULTAT=NL_res,
+                  INST=1.0,
+                  NOM_CHAM='SIEF_NOEU',
+                  NOM_CMP='SIYY',
+                  TYPE_TEST='MIN',
+                  VALE_CALC=-31.2006807436,),);

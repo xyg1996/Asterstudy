@@ -1,0 +1,96 @@
+MA=LIRE_MAILLAGE(FORMAT="ASTER",);
+
+DEFI_GROUP(reuse =MA, MAILLAGE=MA,
+              CREA_GROUP_NO=_F(TOUT_GROUP_MA='OUI',),);
+
+MO=AFFE_MODELE(MAILLAGE=MA,
+               AFFE=_F(TOUT='OUI',
+                       PHENOMENE='MECANIQUE',
+                       MODELISATION='AXIS',),);
+
+MATHER=DEFI_MATERIAU(THER=_F(LAMBDA=1.0,
+                             RHO_CP=1000.0,),);
+
+CHMATHE=AFFE_MATERIAU(MAILLAGE=MA,
+                      AFFE=_F(TOUT='OUI',
+                              MATER=MATHER,),);
+
+HPAROI=DEFI_CONSTANTE(VALE=100.0,);
+
+T_EXT=DEFI_FONCTION(NOM_PARA='INST',
+                    VALE=(0.0,100.0,0.01,0.0,10.0,0.0,100.0,0.0,),
+                    PROL_DROITE='CONSTANT',
+                    PROL_GAUCHE='CONSTANT',);
+
+LISTTH=DEFI_LIST_REEL(DEBUT=0.0,
+                      INTERVALLE=(_F(JUSQU_A=1.E-2,
+                                     NOMBRE=10,),
+                                  _F(JUSQU_A=0.10000000000000001,
+                                     NOMBRE=9,),
+                                  _F(JUSQU_A=1.0,
+                                     NOMBRE=9,),
+                                  _F(JUSQU_A=2.0,
+                                     NOMBRE=5,),
+                                  _F(JUSQU_A=10.0,
+                                     NOMBRE=8,),
+                                  _F(JUSQU_A=100.0,
+                                     NOMBRE=5,),),);
+
+MOTHER2=AFFE_MODELE(MAILLAGE=MA,
+                    AFFE=_F(TOUT='OUI',
+                            PHENOMENE='THERMIQUE',
+                            MODELISATION='AXIS_DIAG',),);
+
+CHAR_TH2=AFFE_CHAR_THER_F(MODELE=MOTHER2,
+                          ECHANGE=_F(GROUP_MA='ECHANGE',
+                                     COEF_H=HPAROI,
+                                     TEMP_EXT=T_EXT,),);
+
+TEMPE2=THER_LINEAIRE(MODELE=MOTHER2,
+                     CHAM_MATER=CHMATHE,
+                     EXCIT=_F(CHARGE=CHAR_TH2,),
+                     INCREMENT=_F(LIST_INST=LISTTH,),
+                     ETAT_INIT=_F(VALE=100.0,),);
+
+MAT=DEFI_MATERIAU(ELAS=_F(E=2.E5,
+                          NU=0.29999999999999999,
+                          RHO=7.9999999999999996E-06,
+                          ALPHA=1.0000000000000001E-05,),);
+
+CHMTM=AFFE_MATERIAU(MAILLAGE=MA,
+                    AFFE=_F(TOUT='OUI',
+                            MATER=MAT,),
+                    AFFE_VARC=(
+                    _F( TOUT='OUI',EVOL=TEMPE2,
+                                  NOM_VARC='TEMP',
+                                  NOM_CHAM='TEMP',VALE_REF=0.0),
+                               ))
+
+CHTEMP0=CREA_CHAMP(TYPE_CHAM='NOEU_TEMP_R',
+                   OPERATION='AFFE',
+                   MODELE=MOTHER2,
+                   AFFE=_F(TOUT='OUI',
+                           NOM_CMP='TEMP',
+                           VALE=0.0,),);
+
+CREA_RESU(reuse=TEMPE2,
+          RESULTAT=TEMPE2,
+          OPERATION='AFFE',
+          TYPE_RESU='EVOL_THER',
+          NOM_CHAM='TEMP',
+          AFFE=_F(CHAM_GD=CHTEMP0,
+                  INST=-1.0,),);
+
+BRIDAG2=AFFE_CHAR_MECA(MODELE=MO,
+                       DDL_IMPO=(_F(GROUP_MA='BAS',
+                                    DY=0.0,),
+                                 _F(GROUP_MA='HAUT',
+                                    DY=0.0,),),);
+
+INSTMEC2=DEFI_LIST_REEL(VALE=(-1.0,0.0,11.0,),);
+
+SNLBRID2=STAT_NON_LINE(MODELE=MO,
+                       CHAM_MATER=CHMTM,
+                       EXCIT=_F(CHARGE=BRIDAG2,),
+                       COMPORTEMENT=_F(RELATION='ELAS',),
+                       INCREMENT=_F(LIST_INST=INSTMEC2,),);

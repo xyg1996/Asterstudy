@@ -1,0 +1,3089 @@
+
+--------------------------------------------------------------------------------
+ Exécution de Code_Aster
+
+<INFO> préparation de l'environnement dans /local00/tmp/G79848-dsp0837509-interactif_18900-0001-dsp0837509
+
+--------------------------------------------------------------------------------
+ Copie des données
+
+copie de .../G79848-dsp0837509-sam.-19-184602.063/RunCase_3_sdll135a.comm...
+                                                                        [  OK  ]
+copie de .../G79848-dsp0837509-sam.-19-184602.063/sdll135a.mmed...      [  OK  ]
+<INFO> Paramètres : mémoire 2048.0 Mo - temps max 900 s
+
+--------------------------------------------------------------------------------
+ Contenu de /local00/tmp/G79848-dsp0837509-interactif_18900-0001-dsp0837509 avant l'exécution
+
+total 216
+drwx------  3 G79848 rdusers   4096 janv. 19 18:46 .
+drwxrwxrwt 17 root   root     65536 janv. 19 18:46 ..
+-rw-r--r--  1 G79848 rdusers    773 janv. 19 18:46 18900-0001-dsp0837509.export
+-rw-r--r--  1 G79848 rdusers   3077 janv. 19 18:46 config.txt
+-rw-r--r--  1 G79848 rdusers  18259 janv. 19 18:46 fort.1.1
+-rw-r--r--  1 G79848 rdusers 114601 janv. 19 18:46 fort.20
+drwxr-xr-x  2 G79848 rdusers   4096 janv. 19 18:46 REPE_OUT
+
+
+--------------------------------------------------------------------------------
+ Exécution de Code_Aster
+
+<INFO> Ligne de commande 1 :
+<INFO> /home/G79848/data/dev/codeaster/install/std/bin/aster /home/G79848/data/dev/codeaster/install/std/lib/aster/Execution/E_SUPERV.py -commandes fort.1 --num_job=18900-0001-dsp0837509 --mode=interactif --rep_outils=/home/G79848/salome_meca_integr/V8_INTEGR/tools/Code_aster_frontend-salomemeca/outils --rep_mat=/home/G79848/dev/codeaster/install/std/share/aster/materiau --rep_dex=/home/G79848/dev/codeaster/install/std/share/aster/datg --numthreads=4 --suivi_batch --memjeveux=256.0 --tpmax=900.0
+/home/G79848/data/dev/codeaster/install/std/lib/aster/aster_settings.py:257: DeprecationWarning: this command line option is deprecated : --rep_outils
+  coreopts.parse_args(argv or sys.argv)
+/home/G79848/data/dev/smeca/salome-codeaster-study/prefix/lib/python2.7/site-packages/future/standard_library/__init__.py:483: ImportWarning: Not importing directory '/home/G79848/salome_meca_integr/appli_V8_INTEGR/bin/salome/test': missing __init__.py
+  import test
+/home/G79848/data/dev/smeca/salome-codeaster-study/prefix/lib/python2.7/site-packages/asterstudy/common/configuration.py:129: DeprecationWarning: The SafeConfigParser class has been renamed to ConfigParser in Python 3.2. This alias will be removed in future versions. Use ConfigParser directly instead.
+  self._cfg = SafeConfigParser()
+# ------------------------------------------------------------------------------------------
+# Impression du contenu du fichier de commandes à exécuter :
+# ------------------------------------------------------------------------------------------
+SOLVEURL = 'MULT_FRONT'
+
+DEBUT(identifier=u'1:1',
+      CODE=_F(NIV_PUB_WEB='INTERNET'),
+      DEBUG=_F(SDVERI='NON'))
+
+MAIL = LIRE_MAILLAGE(identifier=u'2:1',
+                     FORMAT='MED',
+                     UNITE=20)
+
+MODELE = AFFE_MODELE(identifier=u'3:1',
+                     AFFE=_F(MODELISATION='POU_D_E',
+                             PHENOMENE='MECANIQUE',
+                             TOUT='OUI'),
+                     MAILLAGE=MAIL)
+
+CARAC = AFFE_CARA_ELEM(identifier=u'4:1',
+                       MODELE=MODELE,
+                       POUTRE=_F(CARA=('R', 'EP'),
+                                 GROUP_MA='TOUT',
+                                 SECTION='CERCLE',
+                                 VALE=(0.16, 0.01)))
+
+ACIER = DEFI_MATERIAU(identifier=u'5:1',
+                      ELAS=_F(E=2e+11,
+                              NU=0.29,
+                              RHO=7830.0))
+
+CHMAT = AFFE_MATERIAU(identifier=u'6:1',
+                      AFFE=_F(MATER=ACIER,
+                              TOUT='OUI'),
+                      MAILLAGE=MAIL)
+
+LISTE = DEFI_LIST_REEL(identifier=u'7:1',
+                       DEBUT=0.0,
+                       INTERVALLE=_F(JUSQU_A=0.0002,
+                                     PAS=1e-07))
+
+LISTE2 = DEFI_LIST_REEL(identifier=u'8:1',
+                        DEBUT=0.0,
+                        INTERVALLE=_F(JUSQU_A=0.00032,
+                                      PAS=1e-07))
+
+CL = AFFE_CHAR_MECA(identifier=u'9:1',
+                    DDL_IMPO=_F(DRX=0.0,
+                                DRY=0.0,
+                                DRZ=0.0,
+                                DX=0.0,
+                                DY=0.0,
+                                DZ=0.0,
+                                GROUP_NO='A'),
+                    MODELE=MODELE)
+
+CHARFX = AFFE_CHAR_MECA(identifier=u'10:1',
+                        FORCE_NODALE=_F(FX=1.0,
+                                        GROUP_NO='B'),
+                        MODELE=MODELE)
+
+CHARMX = AFFE_CHAR_MECA(identifier=u'11:1',
+                        FORCE_NODALE=_F(GROUP_NO='B',
+                                        MX=1.0),
+                        MODELE=MODELE)
+
+ASSEMBLAGE(identifier=u'12:1',
+           CARA_ELEM=CARAC,
+           CHAM_MATER=CHMAT,
+           CHARGE=CL,
+           MATR_ASSE=(_F(MATRICE=CO('MASSE'),
+                         OPTION='MASS_MECA'),
+                      _F(MATRICE=CO('RIGID'),
+                         OPTION='RIGI_MECA')),
+           MODELE=MODELE,
+           NUME_DDL=CO('NUMEDDL'))
+
+# LISTE DISCRETISE TRES FINEMENT POUR RESPECTER
+# LE RAPPORT TAILLE DE MAILLE VITESSE DE L ONDE DE COMPRESSION
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+# MODELISATION POU_D_E
+# SDVERI='NON' car la verification est trop couteuse en CPU
+# DEFINITION DES LISTES D INSTANTS
+# DANS LES DEUX CAS L ONDE NE FAIT QU UN ALLER POUR
+# UN MINIMUM DE TEMPS CPU CONSOMME
+# LA PREMIERE CORRESPOND A L ONDRE DE TRACTION-COMPRESSION
+# LA SECONDE CORRESPOND A L ONDRE DE TORSION
+# ENCASTREMENT SUR UNE EXTREMITE
+# CHARGEMENT SOUS LA FORME D UNE FORCE ( OU D UN MOMENT ) DE TYPE HEAVYSIDE
+# RECHERCHE DES MODES PROPRES DE TRACTIONS/COMPRESSIONS
+# ON SAUTE SCIEMMENT QUELQUES MODES (D'OU STURM='NON')
+# RECHERCHE DES MODES PROPRES DE FLEXION
+# ON SAUTE SCIEMMENT QUELQUES MODES (D'OU STURM='NON')
+# RECHERCHE DES MODES PROPRES DE TORSION
+# ON SAUTE SCIEMMENT QUELQUES MODES (D'OU STURM='NON')
+# CHARGEMENT DE TYPE TORSION : LA LISTE D INSTANT EST DIFFERENTE CAR
+# LA VITESSE DE L ONDE DE TORSION EST INFERIEURE A CELLE DE TRACTION
+# D OU UN TEMPS SUPERIEUR POUR ATTEINDRE LE BOUT DE LA POUTRE
+# TEST DU CHAMP DE DEPLACEMENT SUR LE NOEUD EXTREMITE
+# TEST SUR LES REACTIONS NODALES
+# TEST SUR LES DEPLACEMENTS
+# TEST SUR LES REACTIONS NODALES
+DYNATRAF = DYNA_VIBRA(identifier=u'17:1',
+                      ARCHIVAGE=_F(PAS_ARCH=100),
+                      BASE_CALCUL='PHYS',
+                      CARA_ELEM=CARAC,
+                      CHAM_MATER=CHMAT,
+                      EXCIT=(_F(CHARGE=CHARFX),
+                             _F(CHARGE=CL)),
+                      INCREMENT=_F(LIST_INST=LISTE),
+                      MATR_MASS=MASSE,
+                      MATR_RIGI=RIGID,
+                      MODELE=MODELE,
+                      SCHEMA_TEMPS=_F(SCHEMA='NEWMARK'),
+                      SOLVEUR=_F(METHODE=SOLVEURL),
+                      TYPE_CALCUL='TRAN')
+
+MODE_DX = CALC_MODES(identifier=u'18:1',
+                     CALC_FREQ=_F(FREQ=(1263.497, 3790.49, 6317.484, 8844.4477, 11371.473)),
+                     MATR_MASS=MASSE,
+                     MATR_RIGI=RIGID,
+                     OPTION='PROCHE',
+                     SOLVEUR=_F(METHODE='MULT_FRONT',
+                                NPREC=9),
+                     VERI_MODE=_F(STURM='NON'))
+
+MODE_FZ = CALC_MODES(identifier=u'19:1',
+                     CALC_FREQ=_F(FREQ=(310.133, 1943.568, 5442.048, 10664.242, 17628.755)),
+                     MATR_MASS=MASSE,
+                     MATR_RIGI=RIGID,
+                     OPTION='PROCHE',
+                     SOLVEUR=_F(METHODE='MULT_FRONT'),
+                     VERI_MODE=_F(STURM='NON'))
+
+MODE_DRX = CALC_MODES(identifier=u'20:1',
+                      CALC_FREQ=_F(FREQ=(786.619, 2359.856, 3933.094, 5506.33)),
+                      MATR_MASS=MASSE,
+                      MATR_RIGI=RIGID,
+                      OPTION='PROCHE',
+                      SOLVEUR=_F(METHODE='MULT_FRONT'),
+                      VERI_MODE=_F(STURM='NON'))
+
+DYNATRAM = DYNA_VIBRA(identifier=u'21:1',
+                      ARCHIVAGE=_F(PAS_ARCH=100),
+                      BASE_CALCUL='PHYS',
+                      CARA_ELEM=CARAC,
+                      CHAM_MATER=CHMAT,
+                      EXCIT=(_F(CHARGE=CHARMX),
+                             _F(CHARGE=CL)),
+                      INCREMENT=_F(LIST_INST=LISTE2),
+                      MATR_MASS=MASSE,
+                      MATR_RIGI=RIGID,
+                      MODELE=MODELE,
+                      SCHEMA_TEMPS=_F(SCHEMA='NEWMARK'),
+                      SOLVEUR=_F(METHODE=SOLVEURL),
+                      TYPE_CALCUL='TRAN')
+
+DYNATRAF = CALC_CHAMP(identifier=u'22:1',
+                      reuse=DYNATRAF,
+                      CONTRAINTE=('SIEF_ELGA', 'SIEF_ELNO'),
+                      RESULTAT=DYNATRAF)
+
+DYNATRAF = CALC_CHAMP(identifier=u'23:1',
+                      reuse=DYNATRAF,
+                      CARA_ELEM=CARAC,
+                      CHAM_MATER=CHMAT,
+                      EXCIT=(_F(CHARGE=CHARFX),
+                             _F(CHARGE=CL)),
+                      FORCE='REAC_NODA',
+                      MODELE=MODELE,
+                      RESULTAT=DYNATRAF)
+
+DYNATRAM = CALC_CHAMP(identifier=u'24:1',
+                      reuse=DYNATRAM,
+                      CONTRAINTE=('SIEF_ELGA', 'SIEF_ELNO'),
+                      RESULTAT=DYNATRAM)
+
+DYNATRAM = CALC_CHAMP(identifier=u'25:1',
+                      reuse=DYNATRAM,
+                      CARA_ELEM=CARAC,
+                      CHAM_MATER=CHMAT,
+                      EXCIT=(_F(CHARGE=CHARMX),
+                             _F(CHARGE=CL)),
+                      FORCE='REAC_NODA',
+                      MODELE=MODELE,
+                      RESULTAT=DYNATRAM)
+
+TEST_RESU(identifier=u'26:1',
+          RESU=_F(GROUP_NO='B',
+                  NOM_CHAM='DEPL',
+                  NOM_CMP='DX',
+                  NUME_ORDRE=10,
+                  REFERENCE='ANALYTIQUE',
+                  RESULTAT=DYNATRAF,
+                  VALE_CALC=2.59345308e-10,
+                  VALE_REFE=2.59473227925e-10))
+
+TEST_RESU(identifier=u'27:1',
+          RESU=_F(GROUP_NO='B',
+                  NOM_CHAM='DEPL',
+                  NOM_CMP='DX',
+                  NUME_ORDRE=15,
+                  REFERENCE='ANALYTIQUE',
+                  RESULTAT=DYNATRAF,
+                  VALE_CALC=3.8907807e-10,
+                  VALE_REFE=3.89209841887e-10))
+
+TEST_RESU(identifier=u'28:1',
+          RESU=_F(GROUP_NO='B',
+                  NOM_CHAM='DEPL',
+                  NOM_CMP='DX',
+                  NUME_ORDRE=20,
+                  REFERENCE='ANALYTIQUE',
+                  RESULTAT=DYNATRAF,
+                  VALE_CALC=5.18818706e-10,
+                  VALE_REFE=5.18946455848e-10))
+
+TEST_RESU(identifier=u'29:1',
+          RESU=_F(CRITERE='ABSOLU',
+                  GROUP_NO='A',
+                  NOM_CHAM='REAC_NODA',
+                  NOM_CMP='DX',
+                  NUME_ORDRE=10,
+                  REFERENCE='ANALYTIQUE',
+                  RESULTAT=DYNATRAF,
+                  VALE_CALC=-8.45037407e-192,
+                  VALE_REFE=0.0))
+
+TEST_RESU(identifier=u'30:1',
+          RESU=_F(CRITERE='ABSOLU',
+                  GROUP_NO='B',
+                  NOM_CHAM='REAC_NODA',
+                  NOM_CMP='DX',
+                  NUME_ORDRE=10,
+                  REFERENCE='ANALYTIQUE',
+                  RESULTAT=DYNATRAF,
+                  VALE_CALC=7.45277104e-13,
+                  VALE_REFE=0.0))
+
+TEST_RESU(identifier=u'31:1',
+          RESU=_F(CRITERE='ABSOLU',
+                  GROUP_NO='A',
+                  NOM_CHAM='REAC_NODA',
+                  NOM_CMP='DX',
+                  NUME_ORDRE=15,
+                  REFERENCE='ANALYTIQUE',
+                  RESULTAT=DYNATRAF,
+                  VALE_CALC=1.18304926e-49,
+                  VALE_REFE=0.0))
+
+TEST_RESU(identifier=u'32:1',
+          RESU=_F(GROUP_NO='A',
+                  NOM_CHAM='REAC_NODA',
+                  NOM_CMP='DX',
+                  NUME_ORDRE=20,
+                  PRECISION=0.05,
+                  REFERENCE='ANALYTIQUE',
+                  RESULTAT=DYNATRAF,
+                  VALE_CALC=-1.97628488,
+                  VALE_REFE=-1.99999819062))
+
+TEST_RESU(identifier=u'33:1',
+          RESU=_F(CRITERE='ABSOLU',
+                  GROUP_NO='B',
+                  NOM_CHAM='REAC_NODA',
+                  NOM_CMP='DX',
+                  NUME_ORDRE=20,
+                  REFERENCE='ANALYTIQUE',
+                  RESULTAT=DYNATRAF,
+                  VALE_CALC=-3.21440791e-13,
+                  VALE_REFE=0.0))
+
+TEST_RESU(identifier=u'34:1',
+          RESU=_F(CRITERE='RELATIF',
+                  NUME_ORDRE=1,
+                  PARA='FREQ',
+                  REFERENCE='ANALYTIQUE',
+                  RESULTAT=MODE_DX,
+                  VALE_CALC=1263.49687,
+                  VALE_REFE=1263.497))
+
+TEST_RESU(identifier=u'35:1',
+          RESU=_F(CRITERE='RELATIF',
+                  NUME_ORDRE=2,
+                  PARA='FREQ',
+                  REFERENCE='ANALYTIQUE',
+                  RESULTAT=MODE_DX,
+                  VALE_CALC=3790.49373,
+                  VALE_REFE=3790.49))
+
+TEST_RESU(identifier=u'36:1',
+          RESU=_F(CRITERE='RELATIF',
+                  NUME_ORDRE=3,
+                  PARA='FREQ',
+                  REFERENCE='ANALYTIQUE',
+                  RESULTAT=MODE_DX,
+                  VALE_CALC=6317.49993,
+                  VALE_REFE=6317.484))
+
+TEST_RESU(identifier=u'37:1',
+          RESU=_F(CRITERE='RELATIF',
+                  NUME_ORDRE=4,
+                  PARA='FREQ',
+                  REFERENCE='ANALYTIQUE',
+                  RESULTAT=MODE_DX,
+                  VALE_CALC=8844.52173,
+                  VALE_REFE=8844.4477))
+
+TEST_RESU(identifier=u'38:1',
+          RESU=_F(CRITERE='RELATIF',
+                  NUME_ORDRE=5,
+                  PARA='FREQ',
+                  REFERENCE='ANALYTIQUE',
+                  RESULTAT=MODE_DX,
+                  VALE_CALC=11371.5653,
+                  VALE_REFE=11371.473))
+
+TEST_RESU(identifier=u'39:1',
+          RESU=_F(CRITERE='RELATIF',
+                  NUME_ORDRE=1,
+                  PARA='FREQ',
+                  REFERENCE='ANALYTIQUE',
+                  RESULTAT=MODE_FZ,
+                  TOLE_MACHINE=5e-05,
+                  VALE_CALC=310.139411573,
+                  VALE_REFE=310.133))
+
+TEST_RESU(identifier=u'40:1',
+          RESU=_F(CRITERE='RELATIF',
+                  NUME_ORDRE=2,
+                  PARA='FREQ',
+                  REFERENCE='ANALYTIQUE',
+                  RESULTAT=MODE_FZ,
+                  VALE_CALC=1943.56657,
+                  VALE_REFE=1943.568))
+
+TEST_RESU(identifier=u'41:1',
+          RESU=_F(CRITERE='RELATIF',
+                  NUME_ORDRE=3,
+                  PARA='FREQ',
+                  REFERENCE='ANALYTIQUE',
+                  RESULTAT=MODE_FZ,
+                  VALE_CALC=5442.04698,
+                  VALE_REFE=5442.048))
+
+TEST_RESU(identifier=u'42:1',
+          RESU=_F(CRITERE='RELATIF',
+                  NUME_ORDRE=4,
+                  PARA='FREQ',
+                  REFERENCE='ANALYTIQUE',
+                  RESULTAT=MODE_FZ,
+                  VALE_CALC=10664.242,
+                  VALE_REFE=10664.242))
+
+TEST_RESU(identifier=u'43:1',
+          RESU=_F(CRITERE='RELATIF',
+                  NUME_ORDRE=5,
+                  PARA='FREQ',
+                  REFERENCE='ANALYTIQUE',
+                  RESULTAT=MODE_FZ,
+                  VALE_CALC=17628.7557,
+                  VALE_REFE=17628.755))
+
+TEST_RESU(identifier=u'44:1',
+          RESU=_F(CRITERE='RELATIF',
+                  NUME_ORDRE=1,
+                  PARA='FREQ',
+                  REFERENCE='ANALYTIQUE',
+                  RESULTAT=MODE_DRX,
+                  VALE_CALC=786.618791723,
+                  VALE_REFE=786.619))
+
+TEST_RESU(identifier=u'45:1',
+          RESU=_F(CRITERE='RELATIF',
+                  NUME_ORDRE=2,
+                  PARA='FREQ',
+                  REFERENCE='ANALYTIQUE',
+                  RESULTAT=MODE_DRX,
+                  VALE_CALC=2359.85832,
+                  VALE_REFE=2359.856))
+
+TEST_RESU(identifier=u'46:1',
+          RESU=_F(CRITERE='RELATIF',
+                  NUME_ORDRE=3,
+                  PARA='FREQ',
+                  REFERENCE='ANALYTIQUE',
+                  RESULTAT=MODE_DRX,
+                  VALE_CALC=3933.10366,
+                  VALE_REFE=3933.094))
+
+TEST_RESU(identifier=u'47:1',
+          RESU=_F(CRITERE='RELATIF',
+                  NUME_ORDRE=4,
+                  PARA='FREQ',
+                  REFERENCE='ANALYTIQUE',
+                  RESULTAT=MODE_DRX,
+                  VALE_CALC=5506.35871,
+                  VALE_REFE=5506.33))
+
+TEST_RESU(identifier=u'48:1',
+          RESU=_F(GROUP_NO='B',
+                  NOM_CHAM='DEPL',
+                  NOM_CMP='DRX',
+                  NUME_ORDRE=5,
+                  PRECISION=0.0015,
+                  REFERENCE='ANALYTIQUE',
+                  RESULTAT=DYNATRAM,
+                  VALE_CALC=8.65597957e-09,
+                  VALE_REFE=8.66477582461e-09))
+
+TEST_RESU(identifier=u'49:1',
+          RESU=_F(GROUP_NO='B',
+                  NOM_CHAM='DEPL',
+                  NOM_CMP='DRX',
+                  NUME_ORDRE=10,
+                  REFERENCE='ANALYTIQUE',
+                  RESULTAT=DYNATRAM,
+                  VALE_CALC=1.73211547e-08,
+                  VALE_REFE=1.73295916526e-08))
+
+TEST_RESU(identifier=u'50:1',
+          RESU=_F(GROUP_NO='B',
+                  NOM_CHAM='DEPL',
+                  NOM_CMP='DRX',
+                  NUME_ORDRE=20,
+                  REFERENCE='ANALYTIQUE',
+                  RESULTAT=DYNATRAM,
+                  VALE_CALC=3.46507014e-08,
+                  VALE_REFE=3.46591033075e-08))
+
+TEST_RESU(identifier=u'51:1',
+          RESU=_F(CRITERE='ABSOLU',
+                  GROUP_NO='A',
+                  NOM_CHAM='REAC_NODA',
+                  NOM_CMP='DRX',
+                  NUME_ORDRE=10,
+                  REFERENCE='ANALYTIQUE',
+                  RESULTAT=DYNATRAM,
+                  VALE_CALC=-2.93279703e-242,
+                  VALE_REFE=0.0))
+
+TEST_RESU(identifier=u'52:1',
+          RESU=_F(CRITERE='ABSOLU',
+                  GROUP_NO='B',
+                  NOM_CHAM='REAC_NODA',
+                  NOM_CMP='DRX',
+                  NUME_ORDRE=10,
+                  REFERENCE='ANALYTIQUE',
+                  RESULTAT=DYNATRAM,
+                  VALE_CALC=3.72242168e-13,
+                  VALE_REFE=0.0))
+
+TEST_RESU(identifier=u'53:1',
+          RESU=_F(CRITERE='ABSOLU',
+                  GROUP_NO='A',
+                  NOM_CHAM='REAC_NODA',
+                  NOM_CMP='DRX',
+                  NUME_ORDRE=15,
+                  REFERENCE='ANALYTIQUE',
+                  RESULTAT=DYNATRAM,
+                  VALE_CALC=2.36489832e-133,
+                  VALE_REFE=0.0))
+
+TEST_RESU(identifier=u'54:1',
+          RESU=_F(CRITERE='ABSOLU',
+                  GROUP_NO='A',
+                  NOM_CHAM='REAC_NODA',
+                  NOM_CMP='DRX',
+                  NUME_ORDRE=20,
+                  PRECISION=1e-08,
+                  REFERENCE='ANALYTIQUE',
+                  RESULTAT=DYNATRAM,
+                  VALE_CALC=-6.10030583e-52,
+                  VALE_REFE=0.0))
+
+TEST_RESU(identifier=u'55:1',
+          RESU=_F(GROUP_NO='A',
+                  NOM_CHAM='REAC_NODA',
+                  NOM_CMP='DRX',
+                  NUME_ORDRE=32,
+                  PRECISION=0.05,
+                  REFERENCE='ANALYTIQUE',
+                  RESULTAT=DYNATRAM,
+                  VALE_CALC=-1.903014564,
+                  VALE_REFE=-2.00000001424))
+
+TEST_RESU(identifier=u'56:1',
+          RESU=_F(CRITERE='ABSOLU',
+                  GROUP_NO='B',
+                  NOM_CHAM='REAC_NODA',
+                  NOM_CMP='DRX',
+                  NUME_ORDRE=32,
+                  PRECISION=1e-08,
+                  REFERENCE='ANALYTIQUE',
+                  RESULTAT=DYNATRAM,
+                  VALE_CALC=4.56954787e-12,
+                  VALE_REFE=0.0))
+
+FIN(identifier=u'57:1',
+    )
+
+# ------------------------------------------------------------------------------------------
+
+  Ouverture en écriture du fichier ./vola.1
+
+ <INFO> Démarrage de l'exécution.
+
+
+             -- CODE_ASTER -- VERSION : DÉVELOPPEMENT (unstable) --
+
+                     Version 14.2.20 modifiée le 07/12/2018
+                   révision b901706c8473 - branche 'default'
+                         Copyright EDF R&D 1991 - 2019
+
+                    Exécution du : Sat Jan 19 18:46:04 2019
+                         Nom de la machine : dsp0837509
+                              Architecture : 64bit
+                          Type de processeur : x86_64
+           Système d'exploitation : Linux debian 8.11  3.16.0-7-amd64
+                        Langue des messages : fr (UTF-8)
+
+                           Version de Python : 2.7.10
+                           Version de NumPy : 1.12.1
+                           Parallélisme MPI : inactif
+                          Parallélisme OpenMP : actif
+                        Nombre de processus utilisés : 4
+                     Version de la librairie HDF5 : 1.8.14
+                      Version de la librairie MED : 3.3.1
+                     Version de la librairie MFront : 3.1.1
+                Version de la librairie MUMPS : 5.1.2consortium
+                        Librairie PETSc : non disponible
+                     Version de la librairie SCOTCH : 6.0.4
+
+                  Mémoire limite pour l'exécution : 2048.00 Mo
+                   consommée par l'initialisation : 656.20 Mo
+                  par les objets du jeu de commandes : 4.01 Mo
+                 reste pour l'allocation dynamique : 1386.61 Mo
+                Taille limite des fichiers d'échange : 12.00 Go
+
+
+.. __stg1_cmd1:1
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0001            Concept de type : -
+  # ------------------------------------------------------------------------------------------
+  DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),
+        DEBUG=_F(SDVERI='NON',
+                 JEVEUX='NON',
+                 JXVERI='NON',
+                 HIST_ETAPE='NON',),
+        INFO=1,
+        PAR_LOT='OUI',
+        IMPR_MACRO='NON',
+        MEMOIRE=_F(TAILLE_BLOC=800.0,
+                   TAILLE_GROUP_ELEM=1000,),
+        RESERVE_CPU=_F(BORNE=900,),
+        MESURE_TEMPS=_F(MOYENNE='NON',
+                        NIVE_DETAIL=1,),
+        )
+
+
+   !-------------------------------------------------------------------------------------------!
+   ! <I> <SUPERVIS_22>                                                                         !
+   !                                                                                           !
+   !    Les mots-clés facteurs CODE et DEBUG dans DEBUT/POURSUITE sont réservés aux cas-tests. !
+   !    Il ne faut pas les utiliser dans les études car ils modifient certaines valeurs par    !
+   !    défaut des commandes DEBUT/POURSUITE qui ont des conséquences sur le comportement      !
+   !    en cas d'erreur ou sur les performances.                                               !
+   !-------------------------------------------------------------------------------------------!
+
+
+  Valeur initiale du temps CPU maximum =   900 secondes
+  Valeur du temps CPU maximum passé aux commandes =   890 secondes
+  Réserve CPU prévue = 10 secondes
+
+  Ouverture en écriture du fichier ./glob.1
+
+  Ouverture en écriture du fichier ./vola.1
+
+  Ouverture en lecture du fichier /home/G79848/data/dev/codeaster/install/std/lib/aster/elem.1
+
+     Nom de la base                          :  ELEMBASE
+     Créée avec la version                   :  14.02.20
+     Nombre d'enregistrements utilisés       :  44
+     Nombre d'enregistrements maximum        :  512
+     Longueur d'enregistrement (octets)      :  819200
+     Nombre d'identificateurs utilisés       :  123
+     Taille maximum du répertoire            :  300
+     Pourcentage d'utilisation du répertoire :  41 %
+
+  Ouverture en lecture du fichier /home/G79848/data/dev/codeaster/install/std/lib/aster/elem.1
+
+
+     Nom de la base                          :  ELEMBASE
+     Nombre d'enregistrements utilisés       :  44
+     Nombre d'enregistrements maximum        :  512
+     Longueur d'enregistrement (octets)      :  819200
+     Nombre total d'accès en lecture         :  62
+     Volume des accès en lecture             :         48.44 Mo.
+     Nombre total d'accès en écriture        :  0
+     Volume des accès en écriture            :          0.00 Mo.
+     Nombre d'identificateurs utilisés       :  123
+     Taille maximum du répertoire            :  300
+     Pourcentage d'utilisation du répertoire :  41 %
+
+  Relecture des catalogues des éléments faite.
+
+  Fin de lecture (durée  0.020917  s.)
+  # Mémoire (Mo) :   707.00 /   699.22 /    44.67 /    23.19 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0001   user+syst:        0.03s (syst:        0.01s, elaps:        0.04s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_cmd2:1
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0002            Concept de type : maillage_sdaster
+  # ------------------------------------------------------------------------------------------
+  MAIL = LIRE_MAILLAGE(FORMAT='MED',
+                       UNITE=20,
+                       INFO_MED=1,
+                       INFO=1,
+                       VERI_MAIL=_F(APLAT=1.E-3,
+                                    VERIF='OUI',),
+                       )
+
+Vérification du maillage.
+
+------------ MAILLAGE MAIL     - IMPRESSIONS NIVEAU  1 ------------
+
+CODE_ASTER - 11.01.04 - VERSION DE DEVELOPPEMENT          - FRONTAL1         - L
+
+NOMBRE DE NOEUDS                        1001
+
+NOMBRE DE MAILLES                       1000
+                              SEG2                 1000
+
+NOMBRE DE GROUPES DE NOEUDS                2
+                              A                                    1
+                              B                                    1
+
+NOMBRE DE GROUPES DE MAILLES               1
+                              TOUT                              1000
+
+--------------------------------------------------------------------------------
+
+  # Mémoire (Mo) :   707.00 /   701.19 /    44.67 /    23.19 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0002   user+syst:        0.01s (syst:        0.00s, elaps:        0.01s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_cmd3:1
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0004            Concept de type : modele_sdaster
+  # ------------------------------------------------------------------------------------------
+  MODELE = AFFE_MODELE(MAILLAGE=MAIL,
+                       AFFE=_F(PHENOMENE='MECANIQUE',
+                               TOUT='OUI',
+                               MODELISATION=('POU_D_E', ),),
+                       INFO=1,
+                       VERI_JACOBIEN='OUI',
+                       DISTRIBUTION=_F(PARTITIONNEUR='METIS',
+                                       METHODE='SOUS_DOMAINE',),
+                       )
+
+
+Sur les 1000 mailles du maillage MAIL, on a demandé l'affectation de 1000, on a pu en affecter 1000
+ Modélisation     Type maille  Élément fini     Nombre
+ POU_D_E          SEG2         MECA_POU_D_E     1000
+#2      Calculs elementaires et assemblages               CPU (USER+SYST/SYST/ELAPS):      0.00      0.00      0.00
+  # Mémoire (Mo) :   979.98 /   926.54 /    44.67 /    33.95 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0004   user+syst:        0.01s (syst:        0.01s, elaps:        0.01s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_cmd4:1
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0005            Concept de type : cara_elem
+  # ------------------------------------------------------------------------------------------
+  CARAC = AFFE_CARA_ELEM(MODELE=MODELE,
+                         POUTRE=_F(SECTION='CERCLE',
+                                   GROUP_MA=('TOUT', ),
+                                   CARA=('R', 'EP'),
+                                   VALE=(0.16, 1.E-2),
+                                   TUYAU_NSEC=16,
+                                   TUYAU_NCOU=3,
+                                   MODI_METRIQUE='NON',
+                                   VARI_SECT='CONSTANT',),
+                         INFO=1,)
+
+
+     LE MODELE MODELE   CONTIENT :
+                                     1000 ELEMENT(S) POUTRE
+#2      Calculs elementaires et assemblages               CPU (USER+SYST/SYST/ELAPS):      0.00      0.00      0.00
+  # Mémoire (Mo) :   979.98 /   927.57 /    44.67 /    33.95 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0005   user+syst:        0.19s (syst:        0.08s, elaps:        0.06s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_cmd5:1
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0007            Concept de type : mater_sdaster
+  # ------------------------------------------------------------------------------------------
+  ACIER = DEFI_MATERIAU(ELAS=_F(E=2.E11,
+                                RHO=7830.0,
+                                NU=0.29,
+                                COEF_AMOR=1.0,),
+                        INFO=1,)
+
+
+ MATERIAU : ACIER
+ RELATION DE COMPORTEMENT: ELAS
+
+
+  # Mémoire (Mo) :   979.98 /   927.57 /    44.67 /    33.95 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0007   user+syst:        0.00s (syst:        0.00s, elaps:        0.00s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_cmd6:1
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0008            Concept de type : cham_mater
+  # ------------------------------------------------------------------------------------------
+  CHMAT = AFFE_MATERIAU(MAILLAGE=MAIL,
+                        AFFE=_F(MATER=(ACIER, ),
+                                TOUT='OUI',),
+                        INFO=1,
+                        )
+
+  # Mémoire (Mo) :   979.98 /   927.57 /    44.67 /    33.95 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0008   user+syst:        0.01s (syst:        0.01s, elaps:        0.00s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_cmd7:1
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0009            Concept de type : listr8_sdaster
+  # ------------------------------------------------------------------------------------------
+  LISTE = DEFI_LIST_REEL(DEBUT=0.0,
+                         INTERVALLE=_F(PAS=1.E-07,
+                                       JUSQU_A=2.E-4,),
+                         INFO=1,)
+
+  # Mémoire (Mo) :   979.98 /   927.57 /    44.67 /    33.95 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0009   user+syst:        0.00s (syst:        0.00s, elaps:        0.00s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_cmd8:1
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0010            Concept de type : listr8_sdaster
+  # ------------------------------------------------------------------------------------------
+  LISTE2 = DEFI_LIST_REEL(DEBUT=0.0,
+                          INTERVALLE=_F(PAS=1.E-07,
+                                        JUSQU_A=3.2E-4,),
+                          INFO=1,)
+
+  # Mémoire (Mo) :   979.98 /   927.57 /    44.67 /    33.95 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0010   user+syst:        0.00s (syst:        0.00s, elaps:        0.00s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_cmd9:1
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0011            Concept de type : char_meca
+  # ------------------------------------------------------------------------------------------
+  CL = AFFE_CHAR_MECA(MODELE=MODELE,
+                      DDL_IMPO=_F(DRY=0.0,
+                                  DRX=0.0,
+                                  DRZ=0.0,
+                                  GROUP_NO=('A', ),
+                                  DZ=0.0,
+                                  DX=0.0,
+                                  DY=0.0,),
+                      INFO=1,
+                      VERI_NORM='OUI',)
+
+  # Mémoire (Mo) :   979.98 /   927.57 /    44.67 /    33.95 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0011   user+syst:        0.00s (syst:        0.00s, elaps:        0.01s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_cmd10:1
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0012            Concept de type : char_meca
+  # ------------------------------------------------------------------------------------------
+  CHARFX = AFFE_CHAR_MECA(MODELE=MODELE,
+                          FORCE_NODALE=_F(FX=1.0,
+                                          GROUP_NO=('B', ),),
+                          INFO=1,
+                          VERI_NORM='OUI',)
+
+  # Mémoire (Mo) :   979.98 /   927.61 /    44.67 /    33.95 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0012   user+syst:        0.00s (syst:        0.00s, elaps:        0.00s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_cmd11:1
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0013            Concept de type : char_meca
+  # ------------------------------------------------------------------------------------------
+  CHARMX = AFFE_CHAR_MECA(MODELE=MODELE,
+                          FORCE_NODALE=_F(GROUP_NO=('B', ),
+                                          MX=1.0,),
+                          INFO=1,
+                          VERI_NORM='OUI',)
+
+  # Mémoire (Mo) :   979.98 /   927.65 /    44.67 /    33.95 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0013   user+syst:        0.01s (syst:        0.00s, elaps:        0.01s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_cmd12:1
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0014            Concept de type : -
+  # ------------------------------------------------------------------------------------------
+  ASSEMBLAGE(CHARGE=(CL, ),
+             CARA_ELEM=CARAC,
+             NUME_DDL=CO(NUMEDDL),
+             MODELE=MODELE,
+             CHAM_MATER=CHMAT,
+             MATR_ASSE=(_F(OPTION='MASS_MECA',
+                           MATRICE=CO(MASSE),),
+                        _F(OPTION='RIGI_MECA',
+                           MATRICE=CO(RIGID),
+                           MODE_FOURIER=0,),
+                        ),
+             INFO=1,
+             INST=0.0,)
+
+#2      Calculs elementaires et assemblages               CPU (USER+SYST/SYST/ELAPS):      0.01      0.00      0.00
+  Le système linéaire à résoudre a 6018 degrés de liberté:
+   - 6006 sont des degrés de liberté physiques
+     (ils sont portés par 1001 noeuds du maillage)
+   - 12 sont les couples de paramètres de Lagrange associés
+     aux 6 relations linéaires dualisées.
+  La matrice est de taille 6018 équations.
+  Elle contient 57111 termes non nuls si elle est symétrique et 108204 termes non nuls si elle n'est pas symétrique.
+  Soit un taux de remplissage de   0.299 %.
+#1      Resolution des systemes lineaires                 CPU (USER+SYST/SYST/ELAPS):      0.02      0.01      0.01
+#2      Calculs elementaires et assemblages               CPU (USER+SYST/SYST/ELAPS):      0.00      0.00      0.00
+#2      Calculs elementaires et assemblages               CPU (USER+SYST/SYST/ELAPS):      0.01      0.00      0.00
+#2      Calculs elementaires et assemblages               CPU (USER+SYST/SYST/ELAPS):      0.00      0.00      0.00
+  # Mémoire (Mo) :   979.98 /   934.02 /    44.67 /    35.58 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0014   user+syst:        0.09s (syst:        0.04s, elaps:        0.02s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_cmd17:1
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0020            Concept de type : dyna_trans
+  # ------------------------------------------------------------------------------------------
+  DYNATRAF = DYNA_VIBRA(TYPE_CALCUL='TRAN',
+                        BASE_CALCUL='PHYS',
+                        SCHEMA_TEMPS=_F(SCHEMA='NEWMARK',
+                                        BETA=0.25,
+                                        GAMMA=0.5,),
+                        INCREMENT=_F(LIST_INST=LISTE,
+                                     VERI_PAS='OUI',),
+                        EXCIT=(_F(CHARGE=CHARFX,
+                                  MULT_APPUI='NON',),
+                               _F(CHARGE=CL,
+                                  MULT_APPUI='NON',),
+                               ),
+                        SOLVEUR=_F(METHODE='MULT_FRONT',
+                                   RENUM='METIS',
+                                   STOP_SINGULIER='OUI',
+                                   ELIM_LAGR='NON',
+                                   NPREC=8,),
+                        CARA_ELEM=CARAC,
+                        MODELE=MODELE,
+                        CHAM_MATER=CHMAT,
+                        MATR_RIGI=RIGID,
+                        MATR_MASS=MASSE,
+                        ARCHIVAGE=_F(PAS_ARCH=100,),
+                        )
+
+
+--------------------------------------------------------------------------------------
+
+D Y N A _ V I B R A
+=====================================================================================
+                     Calcul TRANsitoire sur base PHYSique
+=====================================================================================
+
+Modèle physique
+--------------------------------------------------------------------------------------
+    >> modèle mécanique : MODELE
+    >> nombre de DDL physiques : 6018
+
+Matrices dynamiques pour la résolution
+--------------------------------------------------------------------------------------
+    >> matrice de masse        : MASSE
+    >> matrice de rigidité     : RIGID
+    >> système conservatif, sans amortissement.
+
+Schéma d'intégration NEWMARK à pas constant
+--------------------------------------------------------------------------------------
+    >> type de schéma         : implicite
+    >> pas d'intégration      : 1.00000e-07
+    >> nombre de pas calculés : 2000
+
+État initial
+--------------------------------------------------------------------------------------
+    >> déplacement  : nul
+    >> vitesse      : nul
+    >> accélération : calculee
+
+Durée de la simulation
+--------------------------------------------------------------------------------------
+    >> instant initial : 0.00000e+00
+    >> instant final   : 2.00000e-04
+
+Archivage
+--------------------------------------------------------------------------------------
+    >> fréquence d'archivage : tous les 100 pas calculés
+    >> champs archivés       : DEPL VITE ACCE
+
+======================================================================================
+
+Avancement du calcul
+--------------------------------------------------------------------------------------
+[  0%] Instant calculé : 0.00000e+00, dernier instant archivé : 0.00000e+00, au numéro d'ordre :     0
+[  5%] Instant calculé : 1.00000e-05, dernier instant archivé : 1.00000e-05, au numéro d'ordre :   100
+[ 10%] Instant calculé : 2.00000e-05, dernier instant archivé : 2.00000e-05, au numéro d'ordre :   200
+[ 15%] Instant calculé : 3.00000e-05, dernier instant archivé : 3.00000e-05, au numéro d'ordre :   300
+[ 20%] Instant calculé : 4.00000e-05, dernier instant archivé : 4.00000e-05, au numéro d'ordre :   400
+[ 25%] Instant calculé : 5.00000e-05, dernier instant archivé : 5.00000e-05, au numéro d'ordre :   500
+[ 30%] Instant calculé : 6.00000e-05, dernier instant archivé : 6.00000e-05, au numéro d'ordre :   600
+[ 35%] Instant calculé : 7.00000e-05, dernier instant archivé : 7.00000e-05, au numéro d'ordre :   700
+[ 40%] Instant calculé : 8.00000e-05, dernier instant archivé : 8.00000e-05, au numéro d'ordre :   800
+[ 45%] Instant calculé : 9.00000e-05, dernier instant archivé : 9.00000e-05, au numéro d'ordre :   900
+[ 50%] Instant calculé : 1.00000e-04, dernier instant archivé : 1.00000e-04, au numéro d'ordre :  1000
+[ 55%] Instant calculé : 1.10000e-04, dernier instant archivé : 1.10000e-04, au numéro d'ordre :  1100
+[ 60%] Instant calculé : 1.20000e-04, dernier instant archivé : 1.20000e-04, au numéro d'ordre :  1200
+[ 65%] Instant calculé : 1.30000e-04, dernier instant archivé : 1.30000e-04, au numéro d'ordre :  1300
+[ 70%] Instant calculé : 1.40000e-04, dernier instant archivé : 1.40000e-04, au numéro d'ordre :  1400
+[ 75%] Instant calculé : 1.50000e-04, dernier instant archivé : 1.50000e-04, au numéro d'ordre :  1500
+[ 80%] Instant calculé : 1.60000e-04, dernier instant archivé : 1.60000e-04, au numéro d'ordre :  1600
+[ 85%] Instant calculé : 1.70000e-04, dernier instant archivé : 1.70000e-04, au numéro d'ordre :  1700
+[ 90%] Instant calculé : 1.80000e-04, dernier instant archivé : 1.80000e-04, au numéro d'ordre :  1800
+[ 95%] Instant calculé : 1.90000e-04, dernier instant archivé : 1.90000e-04, au numéro d'ordre :  1900
+[100%] Instant calculé : 2.00000e-04, dernier instant archivé : 2.00000e-04, au numéro d'ordre :  2000
+
+======================================================================================
+                                                                        Fin du calcul
+
+#1      Resolution des systemes lineaires                 CPU (USER+SYST/SYST/ELAPS):      2.13      0.17      1.89
+#2      Calculs elementaires et assemblages               CPU (USER+SYST/SYST/ELAPS):      1.59      0.06      1.42
+  # Mémoire (Mo) :   979.98 /   962.93 /    47.19 /    35.58 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0020   user+syst:        5.32s (syst:        0.34s, elaps:        4.99s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_cmd18:1
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0021            Concept de type : mode_meca
+  # ------------------------------------------------------------------------------------------
+  MODE_DX = CALC_MODES(OPTION='PROCHE',
+                       SOLVEUR=_F(METHODE='MULT_FRONT',
+                                  NPREC=9,
+                                  RENUM='METIS',),
+                       SOLVEUR_MODAL=_F(NMAX_ITER_AJUSTE=15,
+                                        PREC_SEPARE=1.E-4,
+                                        PREC_INV=1.E-05,
+                                        OPTION_INV='DIRECT',
+                                        PREC_AJUSTE=1.E-4,
+                                        NMAX_ITER_SEPARE=30,
+                                        NMAX_ITER_INV=30,),
+                       VERI_MODE=_F(STURM='NON',
+                                    PREC_SHIFT=5.E-3,
+                                    STOP_ERREUR='OUI',
+                                    SEUIL=1.E-2,),
+                       MATR_RIGI=RIGID,
+                       MATR_MASS=MASSE,
+                       CALC_FREQ=_F(FREQ=(1263.497, 3790.49, 6317.484, 8844.4477, 1.1371473E4),
+                                    NMAX_FREQ=0,
+                                    PREC_SHIFT=0.05,
+                                    SEUIL_FREQ=1.E-2,
+                                    NMAX_ITER_SHIFT=3,),
+                       INFO=1,
+                       STOP_BANDE_VIDE='OUI',
+                       AMELIORATION='NON',
+                       TYPE_RESU='DYNAMIQUE',)
+
+  Le nombre total de DDL est       :       6018
+  Le nombre de DDL de Lagrange est :         12
+  Le nombre de DDL actifs est      :       6000
+
+  Degré de liberté physique associé au noeud N502 et à la composante DX.
+
+Problème : la matrice est singulière ou presque singulière :
+  Lors de la factorisation de la matrice, on a rencontré un problème
+  (pivot nul ou presque nul) à la ligne 3019 qui correspond au degré de liberté donné ci-dessus.
+  Le nombre de décimales "perdues" pour cette ligne est : 9.
+  Ce nombre de décimales perdues est lié au degré de singularité de la matrice.
+  Plus il est grand, plus le système est singulier.
+  Quand on a perdu plus de 8 décimales, on estime que l'on a perdu 50% de la précision
+  des nombres réels (qui ont 15 décimales environ).
+
+Risques et conseils :
+   * Si la ligne correspond a un degré de liberté physique, il s'agit probablement d'un mouvement
+     de corps rigide mal bloqué.
+     Vérifiez les conditions aux limites.
+     Si vous faites du contact, il ne faut pas que la structure ne "tienne" que par le contact.
+     Vérifiez également les caractéristiques matériaux (module d'Young, ...).
+
+   * Si la ligne correspond a un degré de liberté de Lagrange, il s'agit sans doute d'une condition
+     limite redondante.
+     En particulier, il se peut que la relation linéaire surabondante provienne des conditions de contact.
+     Peut-être devriez vous exclure certains noeuds des conditions de contact
+     (mots clés SANS_NOEUD et SANS_GROUP_NO).
+
+   * Si le solveur utilisé est LDLT ou MULT_FRONT, vous pouvez utiliser le solveur MUMPS
+     car celui-ci est le seul à pouvoir factoriser les matrices qui ne sont pas définies positives.
+
+   * Parfois, en parallèle, le critère de détection de singularité de MUMPS est trop pessimiste ! Il reste néanmoins souvent
+     possible de faire passer le calcul complet en relaxant ce critère (augmenter de 1 ou 2 la valeur du mot-clé NPREC) ou
+     en le débranchant (valeur du mot-clé NPREC=-1) ou en relançant le calcul sur moins de processeurs.
+
+   * Il se peut aussi que ce phénomène soit tout à fait normal avec X-FEM si la fissure passe
+     très près d'un noeud.
+     Si le nombre de décimales perdues n'est pas trop grand (max 10 décimales),
+     vous pouvez relancer le calcul en augmentant le nombre de décimales perdues autorisé :
+     mot-clé NPREC du mot clé facteur SOLVEUR.
+     Sinon, contactez l'équipe de développement.
+
+     Calcul modal : Méthode d'itération inverse
+
+                                                   INVERSE
+numéro    fréquence (HZ)     amortissement    NB_ITER    précision    norme d'erreur
+    1       1.26350E+03        0.00000E+00        3     3.98570E-14     1.02897E-10
+    2       3.79049E+03        0.00000E+00        3     6.40610E-11     1.15255E-11
+    3       6.31750E+03        0.00000E+00        3     2.16290E-09     4.20775E-12
+    4       8.84452E+03        0.00000E+00        3     3.47017E-08     2.00209E-12
+    5       1.13716E+04        0.00000E+00        3     1.44718E-07     2.45253E-12
+
+
+------------------------------------------------------------------------
+
+         Vérification à posteriori des modes
+
+------------------------------------------------------------------------
+
+#1      Resolution des systemes lineaires                 CPU (USER+SYST/SYST/ELAPS):      0.33      0.00      0.15
+  # Mémoire (Mo) :   979.98 /   963.84 /    47.19 /    35.58 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0021   user+syst:        0.42s (syst:        0.01s, elaps:        0.18s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_cmd19:1
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0023            Concept de type : mode_meca
+  # ------------------------------------------------------------------------------------------
+  MODE_FZ = CALC_MODES(OPTION='PROCHE',
+                       SOLVEUR=_F(METHODE='MULT_FRONT',
+                                  RENUM='METIS',
+                                  NPREC=8,),
+                       SOLVEUR_MODAL=_F(NMAX_ITER_AJUSTE=15,
+                                        PREC_SEPARE=1.E-4,
+                                        PREC_INV=1.E-05,
+                                        OPTION_INV='DIRECT',
+                                        PREC_AJUSTE=1.E-4,
+                                        NMAX_ITER_SEPARE=30,
+                                        NMAX_ITER_INV=30,),
+                       VERI_MODE=_F(STURM='NON',
+                                    PREC_SHIFT=5.E-3,
+                                    STOP_ERREUR='OUI',
+                                    SEUIL=1.E-2,),
+                       MATR_RIGI=RIGID,
+                       MATR_MASS=MASSE,
+                       CALC_FREQ=_F(FREQ=(310.133, 1943.568, 5442.048, 1.0664242E4, 1.7628755E4),
+                                    NMAX_FREQ=0,
+                                    PREC_SHIFT=0.05,
+                                    SEUIL_FREQ=1.E-2,
+                                    NMAX_ITER_SHIFT=3,),
+                       INFO=1,
+                       STOP_BANDE_VIDE='OUI',
+                       AMELIORATION='NON',
+                       TYPE_RESU='DYNAMIQUE',)
+
+  Le nombre total de DDL est       :       6018
+  Le nombre de DDL de Lagrange est :         12
+  Le nombre de DDL actifs est      :       6000
+
+  Degré de liberté physique associé au noeud N502 et à la composante DY.
+
+Problème : la matrice est singulière ou presque singulière :
+  Lors de la factorisation de la matrice, on a rencontré un problème
+  (pivot nul ou presque nul) à la ligne 3020 qui correspond au degré de liberté donné ci-dessus.
+  Le nombre de décimales "perdues" pour cette ligne est : 8.
+  Ce nombre de décimales perdues est lié au degré de singularité de la matrice.
+  Plus il est grand, plus le système est singulier.
+  Quand on a perdu plus de 8 décimales, on estime que l'on a perdu 50% de la précision
+  des nombres réels (qui ont 15 décimales environ).
+
+Risques et conseils :
+   * Si la ligne correspond a un degré de liberté physique, il s'agit probablement d'un mouvement
+     de corps rigide mal bloqué.
+     Vérifiez les conditions aux limites.
+     Si vous faites du contact, il ne faut pas que la structure ne "tienne" que par le contact.
+     Vérifiez également les caractéristiques matériaux (module d'Young, ...).
+
+   * Si la ligne correspond a un degré de liberté de Lagrange, il s'agit sans doute d'une condition
+     limite redondante.
+     En particulier, il se peut que la relation linéaire surabondante provienne des conditions de contact.
+     Peut-être devriez vous exclure certains noeuds des conditions de contact
+     (mots clés SANS_NOEUD et SANS_GROUP_NO).
+
+   * Si le solveur utilisé est LDLT ou MULT_FRONT, vous pouvez utiliser le solveur MUMPS
+     car celui-ci est le seul à pouvoir factoriser les matrices qui ne sont pas définies positives.
+
+   * Parfois, en parallèle, le critère de détection de singularité de MUMPS est trop pessimiste ! Il reste néanmoins souvent
+     possible de faire passer le calcul complet en relaxant ce critère (augmenter de 1 ou 2 la valeur du mot-clé NPREC) ou
+     en le débranchant (valeur du mot-clé NPREC=-1) ou en relançant le calcul sur moins de processeurs.
+
+   * Il se peut aussi que ce phénomène soit tout à fait normal avec X-FEM si la fissure passe
+     très près d'un noeud.
+     Si le nombre de décimales perdues n'est pas trop grand (max 10 décimales),
+     vous pouvez relancer le calcul en augmentant le nombre de décimales perdues autorisé :
+     mot-clé NPREC du mot clé facteur SOLVEUR.
+     Sinon, contactez l'équipe de développement.
+
+
+  Degré de liberté physique associé au noeud N502 et à la composante DY.
+
+Problème : la matrice est singulière ou presque singulière :
+  Lors de la factorisation de la matrice, on a rencontré un problème
+  (pivot nul ou presque nul) à la ligne 3020 qui correspond au degré de liberté donné ci-dessus.
+  Le nombre de décimales "perdues" pour cette ligne est : 9.
+  Ce nombre de décimales perdues est lié au degré de singularité de la matrice.
+  Plus il est grand, plus le système est singulier.
+  Quand on a perdu plus de 8 décimales, on estime que l'on a perdu 50% de la précision
+  des nombres réels (qui ont 15 décimales environ).
+
+Risques et conseils :
+   * Si la ligne correspond a un degré de liberté physique, il s'agit probablement d'un mouvement
+     de corps rigide mal bloqué.
+     Vérifiez les conditions aux limites.
+     Si vous faites du contact, il ne faut pas que la structure ne "tienne" que par le contact.
+     Vérifiez également les caractéristiques matériaux (module d'Young, ...).
+
+   * Si la ligne correspond a un degré de liberté de Lagrange, il s'agit sans doute d'une condition
+     limite redondante.
+     En particulier, il se peut que la relation linéaire surabondante provienne des conditions de contact.
+     Peut-être devriez vous exclure certains noeuds des conditions de contact
+     (mots clés SANS_NOEUD et SANS_GROUP_NO).
+
+   * Si le solveur utilisé est LDLT ou MULT_FRONT, vous pouvez utiliser le solveur MUMPS
+     car celui-ci est le seul à pouvoir factoriser les matrices qui ne sont pas définies positives.
+
+   * Parfois, en parallèle, le critère de détection de singularité de MUMPS est trop pessimiste ! Il reste néanmoins souvent
+     possible de faire passer le calcul complet en relaxant ce critère (augmenter de 1 ou 2 la valeur du mot-clé NPREC) ou
+     en le débranchant (valeur du mot-clé NPREC=-1) ou en relançant le calcul sur moins de processeurs.
+
+   * Il se peut aussi que ce phénomène soit tout à fait normal avec X-FEM si la fissure passe
+     très près d'un noeud.
+     Si le nombre de décimales perdues n'est pas trop grand (max 10 décimales),
+     vous pouvez relancer le calcul en augmentant le nombre de décimales perdues autorisé :
+     mot-clé NPREC du mot clé facteur SOLVEUR.
+     Sinon, contactez l'équipe de développement.
+
+
+  Degré de liberté physique associé au noeud N502 et à la composante DRY.
+
+Problème : la matrice est singulière ou presque singulière :
+  Lors de la factorisation de la matrice, on a rencontré un problème
+  (pivot nul ou presque nul) à la ligne 3023 qui correspond au degré de liberté donné ci-dessus.
+  Le nombre de décimales "perdues" pour cette ligne est : 8.
+  Ce nombre de décimales perdues est lié au degré de singularité de la matrice.
+  Plus il est grand, plus le système est singulier.
+  Quand on a perdu plus de 8 décimales, on estime que l'on a perdu 50% de la précision
+  des nombres réels (qui ont 15 décimales environ).
+
+Risques et conseils :
+   * Si la ligne correspond a un degré de liberté physique, il s'agit probablement d'un mouvement
+     de corps rigide mal bloqué.
+     Vérifiez les conditions aux limites.
+     Si vous faites du contact, il ne faut pas que la structure ne "tienne" que par le contact.
+     Vérifiez également les caractéristiques matériaux (module d'Young, ...).
+
+   * Si la ligne correspond a un degré de liberté de Lagrange, il s'agit sans doute d'une condition
+     limite redondante.
+     En particulier, il se peut que la relation linéaire surabondante provienne des conditions de contact.
+     Peut-être devriez vous exclure certains noeuds des conditions de contact
+     (mots clés SANS_NOEUD et SANS_GROUP_NO).
+
+   * Si le solveur utilisé est LDLT ou MULT_FRONT, vous pouvez utiliser le solveur MUMPS
+     car celui-ci est le seul à pouvoir factoriser les matrices qui ne sont pas définies positives.
+
+   * Parfois, en parallèle, le critère de détection de singularité de MUMPS est trop pessimiste ! Il reste néanmoins souvent
+     possible de faire passer le calcul complet en relaxant ce critère (augmenter de 1 ou 2 la valeur du mot-clé NPREC) ou
+     en le débranchant (valeur du mot-clé NPREC=-1) ou en relançant le calcul sur moins de processeurs.
+
+   * Il se peut aussi que ce phénomène soit tout à fait normal avec X-FEM si la fissure passe
+     très près d'un noeud.
+     Si le nombre de décimales perdues n'est pas trop grand (max 10 décimales),
+     vous pouvez relancer le calcul en augmentant le nombre de décimales perdues autorisé :
+     mot-clé NPREC du mot clé facteur SOLVEUR.
+     Sinon, contactez l'équipe de développement.
+
+
+  Degré de liberté physique associé au noeud N502 et à la composante DY.
+
+Problème : la matrice est singulière ou presque singulière :
+  Lors de la factorisation de la matrice, on a rencontré un problème
+  (pivot nul ou presque nul) à la ligne 3020 qui correspond au degré de liberté donné ci-dessus.
+  Le nombre de décimales "perdues" pour cette ligne est : 11.
+  Ce nombre de décimales perdues est lié au degré de singularité de la matrice.
+  Plus il est grand, plus le système est singulier.
+  Quand on a perdu plus de 8 décimales, on estime que l'on a perdu 50% de la précision
+  des nombres réels (qui ont 15 décimales environ).
+
+Risques et conseils :
+   * Si la ligne correspond a un degré de liberté physique, il s'agit probablement d'un mouvement
+     de corps rigide mal bloqué.
+     Vérifiez les conditions aux limites.
+     Si vous faites du contact, il ne faut pas que la structure ne "tienne" que par le contact.
+     Vérifiez également les caractéristiques matériaux (module d'Young, ...).
+
+   * Si la ligne correspond a un degré de liberté de Lagrange, il s'agit sans doute d'une condition
+     limite redondante.
+     En particulier, il se peut que la relation linéaire surabondante provienne des conditions de contact.
+     Peut-être devriez vous exclure certains noeuds des conditions de contact
+     (mots clés SANS_NOEUD et SANS_GROUP_NO).
+
+   * Si le solveur utilisé est LDLT ou MULT_FRONT, vous pouvez utiliser le solveur MUMPS
+     car celui-ci est le seul à pouvoir factoriser les matrices qui ne sont pas définies positives.
+
+   * Parfois, en parallèle, le critère de détection de singularité de MUMPS est trop pessimiste ! Il reste néanmoins souvent
+     possible de faire passer le calcul complet en relaxant ce critère (augmenter de 1 ou 2 la valeur du mot-clé NPREC) ou
+     en le débranchant (valeur du mot-clé NPREC=-1) ou en relançant le calcul sur moins de processeurs.
+
+   * Il se peut aussi que ce phénomène soit tout à fait normal avec X-FEM si la fissure passe
+     très près d'un noeud.
+     Si le nombre de décimales perdues n'est pas trop grand (max 10 décimales),
+     vous pouvez relancer le calcul en augmentant le nombre de décimales perdues autorisé :
+     mot-clé NPREC du mot clé facteur SOLVEUR.
+     Sinon, contactez l'équipe de développement.
+
+
+  Degré de liberté physique associé au noeud N502 et à la composante DRY.
+
+Problème : la matrice est singulière ou presque singulière :
+  Lors de la factorisation de la matrice, on a rencontré un problème
+  (pivot nul ou presque nul) à la ligne 3023 qui correspond au degré de liberté donné ci-dessus.
+  Le nombre de décimales "perdues" pour cette ligne est : 9.
+  Ce nombre de décimales perdues est lié au degré de singularité de la matrice.
+  Plus il est grand, plus le système est singulier.
+  Quand on a perdu plus de 8 décimales, on estime que l'on a perdu 50% de la précision
+  des nombres réels (qui ont 15 décimales environ).
+
+Risques et conseils :
+   * Si la ligne correspond a un degré de liberté physique, il s'agit probablement d'un mouvement
+     de corps rigide mal bloqué.
+     Vérifiez les conditions aux limites.
+     Si vous faites du contact, il ne faut pas que la structure ne "tienne" que par le contact.
+     Vérifiez également les caractéristiques matériaux (module d'Young, ...).
+
+   * Si la ligne correspond a un degré de liberté de Lagrange, il s'agit sans doute d'une condition
+     limite redondante.
+     En particulier, il se peut que la relation linéaire surabondante provienne des conditions de contact.
+     Peut-être devriez vous exclure certains noeuds des conditions de contact
+     (mots clés SANS_NOEUD et SANS_GROUP_NO).
+
+   * Si le solveur utilisé est LDLT ou MULT_FRONT, vous pouvez utiliser le solveur MUMPS
+     car celui-ci est le seul à pouvoir factoriser les matrices qui ne sont pas définies positives.
+
+   * Parfois, en parallèle, le critère de détection de singularité de MUMPS est trop pessimiste ! Il reste néanmoins souvent
+     possible de faire passer le calcul complet en relaxant ce critère (augmenter de 1 ou 2 la valeur du mot-clé NPREC) ou
+     en le débranchant (valeur du mot-clé NPREC=-1) ou en relançant le calcul sur moins de processeurs.
+
+   * Il se peut aussi que ce phénomène soit tout à fait normal avec X-FEM si la fissure passe
+     très près d'un noeud.
+     Si le nombre de décimales perdues n'est pas trop grand (max 10 décimales),
+     vous pouvez relancer le calcul en augmentant le nombre de décimales perdues autorisé :
+     mot-clé NPREC du mot clé facteur SOLVEUR.
+     Sinon, contactez l'équipe de développement.
+
+     Calcul modal : Méthode d'itération inverse
+
+                                                   INVERSE
+numéro    fréquence (HZ)     amortissement    NB_ITER    précision    norme d'erreur
+    1       3.10139E+02        0.00000E+00        3     2.87159E-12     2.54138E-04
+    2       1.94357E+03        0.00000E+00        3     8.98648E-12     7.57627E-06
+    3       5.44205E+03        0.00000E+00        3     1.72673E-11     9.90298E-07
+    4       1.06642E+04        0.00000E+00        3     2.33147E-15     2.17611E-07
+    5       1.76288E+04        0.00000E+00        3     2.74558E-13     8.92959E-08
+
+
+------------------------------------------------------------------------
+
+         Vérification à posteriori des modes
+
+------------------------------------------------------------------------
+
+#1      Resolution des systemes lineaires                 CPU (USER+SYST/SYST/ELAPS):      0.28      0.01      0.15
+  # Mémoire (Mo) :   979.98 /   964.48 /    47.35 /    35.58 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0023   user+syst:        0.40s (syst:        0.01s, elaps:        0.18s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_cmd20:1
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0025            Concept de type : mode_meca
+  # ------------------------------------------------------------------------------------------
+  MODE_DRX = CALC_MODES(OPTION='PROCHE',
+                        SOLVEUR=_F(METHODE='MULT_FRONT',
+                                   RENUM='METIS',
+                                   NPREC=8,),
+                        SOLVEUR_MODAL=_F(NMAX_ITER_AJUSTE=15,
+                                         PREC_SEPARE=1.E-4,
+                                         PREC_INV=1.E-05,
+                                         OPTION_INV='DIRECT',
+                                         PREC_AJUSTE=1.E-4,
+                                         NMAX_ITER_SEPARE=30,
+                                         NMAX_ITER_INV=30,),
+                        VERI_MODE=_F(STURM='NON',
+                                     PREC_SHIFT=5.E-3,
+                                     STOP_ERREUR='OUI',
+                                     SEUIL=1.E-2,),
+                        MATR_RIGI=RIGID,
+                        MATR_MASS=MASSE,
+                        CALC_FREQ=_F(FREQ=(786.619, 2359.856, 3933.094, 5506.33),
+                                     NMAX_FREQ=0,
+                                     PREC_SHIFT=0.05,
+                                     SEUIL_FREQ=1.E-2,
+                                     NMAX_ITER_SHIFT=3,),
+                        INFO=1,
+                        STOP_BANDE_VIDE='OUI',
+                        AMELIORATION='NON',
+                        TYPE_RESU='DYNAMIQUE',)
+
+  Le nombre total de DDL est       :       6018
+  Le nombre de DDL de Lagrange est :         12
+  Le nombre de DDL actifs est      :       6000
+
+  Degré de liberté physique associé au noeud N502 et à la composante DRX.
+
+Problème : la matrice est singulière ou presque singulière :
+  Lors de la factorisation de la matrice, on a rencontré un problème
+  (pivot nul ou presque nul) à la ligne 3022 qui correspond au degré de liberté donné ci-dessus.
+  Le nombre de décimales "perdues" pour cette ligne est : 9.
+  Ce nombre de décimales perdues est lié au degré de singularité de la matrice.
+  Plus il est grand, plus le système est singulier.
+  Quand on a perdu plus de 8 décimales, on estime que l'on a perdu 50% de la précision
+  des nombres réels (qui ont 15 décimales environ).
+
+Risques et conseils :
+   * Si la ligne correspond a un degré de liberté physique, il s'agit probablement d'un mouvement
+     de corps rigide mal bloqué.
+     Vérifiez les conditions aux limites.
+     Si vous faites du contact, il ne faut pas que la structure ne "tienne" que par le contact.
+     Vérifiez également les caractéristiques matériaux (module d'Young, ...).
+
+   * Si la ligne correspond a un degré de liberté de Lagrange, il s'agit sans doute d'une condition
+     limite redondante.
+     En particulier, il se peut que la relation linéaire surabondante provienne des conditions de contact.
+     Peut-être devriez vous exclure certains noeuds des conditions de contact
+     (mots clés SANS_NOEUD et SANS_GROUP_NO).
+
+   * Si le solveur utilisé est LDLT ou MULT_FRONT, vous pouvez utiliser le solveur MUMPS
+     car celui-ci est le seul à pouvoir factoriser les matrices qui ne sont pas définies positives.
+
+   * Parfois, en parallèle, le critère de détection de singularité de MUMPS est trop pessimiste ! Il reste néanmoins souvent
+     possible de faire passer le calcul complet en relaxant ce critère (augmenter de 1 ou 2 la valeur du mot-clé NPREC) ou
+     en le débranchant (valeur du mot-clé NPREC=-1) ou en relançant le calcul sur moins de processeurs.
+
+   * Il se peut aussi que ce phénomène soit tout à fait normal avec X-FEM si la fissure passe
+     très près d'un noeud.
+     Si le nombre de décimales perdues n'est pas trop grand (max 10 décimales),
+     vous pouvez relancer le calcul en augmentant le nombre de décimales perdues autorisé :
+     mot-clé NPREC du mot clé facteur SOLVEUR.
+     Sinon, contactez l'équipe de développement.
+
+
+  Degré de liberté physique associé au noeud N502 et à la composante DY.
+
+Problème : la matrice est singulière ou presque singulière :
+  Lors de la factorisation de la matrice, on a rencontré un problème
+  (pivot nul ou presque nul) à la ligne 3020 qui correspond au degré de liberté donné ci-dessus.
+  Le nombre de décimales "perdues" pour cette ligne est : 8.
+  Ce nombre de décimales perdues est lié au degré de singularité de la matrice.
+  Plus il est grand, plus le système est singulier.
+  Quand on a perdu plus de 8 décimales, on estime que l'on a perdu 50% de la précision
+  des nombres réels (qui ont 15 décimales environ).
+
+Risques et conseils :
+   * Si la ligne correspond a un degré de liberté physique, il s'agit probablement d'un mouvement
+     de corps rigide mal bloqué.
+     Vérifiez les conditions aux limites.
+     Si vous faites du contact, il ne faut pas que la structure ne "tienne" que par le contact.
+     Vérifiez également les caractéristiques matériaux (module d'Young, ...).
+
+   * Si la ligne correspond a un degré de liberté de Lagrange, il s'agit sans doute d'une condition
+     limite redondante.
+     En particulier, il se peut que la relation linéaire surabondante provienne des conditions de contact.
+     Peut-être devriez vous exclure certains noeuds des conditions de contact
+     (mots clés SANS_NOEUD et SANS_GROUP_NO).
+
+   * Si le solveur utilisé est LDLT ou MULT_FRONT, vous pouvez utiliser le solveur MUMPS
+     car celui-ci est le seul à pouvoir factoriser les matrices qui ne sont pas définies positives.
+
+   * Parfois, en parallèle, le critère de détection de singularité de MUMPS est trop pessimiste ! Il reste néanmoins souvent
+     possible de faire passer le calcul complet en relaxant ce critère (augmenter de 1 ou 2 la valeur du mot-clé NPREC) ou
+     en le débranchant (valeur du mot-clé NPREC=-1) ou en relançant le calcul sur moins de processeurs.
+
+   * Il se peut aussi que ce phénomène soit tout à fait normal avec X-FEM si la fissure passe
+     très près d'un noeud.
+     Si le nombre de décimales perdues n'est pas trop grand (max 10 décimales),
+     vous pouvez relancer le calcul en augmentant le nombre de décimales perdues autorisé :
+     mot-clé NPREC du mot clé facteur SOLVEUR.
+     Sinon, contactez l'équipe de développement.
+
+     Calcul modal : Méthode d'itération inverse
+
+                                                   INVERSE
+numéro    fréquence (HZ)     amortissement    NB_ITER    précision    norme d'erreur
+    1       7.86619E+02        0.00000E+00        3     1.53459E-11     1.30354E-10
+    2       2.35986E+03        0.00000E+00        3     6.16303E-09     1.23288E-11
+    3       3.93310E+03        0.00000E+00        3     3.09750E-07     4.47339E-12
+    4       5.50636E+03        0.00000E+00        4     8.31035E-12     3.43913E-12
+
+
+------------------------------------------------------------------------
+
+         Vérification à posteriori des modes
+
+------------------------------------------------------------------------
+
+#1      Resolution des systemes lineaires                 CPU (USER+SYST/SYST/ELAPS):      0.26      0.00      0.12
+  # Mémoire (Mo) :   979.98 /   964.74 /    47.52 /    35.58 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0025   user+syst:        0.33s (syst:        0.01s, elaps:        0.14s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_cmd21:1
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0027            Concept de type : dyna_trans
+  # ------------------------------------------------------------------------------------------
+  DYNATRAM = DYNA_VIBRA(TYPE_CALCUL='TRAN',
+                        BASE_CALCUL='PHYS',
+                        SCHEMA_TEMPS=_F(SCHEMA='NEWMARK',
+                                        BETA=0.25,
+                                        GAMMA=0.5,),
+                        INCREMENT=_F(LIST_INST=LISTE2,
+                                     VERI_PAS='OUI',),
+                        EXCIT=(_F(CHARGE=CHARMX,
+                                  MULT_APPUI='NON',),
+                               _F(CHARGE=CL,
+                                  MULT_APPUI='NON',),
+                               ),
+                        SOLVEUR=_F(METHODE='MULT_FRONT',
+                                   RENUM='METIS',
+                                   STOP_SINGULIER='OUI',
+                                   ELIM_LAGR='NON',
+                                   NPREC=8,),
+                        CARA_ELEM=CARAC,
+                        MODELE=MODELE,
+                        CHAM_MATER=CHMAT,
+                        MATR_RIGI=RIGID,
+                        MATR_MASS=MASSE,
+                        ARCHIVAGE=_F(PAS_ARCH=100,),
+                        )
+
+
+--------------------------------------------------------------------------------------
+
+D Y N A _ V I B R A
+=====================================================================================
+                     Calcul TRANsitoire sur base PHYSique
+=====================================================================================
+
+Modèle physique
+--------------------------------------------------------------------------------------
+    >> modèle mécanique : MODELE
+    >> nombre de DDL physiques : 6018
+
+Matrices dynamiques pour la résolution
+--------------------------------------------------------------------------------------
+    >> matrice de masse        : MASSE
+    >> matrice de rigidité     : RIGID
+    >> système conservatif, sans amortissement.
+
+Schéma d'intégration NEWMARK à pas constant
+--------------------------------------------------------------------------------------
+    >> type de schéma         : implicite
+    >> pas d'intégration      : 1.00000e-07
+    >> nombre de pas calculés : 3200
+
+État initial
+--------------------------------------------------------------------------------------
+    >> déplacement  : nul
+    >> vitesse      : nul
+    >> accélération : calculee
+
+Durée de la simulation
+--------------------------------------------------------------------------------------
+    >> instant initial : 0.00000e+00
+    >> instant final   : 3.20000e-04
+
+Archivage
+--------------------------------------------------------------------------------------
+    >> fréquence d'archivage : tous les 100 pas calculés
+    >> champs archivés       : DEPL VITE ACCE
+
+======================================================================================
+
+Avancement du calcul
+--------------------------------------------------------------------------------------
+[  0%] Instant calculé : 0.00000e+00, dernier instant archivé : 0.00000e+00, au numéro d'ordre :     0
+[  5%] Instant calculé : 1.60000e-05, dernier instant archivé : 1.00000e-05, au numéro d'ordre :   160
+[ 10%] Instant calculé : 3.20000e-05, dernier instant archivé : 3.00000e-05, au numéro d'ordre :   320
+[ 15%] Instant calculé : 4.80000e-05, dernier instant archivé : 4.00000e-05, au numéro d'ordre :   480
+[ 20%] Instant calculé : 6.40000e-05, dernier instant archivé : 6.00000e-05, au numéro d'ordre :   640
+[ 25%] Instant calculé : 8.00000e-05, dernier instant archivé : 8.00000e-05, au numéro d'ordre :   800
+[ 30%] Instant calculé : 9.60000e-05, dernier instant archivé : 9.00000e-05, au numéro d'ordre :   960
+[ 35%] Instant calculé : 1.12000e-04, dernier instant archivé : 1.10000e-04, au numéro d'ordre :  1120
+[ 40%] Instant calculé : 1.28000e-04, dernier instant archivé : 1.20000e-04, au numéro d'ordre :  1280
+[ 45%] Instant calculé : 1.44000e-04, dernier instant archivé : 1.40000e-04, au numéro d'ordre :  1440
+[ 50%] Instant calculé : 1.60000e-04, dernier instant archivé : 1.60000e-04, au numéro d'ordre :  1600
+[ 55%] Instant calculé : 1.76000e-04, dernier instant archivé : 1.70000e-04, au numéro d'ordre :  1760
+[ 60%] Instant calculé : 1.92000e-04, dernier instant archivé : 1.90000e-04, au numéro d'ordre :  1920
+[ 65%] Instant calculé : 2.08000e-04, dernier instant archivé : 2.00000e-04, au numéro d'ordre :  2080
+[ 70%] Instant calculé : 2.24000e-04, dernier instant archivé : 2.20000e-04, au numéro d'ordre :  2240
+[ 75%] Instant calculé : 2.40000e-04, dernier instant archivé : 2.40000e-04, au numéro d'ordre :  2400
+[ 80%] Instant calculé : 2.56000e-04, dernier instant archivé : 2.50000e-04, au numéro d'ordre :  2560
+[ 85%] Instant calculé : 2.72000e-04, dernier instant archivé : 2.70000e-04, au numéro d'ordre :  2720
+[ 90%] Instant calculé : 2.88000e-04, dernier instant archivé : 2.80000e-04, au numéro d'ordre :  2880
+[ 95%] Instant calculé : 3.04000e-04, dernier instant archivé : 3.00000e-04, au numéro d'ordre :  3040
+[100%] Instant calculé : 3.20000e-04, dernier instant archivé : 3.20000e-04, au numéro d'ordre :  3200
+
+======================================================================================
+                                                                        Fin du calcul
+
+#1      Resolution des systemes lineaires                 CPU (USER+SYST/SYST/ELAPS):      2.73      0.15      2.81
+#2      Calculs elementaires et assemblages               CPU (USER+SYST/SYST/ELAPS):      2.31      0.06      2.24
+  # Mémoire (Mo) :   979.98 /   970.09 /    53.03 /    35.58 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0027   user+syst:        7.67s (syst:        0.25s, elaps:        7.65s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_cmd22:1
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0028            Concept de type : dyna_trans
+  # ------------------------------------------------------------------------------------------
+  DYNATRAF = CALC_CHAMP(reuse=DYNATRAF,
+                        RESULTAT=DYNATRAF,
+                        PRECISION=1.E-06,
+                        CONTRAINTE=('SIEF_ELGA', 'SIEF_ELNO'),
+                        INFO=1,
+                        CRITERE='RELATIF',)
+
+
+   !----------------------------------------------------------------------------------------------------!
+   ! <A> <CALCCHAMP_6>                                                                                  !
+   !                                                                                                    !
+   ! Le mot clef EXCIT de la commande n'est pas renseigné et la récupération des chargements concernant !
+   ! le résultat DYNATRAF n'est actuellement pas possible.                                              !
+   !                                                                                                    !
+   ! Conseil : Il faut renseigner le mot clef EXCIT de la commande CALC_CHAMP,                          !
+   !                                                                                                    !
+   !                                                                                                    !
+   ! Ceci est une alarme. Si vous ne comprenez pas le sens de cette                                     !
+   ! alarme, vous pouvez obtenir des résultats inattendus !                                             !
+   !----------------------------------------------------------------------------------------------------!
+
+#2      Calculs elementaires et assemblages               CPU (USER+SYST/SYST/ELAPS):      0.36      0.21      0.10
+  # Mémoire (Mo) :   979.98 /   975.04 /    56.90 /    35.58 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0028   user+syst:        0.46s (syst:        0.24s, elaps:        0.13s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_cmd23:1
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0029            Concept de type : dyna_trans
+  # ------------------------------------------------------------------------------------------
+  DYNATRAF = CALC_CHAMP(reuse=DYNATRAF,
+                        CARA_ELEM=CARAC,
+                        CHAM_MATER=CHMAT,
+                        RESULTAT=DYNATRAF,
+                        MODELE=MODELE,
+                        PRECISION=1.E-06,
+                        FORCE=('REAC_NODA', ),
+                        EXCIT=(_F(CHARGE=CHARFX,
+                                  TYPE_CHARGE='FIXE_CSTE',
+                                  PHAS_DEG=0.0,
+                                  PUIS_PULS=0,),
+                               _F(CHARGE=CL,
+                                  TYPE_CHARGE='FIXE_CSTE',
+                                  PHAS_DEG=0.0,
+                                  PUIS_PULS=0,),
+                               ),
+                        INFO=1,
+                        CRITERE='RELATIF',)
+
+
+   !--------------------------------------------------------------------------------------------------------!
+   ! <A> <CALCCHAMP_5>                                                                                      !
+   !                                                                                                        !
+   ! La récupération des chargements concernant le résultat DYNATRAF n'est actuellement pas possible.       !
+   ! Code_Aster ne peut donc pas vérifier la cohérence des chargements.                                     !
+   !                                                                                                        !
+   ! Conseil : Si vous utilisez une commande avec une option qui nécessite la redéfinition des chargements, !
+   ! il faut vérifier la cohérence des chargements.                                                         !
+   !                                                                                                        !
+   !                                                                                                        !
+   ! Ceci est une alarme. Si vous ne comprenez pas le sens de cette                                         !
+   ! alarme, vous pouvez obtenir des résultats inattendus !                                                 !
+   !--------------------------------------------------------------------------------------------------------!
+
+
+   !--------------------------------------------------------------------!
+   ! <A> <CALCCHAMP_4>                                                  !
+   !                                                                    !
+   ! Les contributions de l'amortissement liées à la vitesse pour les   !
+   ! réactions nodales sont négligées dans la version actuelle du code. !
+   !                                                                    !
+   !                                                                    !
+   ! Ceci est une alarme. Si vous ne comprenez pas le sens de cette     !
+   ! alarme, vous pouvez obtenir des résultats inattendus !             !
+   !--------------------------------------------------------------------!
+
+#2      Calculs elementaires et assemblages               CPU (USER+SYST/SYST/ELAPS):      0.17      0.08      0.05
+  # Mémoire (Mo) :   979.98 /   976.40 /    58.22 /    35.58 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0029   user+syst:        0.40s (syst:        0.21s, elaps:        0.11s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_cmd24:1
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0030            Concept de type : dyna_trans
+  # ------------------------------------------------------------------------------------------
+  DYNATRAM = CALC_CHAMP(reuse=DYNATRAM,
+                        RESULTAT=DYNATRAM,
+                        PRECISION=1.E-06,
+                        CONTRAINTE=('SIEF_ELGA', 'SIEF_ELNO'),
+                        INFO=1,
+                        CRITERE='RELATIF',)
+
+
+   !----------------------------------------------------------------------------------------------------!
+   ! <A> <CALCCHAMP_6>                                                                                  !
+   !                                                                                                    !
+   ! Le mot clef EXCIT de la commande n'est pas renseigné et la récupération des chargements concernant !
+   ! le résultat DYNATRAM n'est actuellement pas possible.                                              !
+   !                                                                                                    !
+   ! Conseil : Il faut renseigner le mot clef EXCIT de la commande CALC_CHAMP,                          !
+   !                                                                                                    !
+   !                                                                                                    !
+   ! Ceci est une alarme. Si vous ne comprenez pas le sens de cette                                     !
+   ! alarme, vous pouvez obtenir des résultats inattendus !                                             !
+   !----------------------------------------------------------------------------------------------------!
+
+#2      Calculs elementaires et assemblages               CPU (USER+SYST/SYST/ELAPS):      0.40      0.22      0.15
+  # Mémoire (Mo) :   986.42 /   985.86 /    67.47 /    35.58 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0030   user+syst:        0.53s (syst:        0.24s, elaps:        0.21s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_cmd25:1
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0031            Concept de type : dyna_trans
+  # ------------------------------------------------------------------------------------------
+  DYNATRAM = CALC_CHAMP(reuse=DYNATRAM,
+                        CARA_ELEM=CARAC,
+                        CHAM_MATER=CHMAT,
+                        RESULTAT=DYNATRAM,
+                        MODELE=MODELE,
+                        PRECISION=1.E-06,
+                        FORCE=('REAC_NODA', ),
+                        EXCIT=(_F(CHARGE=CHARMX,
+                                  TYPE_CHARGE='FIXE_CSTE',
+                                  PHAS_DEG=0.0,
+                                  PUIS_PULS=0,),
+                               _F(CHARGE=CL,
+                                  TYPE_CHARGE='FIXE_CSTE',
+                                  PHAS_DEG=0.0,
+                                  PUIS_PULS=0,),
+                               ),
+                        INFO=1,
+                        CRITERE='RELATIF',)
+
+
+   !--------------------------------------------------------------------------------------------------------!
+   ! <A> <CALCCHAMP_5>                                                                                      !
+   !                                                                                                        !
+   ! La récupération des chargements concernant le résultat DYNATRAM n'est actuellement pas possible.       !
+   ! Code_Aster ne peut donc pas vérifier la cohérence des chargements.                                     !
+   !                                                                                                        !
+   ! Conseil : Si vous utilisez une commande avec une option qui nécessite la redéfinition des chargements, !
+   ! il faut vérifier la cohérence des chargements.                                                         !
+   !                                                                                                        !
+   !                                                                                                        !
+   ! Ceci est une alarme. Si vous ne comprenez pas le sens de cette                                         !
+   ! alarme, vous pouvez obtenir des résultats inattendus !                                                 !
+   !--------------------------------------------------------------------------------------------------------!
+
+
+   !--------------------------------------------------------------------!
+   ! <A> <CALCCHAMP_4>                                                  !
+   !                                                                    !
+   ! Les contributions de l'amortissement liées à la vitesse pour les   !
+   ! réactions nodales sont négligées dans la version actuelle du code. !
+   !                                                                    !
+   !                                                                    !
+   ! Ceci est une alarme. Si vous ne comprenez pas le sens de cette     !
+   ! alarme, vous pouvez obtenir des résultats inattendus !             !
+   !--------------------------------------------------------------------!
+
+#2      Calculs elementaires et assemblages               CPU (USER+SYST/SYST/ELAPS):      0.24      0.11      0.07
+  # Mémoire (Mo) :   988.27 /   987.76 /    69.34 /    35.58 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0031   user+syst:        0.46s (syst:        0.24s, elaps:        0.16s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_cmd26:1
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0032            Concept de type : -
+  # ------------------------------------------------------------------------------------------
+  TEST_RESU(RESU=_F(NOM_CMP='DX',
+                    GROUP_NO=('B', ),
+                    NOM_CHAM='DEPL',
+                    RESULTAT=DYNATRAF,
+                    NUME_ORDRE=10,
+                    REFERENCE='ANALYTIQUE',
+                    VALE_CALC=(2.59345308E-10, ),
+                    VALE_REFE=(2.59473227925E-10, ),
+                    PRECISION=1.E-3,
+                    VALE_ABS='NON',),
+            TEST_NAN='NON',)
+
+
+--------------------------------------------------------------------------------
+ ---- RESULTAT         NUME_ORDRE       NOM_CHAM         NOM_CMP          GROUP_NO
+      DYNATRAF         10               DEPL             DX               B
+      REFERENCE        LEGENDE          VALE_REFE           VALE_CALC           ERREUR           TOLE
+ OK   NON_REGRESSION   XXXX             2.59345308E-10      2.59345308152E-10    5.867629E-08%   0.0001%
+ OK   ANALYTIQUE       XXXX             2.59473227925E-10   2.59345308152E-10   0.0492997963022% 0.1%
+
+  # Mémoire (Mo) :   988.27 /   987.76 /    69.34 /    35.58 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0032   user+syst:        0.01s (syst:        0.00s, elaps:        0.00s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_cmd27:1
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0033            Concept de type : -
+  # ------------------------------------------------------------------------------------------
+  TEST_RESU(RESU=_F(NOM_CMP='DX',
+                    GROUP_NO=('B', ),
+                    NOM_CHAM='DEPL',
+                    RESULTAT=DYNATRAF,
+                    NUME_ORDRE=15,
+                    REFERENCE='ANALYTIQUE',
+                    VALE_CALC=(3.8907807E-10, ),
+                    VALE_REFE=(3.89209841887E-10, ),
+                    PRECISION=1.E-3,
+                    VALE_ABS='NON',),
+            TEST_NAN='NON',)
+
+
+--------------------------------------------------------------------------------
+ ---- RESULTAT         NUME_ORDRE       NOM_CHAM         NOM_CMP          GROUP_NO
+      DYNATRAF         15               DEPL             DX               B
+      REFERENCE        LEGENDE          VALE_REFE          VALE_CALC          ERREUR           TOLE
+ OK   NON_REGRESSION   XXXX             3.8907807E-10      3.8907807048E-10    1.233449E-07%   0.0001%
+ OK   ANALYTIQUE       XXXX             3.89209841887E-10   3.8907807048E-10    0.0338561343807% 0.1%
+
+  # Mémoire (Mo) :   988.27 /   987.76 /    69.34 /    35.58 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0033   user+syst:        0.00s (syst:        0.00s, elaps:        0.01s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_cmd28:1
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0034            Concept de type : -
+  # ------------------------------------------------------------------------------------------
+  TEST_RESU(RESU=_F(NOM_CMP='DX',
+                    GROUP_NO=('B', ),
+                    NOM_CHAM='DEPL',
+                    RESULTAT=DYNATRAF,
+                    NUME_ORDRE=20,
+                    REFERENCE='ANALYTIQUE',
+                    VALE_CALC=(5.18818706E-10, ),
+                    VALE_REFE=(5.18946455848E-10, ),
+                    PRECISION=1.E-3,
+                    VALE_ABS='NON',),
+            TEST_NAN='NON',)
+
+
+--------------------------------------------------------------------------------
+ ---- RESULTAT         NUME_ORDRE       NOM_CHAM         NOM_CMP          GROUP_NO
+      DYNATRAF         20               DEPL             DX               B
+      REFERENCE        LEGENDE          VALE_REFE           VALE_CALC           ERREUR           TOLE
+ OK   NON_REGRESSION   XXXX             5.18818706E-10      5.18818705832E-10    3.231486E-08%   0.0001%
+ OK   ANALYTIQUE       XXXX             5.18946455848E-10   5.18818705832E-10   0.0246171862657% 0.1%
+
+  # Mémoire (Mo) :   988.27 /   987.76 /    69.34 /    35.58 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0034   user+syst:        0.00s (syst:        0.00s, elaps:        0.00s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_cmd29:1
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0035            Concept de type : -
+  # ------------------------------------------------------------------------------------------
+  TEST_RESU(RESU=_F(NOM_CMP='DX',
+                    GROUP_NO=('A', ),
+                    NOM_CHAM='REAC_NODA',
+                    RESULTAT=DYNATRAF,
+                    NUME_ORDRE=10,
+                    CRITERE=('ABSOLU', ),
+                    REFERENCE='ANALYTIQUE',
+                    VALE_CALC=(-8.45037407E-192, ),
+                    VALE_REFE=(0.0, ),
+                    PRECISION=1.E-3,
+                    VALE_ABS='NON',),
+            TEST_NAN='NON',)
+
+
+--------------------------------------------------------------------------------
+ ---- RESULTAT         NUME_ORDRE       NOM_CHAM         NOM_CMP          GROUP_NO
+      DYNATRAF         10               REAC_NODA        DX               A
+
+   !-------------------------------------------------------------------------------------------!
+   ! <A> <TEST0_12>                                                                            !
+   !                                                                                           !
+   ! Pour les tests de non régression de valeurs nulles, il faut définir un ordre de grandeur. !
+   ! Dans le cas contraire, le test de non régression est ignoré.                              !
+   !                                                                                           !
+   !                                                                                           !
+   ! Ceci est une alarme. Si vous ne comprenez pas le sens de cette                            !
+   ! alarme, vous pouvez obtenir des résultats inattendus !                                    !
+   !-------------------------------------------------------------------------------------------!
+
+      REFERENCE        LEGENDE          VALE_REFE             VALE_CALC             ERREUR           TOLE
+SKIP  NON_REGRESSION   -                -                     -                     -                -
+ OK   ANALYTIQUE       XXXX             0.0                   -8.45037406993E-192   8.450374E-192    0.001
+
+  # Mémoire (Mo) :   988.27 /   987.76 /    69.34 /    35.58 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0035   user+syst:        0.00s (syst:        0.00s, elaps:        0.00s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_cmd30:1
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0036            Concept de type : -
+  # ------------------------------------------------------------------------------------------
+  TEST_RESU(RESU=_F(NOM_CMP='DX',
+                    GROUP_NO=('B', ),
+                    NOM_CHAM='REAC_NODA',
+                    RESULTAT=DYNATRAF,
+                    NUME_ORDRE=10,
+                    CRITERE=('ABSOLU', ),
+                    REFERENCE='ANALYTIQUE',
+                    VALE_CALC=(7.45277104E-13, ),
+                    VALE_REFE=(0.0, ),
+                    PRECISION=1.E-3,
+                    VALE_ABS='NON',),
+            TEST_NAN='NON',)
+
+
+--------------------------------------------------------------------------------
+ ---- RESULTAT         NUME_ORDRE       NOM_CHAM         NOM_CMP          GROUP_NO
+      DYNATRAF         10               REAC_NODA        DX               B
+      REFERENCE        LEGENDE          VALE_REFE            VALE_CALC            ERREUR           TOLE
+ OK   NON_REGRESSION   XXXX             7.45277104E-13       -3.88142643026E-13    1.133420E-12    1E-06
+ OK   ANALYTIQUE       XXXX             0.0                  -3.88142643026E-13    3.881426E-13    0.001
+
+  # Mémoire (Mo) :   988.27 /   987.76 /    69.34 /    35.58 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0036   user+syst:        0.01s (syst:        0.00s, elaps:        0.00s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_cmd31:1
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0037            Concept de type : -
+  # ------------------------------------------------------------------------------------------
+  TEST_RESU(RESU=_F(NOM_CMP='DX',
+                    GROUP_NO=('A', ),
+                    NOM_CHAM='REAC_NODA',
+                    RESULTAT=DYNATRAF,
+                    NUME_ORDRE=15,
+                    CRITERE=('ABSOLU', ),
+                    REFERENCE='ANALYTIQUE',
+                    VALE_CALC=(1.18304926E-49, ),
+                    VALE_REFE=(0.0, ),
+                    PRECISION=1.E-3,
+                    VALE_ABS='NON',),
+            TEST_NAN='NON',)
+
+
+--------------------------------------------------------------------------------
+ ---- RESULTAT         NUME_ORDRE       NOM_CHAM         NOM_CMP          GROUP_NO
+      DYNATRAF         15               REAC_NODA        DX               A
+
+   !-------------------------------------------------------------------------------------------!
+   ! <A> <TEST0_12>                                                                            !
+   !                                                                                           !
+   ! Pour les tests de non régression de valeurs nulles, il faut définir un ordre de grandeur. !
+   ! Dans le cas contraire, le test de non régression est ignoré.                              !
+   !                                                                                           !
+   !                                                                                           !
+   ! Ceci est une alarme. Si vous ne comprenez pas le sens de cette                            !
+   ! alarme, vous pouvez obtenir des résultats inattendus !                                    !
+   !-------------------------------------------------------------------------------------------!
+
+      REFERENCE        LEGENDE          VALE_REFE           VALE_CALC           ERREUR           TOLE
+SKIP  NON_REGRESSION   -                -                   -                   -                -
+ OK   ANALYTIQUE       XXXX             0.0                 1.18304926236E-49    1.183049E-49    0.001
+
+  # Mémoire (Mo) :   988.27 /   987.76 /    69.34 /    35.58 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0037   user+syst:        0.00s (syst:        0.00s, elaps:        0.01s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_cmd32:1
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0038            Concept de type : -
+  # ------------------------------------------------------------------------------------------
+  TEST_RESU(RESU=_F(NOM_CMP='DX',
+                    GROUP_NO=('A', ),
+                    NOM_CHAM='REAC_NODA',
+                    RESULTAT=DYNATRAF,
+                    NUME_ORDRE=20,
+                    REFERENCE='ANALYTIQUE',
+                    VALE_CALC=(-1.97628488, ),
+                    VALE_REFE=(-1.99999819062, ),
+                    PRECISION=0.05,
+                    VALE_ABS='NON',),
+            TEST_NAN='NON',)
+
+
+--------------------------------------------------------------------------------
+ ---- RESULTAT         NUME_ORDRE       NOM_CHAM         NOM_CMP          GROUP_NO
+      DYNATRAF         20               REAC_NODA        DX               A
+      REFERENCE        LEGENDE          VALE_REFE          VALE_CALC          ERREUR           TOLE
+ OK   NON_REGRESSION   XXXX             -1.97628488        -1.97628488017      8.391267E-09%   0.0001%
+ OK   ANALYTIQUE       XXXX             -1.99999819062     -1.97628488017     1.18566659537%   5.0%
+
+  # Mémoire (Mo) :   988.27 /   987.76 /    69.34 /    35.58 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0038   user+syst:        0.00s (syst:        0.00s, elaps:        0.00s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_cmd33:1
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0039            Concept de type : -
+  # ------------------------------------------------------------------------------------------
+  TEST_RESU(RESU=_F(NOM_CMP='DX',
+                    GROUP_NO=('B', ),
+                    NOM_CHAM='REAC_NODA',
+                    RESULTAT=DYNATRAF,
+                    NUME_ORDRE=20,
+                    CRITERE=('ABSOLU', ),
+                    REFERENCE='ANALYTIQUE',
+                    VALE_CALC=(-3.21440791E-13, ),
+                    VALE_REFE=(0.0, ),
+                    PRECISION=1.E-3,
+                    VALE_ABS='NON',),
+            TEST_NAN='NON',)
+
+
+--------------------------------------------------------------------------------
+ ---- RESULTAT         NUME_ORDRE       NOM_CHAM         NOM_CMP          GROUP_NO
+      DYNATRAF         20               REAC_NODA        DX               B
+      REFERENCE        LEGENDE          VALE_REFE           VALE_CALC           ERREUR           TOLE
+ OK   NON_REGRESSION   XXXX             -3.21440791E-13     1.91943596434E-12    2.240877E-12    1E-06
+ OK   ANALYTIQUE       XXXX             0.0                 1.91943596434E-12    1.919436E-12    0.001
+
+  # Mémoire (Mo) :   988.27 /   987.76 /    69.34 /    35.58 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0039   user+syst:        0.01s (syst:        0.00s, elaps:        0.00s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_cmd34:1
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0040            Concept de type : -
+  # ------------------------------------------------------------------------------------------
+  TEST_RESU(RESU=_F(PARA='FREQ',
+                    RESULTAT=MODE_DX,
+                    NUME_ORDRE=1,
+                    CRITERE=('RELATIF', ),
+                    REFERENCE='ANALYTIQUE',
+                    VALE_CALC=(1263.49687, ),
+                    VALE_REFE=(1263.497, ),
+                    PRECISION=1.E-3,
+                    VALE_ABS='NON',),
+            TEST_NAN='NON',)
+
+
+--------------------------------------------------------------------------------
+ ---- RESULTAT         NUME_ORDRE       PARA
+      MODE_DX          1                FREQ
+      REFERENCE        LEGENDE          VALE_REFE          VALE_CALC          ERREUR           TOLE
+ OK   NON_REGRESSION   XXXX             1263.49687         1263.49686922       6.147940E-08%   0.0001%
+ OK   ANALYTIQUE       XXXX             1263.497           1263.49686922       1.035038E-05%   0.1%
+
+  # Mémoire (Mo) :   988.27 /   987.76 /    69.34 /    35.58 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0040   user+syst:        0.00s (syst:        0.00s, elaps:        0.00s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_cmd35:1
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0041            Concept de type : -
+  # ------------------------------------------------------------------------------------------
+  TEST_RESU(RESU=_F(PARA='FREQ',
+                    RESULTAT=MODE_DX,
+                    NUME_ORDRE=2,
+                    CRITERE=('RELATIF', ),
+                    REFERENCE='ANALYTIQUE',
+                    VALE_CALC=(3790.49373, ),
+                    VALE_REFE=(3790.49, ),
+                    PRECISION=1.E-3,
+                    VALE_ABS='NON',),
+            TEST_NAN='NON',)
+
+
+--------------------------------------------------------------------------------
+ ---- RESULTAT         NUME_ORDRE       PARA
+      MODE_DX          2                FREQ
+      REFERENCE        LEGENDE          VALE_REFE          VALE_CALC          ERREUR           TOLE
+ OK   NON_REGRESSION   XXXX             3790.49373         3790.49372515       1.279545E-07%   0.0001%
+ OK   ANALYTIQUE       XXXX             3790.49            3790.49372515       9.827621E-05%   0.1%
+
+  # Mémoire (Mo) :   988.27 /   987.76 /    69.34 /    35.58 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0041   user+syst:        0.00s (syst:        0.00s, elaps:        0.01s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_cmd36:1
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0042            Concept de type : -
+  # ------------------------------------------------------------------------------------------
+  TEST_RESU(RESU=_F(PARA='FREQ',
+                    RESULTAT=MODE_DX,
+                    NUME_ORDRE=3,
+                    CRITERE=('RELATIF', ),
+                    REFERENCE='ANALYTIQUE',
+                    VALE_CALC=(6317.49993, ),
+                    VALE_REFE=(6317.484, ),
+                    PRECISION=1.E-3,
+                    VALE_ABS='NON',),
+            TEST_NAN='NON',)
+
+
+--------------------------------------------------------------------------------
+ ---- RESULTAT         NUME_ORDRE       PARA
+      MODE_DX          3                FREQ
+      REFERENCE        LEGENDE          VALE_REFE          VALE_CALC          ERREUR           TOLE
+ OK   NON_REGRESSION   XXXX             6317.49993         6317.49993376       5.957899E-08%   0.0001%
+ OK   ANALYTIQUE       XXXX             6317.484           6317.49993376       2.522169E-04%   0.1%
+
+  # Mémoire (Mo) :   988.27 /   987.76 /    69.34 /    35.58 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0042   user+syst:        0.00s (syst:        0.00s, elaps:        0.00s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_cmd37:1
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0043            Concept de type : -
+  # ------------------------------------------------------------------------------------------
+  TEST_RESU(RESU=_F(PARA='FREQ',
+                    RESULTAT=MODE_DX,
+                    NUME_ORDRE=4,
+                    CRITERE=('RELATIF', ),
+                    REFERENCE='ANALYTIQUE',
+                    VALE_CALC=(8844.52173, ),
+                    VALE_REFE=(8844.4477, ),
+                    PRECISION=1.E-3,
+                    VALE_ABS='NON',),
+            TEST_NAN='NON',)
+
+
+--------------------------------------------------------------------------------
+ ---- RESULTAT         NUME_ORDRE       PARA
+      MODE_DX          4                FREQ
+      REFERENCE        LEGENDE          VALE_REFE          VALE_CALC          ERREUR           TOLE
+ OK   NON_REGRESSION   XXXX             8844.52173         8844.52173019       2.100476E-09%   0.0001%
+ OK   ANALYTIQUE       XXXX             8844.4477          8844.52173019       8.370244E-04%   0.1%
+
+  # Mémoire (Mo) :   988.27 /   987.76 /    69.34 /    35.58 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0043   user+syst:        0.00s (syst:        0.00s, elaps:        0.00s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_cmd38:1
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0044            Concept de type : -
+  # ------------------------------------------------------------------------------------------
+  TEST_RESU(RESU=_F(PARA='FREQ',
+                    RESULTAT=MODE_DX,
+                    NUME_ORDRE=5,
+                    CRITERE=('RELATIF', ),
+                    REFERENCE='ANALYTIQUE',
+                    VALE_CALC=(1.13715653E4, ),
+                    VALE_REFE=(1.1371473E4, ),
+                    PRECISION=1.E-3,
+                    VALE_ABS='NON',),
+            TEST_NAN='NON',)
+
+
+--------------------------------------------------------------------------------
+ ---- RESULTAT         NUME_ORDRE       PARA
+      MODE_DX          5                FREQ
+      REFERENCE        LEGENDE          VALE_REFE          VALE_CALC          ERREUR           TOLE
+ OK   NON_REGRESSION   XXXX             11371.5653         11371.5653496       4.360794E-07%   0.0001%
+ OK   ANALYTIQUE       XXXX             11371.473          11371.5653496       8.121163E-04%   0.1%
+
+  # Mémoire (Mo) :   988.27 /   987.76 /    69.34 /    35.58 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0044   user+syst:        0.00s (syst:        0.00s, elaps:        0.00s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_cmd39:1
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0045            Concept de type : -
+  # ------------------------------------------------------------------------------------------
+  TEST_RESU(RESU=_F(PARA='FREQ',
+                    RESULTAT=MODE_FZ,
+                    NUME_ORDRE=1,
+                    CRITERE=('RELATIF', ),
+                    REFERENCE='ANALYTIQUE',
+                    VALE_CALC=(310.139411573, ),
+                    TOLE_MACHINE=(5.E-05, ),
+                    VALE_REFE=(310.133, ),
+                    PRECISION=1.E-3,
+                    VALE_ABS='NON',),
+            TEST_NAN='NON',)
+
+
+--------------------------------------------------------------------------------
+ ---- RESULTAT         NUME_ORDRE       PARA
+      MODE_FZ          1                FREQ
+      REFERENCE        LEGENDE          VALE_REFE          VALE_CALC          ERREUR           TOLE
+ OK   NON_REGRESSION   XXXX             310.139411573      310.139411573       1.519053E-10%   0.005%
+ OK   ANALYTIQUE       XXXX             310.133            310.139411573      0.0020673625416% 0.1%
+
+  # Mémoire (Mo) :   988.27 /   987.76 /    69.34 /    35.58 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0045   user+syst:        0.01s (syst:        0.00s, elaps:        0.00s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_cmd40:1
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0046            Concept de type : -
+  # ------------------------------------------------------------------------------------------
+  TEST_RESU(RESU=_F(PARA='FREQ',
+                    RESULTAT=MODE_FZ,
+                    NUME_ORDRE=2,
+                    CRITERE=('RELATIF', ),
+                    REFERENCE='ANALYTIQUE',
+                    VALE_CALC=(1943.56657, ),
+                    VALE_REFE=(1943.568, ),
+                    PRECISION=1.E-3,
+                    VALE_ABS='NON',),
+            TEST_NAN='NON',)
+
+
+--------------------------------------------------------------------------------
+ ---- RESULTAT         NUME_ORDRE       PARA
+      MODE_FZ          2                FREQ
+      REFERENCE        LEGENDE          VALE_REFE          VALE_CALC          ERREUR           TOLE
+ OK   NON_REGRESSION   XXXX             1943.56657         1943.56666924       5.105983E-06%   0.0001%
+ OK   ANALYTIQUE       XXXX             1943.568           1943.56666924       6.847004E-05%   0.1%
+
+  # Mémoire (Mo) :   988.27 /   987.76 /    69.34 /    35.58 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0046   user+syst:        0.00s (syst:        0.00s, elaps:        0.00s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_cmd41:1
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0047            Concept de type : -
+  # ------------------------------------------------------------------------------------------
+  TEST_RESU(RESU=_F(PARA='FREQ',
+                    RESULTAT=MODE_FZ,
+                    NUME_ORDRE=3,
+                    CRITERE=('RELATIF', ),
+                    REFERENCE='ANALYTIQUE',
+                    VALE_CALC=(5442.04698, ),
+                    VALE_REFE=(5442.048, ),
+                    PRECISION=1.E-3,
+                    VALE_ABS='NON',),
+            TEST_NAN='NON',)
+
+
+--------------------------------------------------------------------------------
+ ---- RESULTAT         NUME_ORDRE       PARA
+      MODE_FZ          3                FREQ
+      REFERENCE        LEGENDE          VALE_REFE          VALE_CALC          ERREUR           TOLE
+ OK   NON_REGRESSION   XXXX             5442.04698         5442.04693987       7.373457E-07%   0.0001%
+ OK   ANALYTIQUE       XXXX             5442.048           5442.04693987       1.948029E-05%   0.1%
+
+  # Mémoire (Mo) :   988.27 /   987.76 /    69.34 /    35.58 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0047   user+syst:        0.00s (syst:        0.00s, elaps:        0.01s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_cmd42:1
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0048            Concept de type : -
+  # ------------------------------------------------------------------------------------------
+  TEST_RESU(RESU=_F(PARA='FREQ',
+                    RESULTAT=MODE_FZ,
+                    NUME_ORDRE=4,
+                    CRITERE=('RELATIF', ),
+                    REFERENCE='ANALYTIQUE',
+                    VALE_CALC=(1.0664242E4, ),
+                    VALE_REFE=(1.0664242E4, ),
+                    PRECISION=1.E-3,
+                    VALE_ABS='NON',),
+            TEST_NAN='NON',)
+
+
+--------------------------------------------------------------------------------
+ ---- RESULTAT         NUME_ORDRE       PARA
+      MODE_FZ          4                FREQ
+      REFERENCE        LEGENDE          VALE_REFE          VALE_CALC          ERREUR           TOLE
+ OK   NON_REGRESSION   XXXX             10664.242          10664.2420036       3.362908E-08%   0.0001%
+ OK   ANALYTIQUE       XXXX             10664.242          10664.2420036       3.362908E-08%   0.1%
+
+  # Mémoire (Mo) :   988.27 /   987.76 /    69.34 /    35.58 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0048   user+syst:        0.00s (syst:        0.00s, elaps:        0.00s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_cmd43:1
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0049            Concept de type : -
+  # ------------------------------------------------------------------------------------------
+  TEST_RESU(RESU=_F(PARA='FREQ',
+                    RESULTAT=MODE_FZ,
+                    NUME_ORDRE=5,
+                    CRITERE=('RELATIF', ),
+                    REFERENCE='ANALYTIQUE',
+                    VALE_CALC=(1.76287557E4, ),
+                    VALE_REFE=(1.7628755E4, ),
+                    PRECISION=1.E-3,
+                    VALE_ABS='NON',),
+            TEST_NAN='NON',)
+
+
+--------------------------------------------------------------------------------
+ ---- RESULTAT         NUME_ORDRE       PARA
+      MODE_FZ          5                FREQ
+      REFERENCE        LEGENDE          VALE_REFE          VALE_CALC          ERREUR           TOLE
+ OK   NON_REGRESSION   XXXX             17628.7557         17628.7556367       3.592280E-07%   0.0001%
+ OK   ANALYTIQUE       XXXX             17628.755          17628.7556367       3.611557E-06%   0.1%
+
+  # Mémoire (Mo) :   988.27 /   987.76 /    69.34 /    35.58 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0049   user+syst:        0.01s (syst:        0.00s, elaps:        0.00s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_cmd44:1
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0050            Concept de type : -
+  # ------------------------------------------------------------------------------------------
+  TEST_RESU(RESU=_F(PARA='FREQ',
+                    RESULTAT=MODE_DRX,
+                    NUME_ORDRE=1,
+                    CRITERE=('RELATIF', ),
+                    REFERENCE='ANALYTIQUE',
+                    VALE_CALC=(786.618791723, ),
+                    VALE_REFE=(786.619, ),
+                    PRECISION=1.E-3,
+                    VALE_ABS='NON',),
+            TEST_NAN='NON',)
+
+
+--------------------------------------------------------------------------------
+ ---- RESULTAT         NUME_ORDRE       PARA
+      MODE_DRX         1                FREQ
+      REFERENCE        LEGENDE          VALE_REFE          VALE_CALC          ERREUR           TOLE
+ OK   NON_REGRESSION   XXXX             786.618791723      786.618791725       1.959194E-10%   0.0001%
+ OK   ANALYTIQUE       XXXX             786.619            786.618791725       2.647730E-05%   0.1%
+
+  # Mémoire (Mo) :   988.27 /   987.76 /    69.34 /    35.58 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0050   user+syst:        0.00s (syst:        0.00s, elaps:        0.00s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_cmd45:1
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0051            Concept de type : -
+  # ------------------------------------------------------------------------------------------
+  TEST_RESU(RESU=_F(PARA='FREQ',
+                    RESULTAT=MODE_DRX,
+                    NUME_ORDRE=2,
+                    CRITERE=('RELATIF', ),
+                    REFERENCE='ANALYTIQUE',
+                    VALE_CALC=(2359.85832, ),
+                    VALE_REFE=(2359.856, ),
+                    PRECISION=1.E-3,
+                    VALE_ABS='NON',),
+            TEST_NAN='NON',)
+
+
+--------------------------------------------------------------------------------
+ ---- RESULTAT         NUME_ORDRE       PARA
+      MODE_DRX         2                FREQ
+      REFERENCE        LEGENDE          VALE_REFE          VALE_CALC          ERREUR           TOLE
+ OK   NON_REGRESSION   XXXX             2359.85832         2359.85831598       1.704505E-07%   0.0001%
+ OK   ANALYTIQUE       XXXX             2359.856           2359.85831598       9.814063E-05%   0.1%
+
+  # Mémoire (Mo) :   988.27 /   987.76 /    69.34 /    35.58 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0051   user+syst:        0.00s (syst:        0.00s, elaps:        0.01s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_cmd46:1
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0052            Concept de type : -
+  # ------------------------------------------------------------------------------------------
+  TEST_RESU(RESU=_F(PARA='FREQ',
+                    RESULTAT=MODE_DRX,
+                    NUME_ORDRE=3,
+                    CRITERE=('RELATIF', ),
+                    REFERENCE='ANALYTIQUE',
+                    VALE_CALC=(3933.10366, ),
+                    VALE_REFE=(3933.094, ),
+                    PRECISION=1.E-3,
+                    VALE_ABS='NON',),
+            TEST_NAN='NON',)
+
+
+--------------------------------------------------------------------------------
+ ---- RESULTAT         NUME_ORDRE       PARA
+      MODE_DRX         3                FREQ
+      REFERENCE        LEGENDE          VALE_REFE          VALE_CALC          ERREUR           TOLE
+ OK   NON_REGRESSION   XXXX             3933.10366         3933.10366297       7.545963E-08%   0.0001%
+ OK   ANALYTIQUE       XXXX             3933.094           3933.10366297       2.456836E-04%   0.1%
+
+  # Mémoire (Mo) :   988.27 /   987.76 /    69.34 /    35.58 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0052   user+syst:        0.00s (syst:        0.00s, elaps:        0.00s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_cmd47:1
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0053            Concept de type : -
+  # ------------------------------------------------------------------------------------------
+  TEST_RESU(RESU=_F(PARA='FREQ',
+                    RESULTAT=MODE_DRX,
+                    NUME_ORDRE=4,
+                    CRITERE=('RELATIF', ),
+                    REFERENCE='ANALYTIQUE',
+                    VALE_CALC=(5506.35871, ),
+                    VALE_REFE=(5506.33, ),
+                    PRECISION=1.E-3,
+                    VALE_ABS='NON',),
+            TEST_NAN='NON',)
+
+
+--------------------------------------------------------------------------------
+ ---- RESULTAT         NUME_ORDRE       PARA
+      MODE_DRX         4                FREQ
+      REFERENCE        LEGENDE          VALE_REFE          VALE_CALC          ERREUR           TOLE
+ OK   NON_REGRESSION   XXXX             5506.35871         5506.35871452       8.215421E-08%   0.0001%
+ OK   ANALYTIQUE       XXXX             5506.33            5506.35871452       5.214821E-04%   0.1%
+
+  # Mémoire (Mo) :   988.27 /   987.76 /    69.34 /    35.58 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0053   user+syst:        0.00s (syst:        0.00s, elaps:        0.00s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_cmd48:1
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0054            Concept de type : -
+  # ------------------------------------------------------------------------------------------
+  TEST_RESU(RESU=_F(NOM_CMP='DRX',
+                    GROUP_NO=('B', ),
+                    NOM_CHAM='DEPL',
+                    RESULTAT=DYNATRAM,
+                    NUME_ORDRE=5,
+                    REFERENCE='ANALYTIQUE',
+                    VALE_CALC=(8.65597957E-09, ),
+                    VALE_REFE=(8.66477582461E-09, ),
+                    PRECISION=1.5E-3,
+                    VALE_ABS='NON',),
+            TEST_NAN='NON',)
+
+
+--------------------------------------------------------------------------------
+ ---- RESULTAT         NUME_ORDRE       NOM_CHAM         NOM_CMP          GROUP_NO
+      DYNATRAM         5                DEPL             DRX              B
+      REFERENCE        LEGENDE          VALE_REFE           VALE_CALC           ERREUR           TOLE
+ OK   NON_REGRESSION   XXXX             8.65597957E-09      8.65597957111E-09    1.276954E-08%   0.0001%
+ OK   ANALYTIQUE       XXXX             8.66477582461E-09   8.65597957111E-09   0.101517381208%  0.15%
+
+  # Mémoire (Mo) :   988.27 /   987.76 /    69.34 /    35.58 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0054   user+syst:        0.00s (syst:        0.00s, elaps:        0.00s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_cmd49:1
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0055            Concept de type : -
+  # ------------------------------------------------------------------------------------------
+  TEST_RESU(RESU=_F(NOM_CMP='DRX',
+                    GROUP_NO=('B', ),
+                    NOM_CHAM='DEPL',
+                    RESULTAT=DYNATRAM,
+                    NUME_ORDRE=10,
+                    REFERENCE='ANALYTIQUE',
+                    VALE_CALC=(1.73211547E-08, ),
+                    VALE_REFE=(1.73295916526E-08, ),
+                    PRECISION=1.E-3,
+                    VALE_ABS='NON',),
+            TEST_NAN='NON',)
+
+
+--------------------------------------------------------------------------------
+ ---- RESULTAT         NUME_ORDRE       NOM_CHAM         NOM_CMP          GROUP_NO
+      DYNATRAM         10               DEPL             DRX              B
+      REFERENCE        LEGENDE          VALE_REFE           VALE_CALC           ERREUR           TOLE
+ OK   NON_REGRESSION   XXXX             1.73211547E-08      1.73211547363E-08    2.098424E-07%   0.0001%
+ OK   ANALYTIQUE       XXXX             1.73295916526E-08   1.73211547363E-08   0.0486850262949% 0.1%
+
+  # Mémoire (Mo) :   988.27 /   987.76 /    69.34 /    35.58 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0055   user+syst:        0.01s (syst:        0.00s, elaps:        0.00s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_cmd50:1
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0056            Concept de type : -
+  # ------------------------------------------------------------------------------------------
+  TEST_RESU(RESU=_F(NOM_CMP='DRX',
+                    GROUP_NO=('B', ),
+                    NOM_CHAM='DEPL',
+                    RESULTAT=DYNATRAM,
+                    NUME_ORDRE=20,
+                    REFERENCE='ANALYTIQUE',
+                    VALE_CALC=(3.46507014E-08, ),
+                    VALE_REFE=(3.46591033075E-08, ),
+                    PRECISION=1.E-3,
+                    VALE_ABS='NON',),
+            TEST_NAN='NON',)
+
+
+--------------------------------------------------------------------------------
+ ---- RESULTAT         NUME_ORDRE       NOM_CHAM         NOM_CMP          GROUP_NO
+      DYNATRAM         20               DEPL             DRX              B
+      REFERENCE        LEGENDE          VALE_REFE           VALE_CALC           ERREUR           TOLE
+ OK   NON_REGRESSION   XXXX             3.46507014E-08      3.46507014115E-08    3.316369E-08%   0.0001%
+ OK   ANALYTIQUE       XXXX             3.46591033075E-08   3.46507014115E-08   0.0242415273529% 0.1%
+
+  # Mémoire (Mo) :   988.27 /   987.76 /    69.34 /    35.58 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0056   user+syst:        0.00s (syst:        0.00s, elaps:        0.01s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_cmd51:1
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0057            Concept de type : -
+  # ------------------------------------------------------------------------------------------
+  TEST_RESU(RESU=_F(NOM_CMP='DRX',
+                    GROUP_NO=('A', ),
+                    NOM_CHAM='REAC_NODA',
+                    RESULTAT=DYNATRAM,
+                    NUME_ORDRE=10,
+                    CRITERE=('ABSOLU', ),
+                    REFERENCE='ANALYTIQUE',
+                    VALE_CALC=(-2.93279703E-242, ),
+                    VALE_REFE=(0.0, ),
+                    PRECISION=1.E-3,
+                    VALE_ABS='NON',),
+            TEST_NAN='NON',)
+
+
+--------------------------------------------------------------------------------
+ ---- RESULTAT         NUME_ORDRE       NOM_CHAM         NOM_CMP          GROUP_NO
+      DYNATRAM         10               REAC_NODA        DRX              A
+
+   !-------------------------------------------------------------------------------------------!
+   ! <A> <TEST0_12>                                                                            !
+   !                                                                                           !
+   ! Pour les tests de non régression de valeurs nulles, il faut définir un ordre de grandeur. !
+   ! Dans le cas contraire, le test de non régression est ignoré.                              !
+   !                                                                                           !
+   !                                                                                           !
+   ! Ceci est une alarme. Si vous ne comprenez pas le sens de cette                            !
+   ! alarme, vous pouvez obtenir des résultats inattendus !                                    !
+   !-------------------------------------------------------------------------------------------!
+
+      REFERENCE        LEGENDE          VALE_REFE             VALE_CALC             ERREUR           TOLE
+SKIP  NON_REGRESSION   -                -                     -                     -                -
+ OK   ANALYTIQUE       XXXX             0.0                   -2.93279703214E-242   2.932797E-242    0.001
+
+  # Mémoire (Mo) :   988.27 /   987.76 /    69.34 /    35.58 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0057   user+syst:        0.00s (syst:        0.00s, elaps:        0.00s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_cmd52:1
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0058            Concept de type : -
+  # ------------------------------------------------------------------------------------------
+  TEST_RESU(RESU=_F(NOM_CMP='DRX',
+                    GROUP_NO=('B', ),
+                    NOM_CHAM='REAC_NODA',
+                    RESULTAT=DYNATRAM,
+                    NUME_ORDRE=10,
+                    CRITERE=('ABSOLU', ),
+                    REFERENCE='ANALYTIQUE',
+                    VALE_CALC=(3.72242168E-13, ),
+                    VALE_REFE=(0.0, ),
+                    PRECISION=1.E-3,
+                    VALE_ABS='NON',),
+            TEST_NAN='NON',)
+
+
+--------------------------------------------------------------------------------
+ ---- RESULTAT         NUME_ORDRE       NOM_CHAM         NOM_CMP          GROUP_NO
+      DYNATRAM         10               REAC_NODA        DRX              B
+      REFERENCE        LEGENDE          VALE_REFE           VALE_CALC           ERREUR           TOLE
+ OK   NON_REGRESSION   XXXX             3.72242168E-13      5.57756965613E-13    1.855148E-13    1E-06
+ OK   ANALYTIQUE       XXXX             0.0                 5.57756965613E-13    5.577570E-13    0.001
+
+  # Mémoire (Mo) :   988.27 /   987.76 /    69.34 /    35.58 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0058   user+syst:        0.01s (syst:        0.00s, elaps:        0.00s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_cmd53:1
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0059            Concept de type : -
+  # ------------------------------------------------------------------------------------------
+  TEST_RESU(RESU=_F(NOM_CMP='DRX',
+                    GROUP_NO=('A', ),
+                    NOM_CHAM='REAC_NODA',
+                    RESULTAT=DYNATRAM,
+                    NUME_ORDRE=15,
+                    CRITERE=('ABSOLU', ),
+                    REFERENCE='ANALYTIQUE',
+                    VALE_CALC=(2.36489832E-133, ),
+                    VALE_REFE=(0.0, ),
+                    PRECISION=1.E-3,
+                    VALE_ABS='NON',),
+            TEST_NAN='NON',)
+
+
+--------------------------------------------------------------------------------
+ ---- RESULTAT         NUME_ORDRE       NOM_CHAM         NOM_CMP          GROUP_NO
+      DYNATRAM         15               REAC_NODA        DRX              A
+
+   !-------------------------------------------------------------------------------------------!
+   ! <A> <TEST0_12>                                                                            !
+   !                                                                                           !
+   ! Pour les tests de non régression de valeurs nulles, il faut définir un ordre de grandeur. !
+   ! Dans le cas contraire, le test de non régression est ignoré.                              !
+   !                                                                                           !
+   !                                                                                           !
+   ! Ceci est une alarme. Si vous ne comprenez pas le sens de cette                            !
+   ! alarme, vous pouvez obtenir des résultats inattendus !                                    !
+   !-------------------------------------------------------------------------------------------!
+
+      REFERENCE        LEGENDE          VALE_REFE            VALE_CALC            ERREUR           TOLE
+SKIP  NON_REGRESSION   -                -                    -                    -                -
+ OK   ANALYTIQUE       XXXX             0.0                  2.36489831952E-133   2.364898E-133    0.001
+
+  # Mémoire (Mo) :   988.27 /   987.76 /    69.34 /    35.58 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0059   user+syst:        0.00s (syst:        0.00s, elaps:        0.01s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_cmd54:1
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0060            Concept de type : -
+  # ------------------------------------------------------------------------------------------
+  TEST_RESU(RESU=_F(NOM_CMP='DRX',
+                    GROUP_NO=('A', ),
+                    NOM_CHAM='REAC_NODA',
+                    RESULTAT=DYNATRAM,
+                    NUME_ORDRE=20,
+                    CRITERE=('ABSOLU', ),
+                    REFERENCE='ANALYTIQUE',
+                    VALE_CALC=(-6.10030583E-52, ),
+                    VALE_REFE=(0.0, ),
+                    PRECISION=1.E-08,
+                    VALE_ABS='NON',),
+            TEST_NAN='NON',)
+
+
+--------------------------------------------------------------------------------
+ ---- RESULTAT         NUME_ORDRE       NOM_CHAM         NOM_CMP          GROUP_NO
+      DYNATRAM         20               REAC_NODA        DRX              A
+
+   !-------------------------------------------------------------------------------------------!
+   ! <A> <TEST0_12>                                                                            !
+   !                                                                                           !
+   ! Pour les tests de non régression de valeurs nulles, il faut définir un ordre de grandeur. !
+   ! Dans le cas contraire, le test de non régression est ignoré.                              !
+   !                                                                                           !
+   !                                                                                           !
+   ! Ceci est une alarme. Si vous ne comprenez pas le sens de cette                            !
+   ! alarme, vous pouvez obtenir des résultats inattendus !                                    !
+   !-------------------------------------------------------------------------------------------!
+
+      REFERENCE        LEGENDE          VALE_REFE            VALE_CALC            ERREUR           TOLE
+SKIP  NON_REGRESSION   -                -                    -                    -                -
+ OK   ANALYTIQUE       XXXX             0.0                  -6.10030583274E-52    6.100306E-52    1E-08
+
+  # Mémoire (Mo) :   988.27 /   987.76 /    69.34 /    35.58 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0060   user+syst:        0.00s (syst:        0.00s, elaps:        0.00s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_cmd55:1
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0061            Concept de type : -
+  # ------------------------------------------------------------------------------------------
+  TEST_RESU(RESU=_F(NOM_CMP='DRX',
+                    GROUP_NO=('A', ),
+                    NOM_CHAM='REAC_NODA',
+                    RESULTAT=DYNATRAM,
+                    NUME_ORDRE=32,
+                    REFERENCE='ANALYTIQUE',
+                    VALE_CALC=(-1.903014564, ),
+                    VALE_REFE=(-2.00000001424, ),
+                    PRECISION=0.05,
+                    VALE_ABS='NON',),
+            TEST_NAN='NON',)
+
+
+--------------------------------------------------------------------------------
+ ---- RESULTAT         NUME_ORDRE       NOM_CHAM         NOM_CMP          GROUP_NO
+      DYNATRAM         32               REAC_NODA        DRX              A
+      REFERENCE        LEGENDE          VALE_REFE          VALE_CALC          ERREUR           TOLE
+ OK   NON_REGRESSION   XXXX             -1.903014564       -1.9030145637       1.600875E-08%   0.0001%
+ OK   ANALYTIQUE       XXXX             -2.00000001424     -1.9030145637      4.84927249271%   5.0%
+
+  # Mémoire (Mo) :   988.27 /   987.76 /    69.34 /    35.58 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0061   user+syst:        0.00s (syst:        0.00s, elaps:        0.00s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_cmd56:1
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0062            Concept de type : -
+  # ------------------------------------------------------------------------------------------
+  TEST_RESU(RESU=_F(NOM_CMP='DRX',
+                    GROUP_NO=('B', ),
+                    NOM_CHAM='REAC_NODA',
+                    RESULTAT=DYNATRAM,
+                    NUME_ORDRE=32,
+                    CRITERE=('ABSOLU', ),
+                    REFERENCE='ANALYTIQUE',
+                    VALE_CALC=(4.56954787E-12, ),
+                    VALE_REFE=(0.0, ),
+                    PRECISION=1.E-08,
+                    VALE_ABS='NON',),
+            TEST_NAN='NON',)
+
+
+--------------------------------------------------------------------------------
+ ---- RESULTAT         NUME_ORDRE       NOM_CHAM         NOM_CMP          GROUP_NO
+      DYNATRAM         32               REAC_NODA        DRX              B
+      REFERENCE        LEGENDE          VALE_REFE           VALE_CALC           ERREUR           TOLE
+ OK   NON_REGRESSION   XXXX             4.56954787E-12      4.04507156937E-12    5.244763E-13    1E-06
+ OK   ANALYTIQUE       XXXX             0.0                 4.04507156937E-12    4.045072E-12    1E-08
+
+  # Mémoire (Mo) :   988.27 /   987.76 /    69.34 /    35.58 (VmPeak / VmSize / Optimum / Minimum)
+  # Fin commande No : 0062   user+syst:        0.00s (syst:        0.00s, elaps:        0.00s)
+  # ------------------------------------------------------------------------------------------
+
+.. __stg1_cmd57:1
+  # ------------------------------------------------------------------------------------------
+  # Commande No :  0063            Concept de type : -
+  # ------------------------------------------------------------------------------------------
+  FIN(RETASSAGE='NON',
+      INFO_RESU='OUI',
+      FORMAT_HDF='NON',
+      PROC0='OUI',
+      )
+
+
+   !-------------------------------------------------------------------------!
+   ! <I> <CATAMESS_89>                                                       !
+   !                                                                         !
+   !     Liste des alarmes émises lors de l'exécution du calcul.             !
+   !                                                                         !
+   !     Les alarmes que vous avez choisies d'ignorer sont précédées de (*). !
+   !     Nombre d'occurrences pour chacune des alarmes :                     !
+   !            CALCCHAMP_4          émise    2 fois                         !
+   !            CALCCHAMP_5          émise    2 fois                         !
+   !            CALCCHAMP_6          émise    2 fois                         !
+   !            TEST0_12             émise    5 fois                         !
+   !-------------------------------------------------------------------------!
+
+
+ ======>
+
+ STRUCTURE DU CONCEPT DYNATRAF CALCULE POUR         21 NUMEROS D'ORDRE
+
+ LISTE DES NOMS SYMBOLIQUES:
+ ! ---------- !----------------!----------------!----------------!----------------!----------------!----------------!
+ ! NUME_ORDRE !      DEPL      !      VITE      !      ACCE      !   SIEF_ELGA    !   SIEF_ELNO    !   REAC_NODA    !
+ ! ---------- !----------------!----------------!----------------!----------------!----------------!----------------!
+ !          0 !     DEPL_R     !     DEPL_R     !     DEPL_R     !     SIEF_R     !     SIEF_R     !     DEPL_R     !
+ !        ... !      ...       !      ...       !      ...       !      ...       !      ...       !      ...       !
+ !         20 !     DEPL_R     !     DEPL_R     !     DEPL_R     !     SIEF_R     !     SIEF_R     !     DEPL_R     !
+ ! ---------- !----------------!----------------!----------------!----------------!----------------!----------------!
+
+ LISTE DES NOMS DE VARIABLES D'ACCES:
+                                      INST             DE TYPE  R
+
+ LISTE DES NOMS DE PARAMETRES:
+ ! ---------- !----------------!----------------!----------------!----------------!
+ ! NUME_ORDRE !    CARAELEM    !    CHAMPMAT    !     EXCIT      !     MODELE     !
+ ! ---------- !----------------!----------------!----------------!----------------!
+ !          0 !       K8       !       K8       !      K24       !       K8       !
+ !        ... !      ...       !      ...       !      ...       !      ...       !
+ !         20 !       K8       !       K8       !      K24       !       K8       !
+ ! ---------- !----------------!----------------!----------------!----------------!
+
+ ======>
+
+ STRUCTURE DU CONCEPT DYNATRAM CALCULE POUR         33 NUMEROS D'ORDRE
+
+ LISTE DES NOMS SYMBOLIQUES:
+ ! ---------- !----------------!----------------!----------------!----------------!----------------!----------------!
+ ! NUME_ORDRE !      DEPL      !      VITE      !      ACCE      !   SIEF_ELGA    !   SIEF_ELNO    !   REAC_NODA    !
+ ! ---------- !----------------!----------------!----------------!----------------!----------------!----------------!
+ !          0 !     DEPL_R     !     DEPL_R     !     DEPL_R     !     SIEF_R     !     SIEF_R     !     DEPL_R     !
+ !        ... !      ...       !      ...       !      ...       !      ...       !      ...       !      ...       !
+ !         32 !     DEPL_R     !     DEPL_R     !     DEPL_R     !     SIEF_R     !     SIEF_R     !     DEPL_R     !
+ ! ---------- !----------------!----------------!----------------!----------------!----------------!----------------!
+
+ LISTE DES NOMS DE VARIABLES D'ACCES:
+                                      INST             DE TYPE  R
+
+ LISTE DES NOMS DE PARAMETRES:
+ ! ---------- !----------------!----------------!----------------!----------------!
+ ! NUME_ORDRE !    CARAELEM    !    CHAMPMAT    !     EXCIT      !     MODELE     !
+ ! ---------- !----------------!----------------!----------------!----------------!
+ !          0 !       K8       !       K8       !      K24       !       K8       !
+ !        ... !      ...       !      ...       !      ...       !      ...       !
+ !         32 !       K8       !       K8       !      K24       !       K8       !
+ ! ---------- !----------------!----------------!----------------!----------------!
+
+ ======>
+
+ STRUCTURE DU CONCEPT MODE_DRX CALCULE POUR          4 NUMEROS D'ORDRE
+
+ LISTE DES NOMS SYMBOLIQUES:
+ ! ---------- !----------------!
+ ! NUME_ORDRE !      DEPL      !
+ ! ---------- !----------------!
+ !          1 !     DEPL_R     !
+ !        ... !      ...       !
+ !          4 !     DEPL_R     !
+ ! ---------- !----------------!
+
+ LISTE DES NOMS DE VARIABLES D'ACCES:
+                                      FREQ             DE TYPE  R
+                                      NUME_MODE        DE TYPE  I
+                                      NOEUD_CMP        DE TYPE  K16
+
+ LISTE DES NOMS DE PARAMETRES:
+ ! ---------- !----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!
+ ! NUME_ORDRE !   AMOR_GENE    !  AMOR_REDUIT   !    CARAELEM    !    CHAMPMAT    !     EXCIT      !FACT_PARTICI_DX !FACT_PARTICI_DY !FACT_PARTICI_DZ !  MASS_EFFE_DX  !  MASS_EFFE_DY  !  MASS_EFFE_DZ  !MASS_EFFE_UN_DY !   MASS_GENE    !     MODELE     !     NORME      !    NUME_DDL    !     OMEGA2     !   RIGI_GENE    !   TYPE_DEFO    !   TYPE_MODE    !
+ ! ---------- !----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!
+ !          1 !       R        !       R        !       K8       !       K8       !      K24       !       R        !       R        !       R        !       R        !       R        !       R        !       R        !       R        !       K8       !      K24       !       I        !       R        !       R        !      K16       !      K16       !
+ !        ... !      ...       !      ...       !      ...       !      ...       !      ...       !      ...       !      ...       !      ...       !      ...       !      ...       !      ...       !      ...       !      ...       !      ...       !      ...       !      ...       !      ...       !      ...       !      ...       !      ...       !
+ !          4 !       R        !       R        !       K8       !       K8       !      K24       !       R        !       R        !       R        !       R        !       R        !       R        !       R        !       R        !       K8       !      K24       !       I        !       R        !       R        !      K16       !      K16       !
+ ! ---------- !----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!
+
+ ======>
+
+ STRUCTURE DU CONCEPT MODE_DX  CALCULE POUR          5 NUMEROS D'ORDRE
+
+ LISTE DES NOMS SYMBOLIQUES:
+ ! ---------- !----------------!
+ ! NUME_ORDRE !      DEPL      !
+ ! ---------- !----------------!
+ !          1 !     DEPL_R     !
+ !        ... !      ...       !
+ !          5 !     DEPL_R     !
+ ! ---------- !----------------!
+
+ LISTE DES NOMS DE VARIABLES D'ACCES:
+                                      FREQ             DE TYPE  R
+                                      NUME_MODE        DE TYPE  I
+                                      NOEUD_CMP        DE TYPE  K16
+
+ LISTE DES NOMS DE PARAMETRES:
+ ! ---------- !----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!
+ ! NUME_ORDRE !   AMOR_GENE    !  AMOR_REDUIT   !    CARAELEM    !    CHAMPMAT    !     EXCIT      !FACT_PARTICI_DX !FACT_PARTICI_DY !FACT_PARTICI_DZ !  MASS_EFFE_DX  !  MASS_EFFE_DY  !  MASS_EFFE_DZ  !MASS_EFFE_UN_DY !   MASS_GENE    !     MODELE     !     NORME      !    NUME_DDL    !     OMEGA2     !   RIGI_GENE    !   TYPE_DEFO    !   TYPE_MODE    !
+ ! ---------- !----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!
+ !          1 !       R        !       R        !       K8       !       K8       !      K24       !       R        !       R        !       R        !       R        !       R        !       R        !       R        !       R        !       K8       !      K24       !       I        !       R        !       R        !      K16       !      K16       !
+ !        ... !      ...       !      ...       !      ...       !      ...       !      ...       !      ...       !      ...       !      ...       !      ...       !      ...       !      ...       !      ...       !      ...       !      ...       !      ...       !      ...       !      ...       !      ...       !      ...       !      ...       !
+ !          5 !       R        !       R        !       K8       !       K8       !      K24       !       R        !       R        !       R        !       R        !       R        !       R        !       R        !       R        !       K8       !      K24       !       I        !       R        !       R        !      K16       !      K16       !
+ ! ---------- !----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!
+
+ ======>
+
+ STRUCTURE DU CONCEPT MODE_FZ  CALCULE POUR          5 NUMEROS D'ORDRE
+
+ LISTE DES NOMS SYMBOLIQUES:
+ ! ---------- !----------------!
+ ! NUME_ORDRE !      DEPL      !
+ ! ---------- !----------------!
+ !          1 !     DEPL_R     !
+ !        ... !      ...       !
+ !          5 !     DEPL_R     !
+ ! ---------- !----------------!
+
+ LISTE DES NOMS DE VARIABLES D'ACCES:
+                                      FREQ             DE TYPE  R
+                                      NUME_MODE        DE TYPE  I
+                                      NOEUD_CMP        DE TYPE  K16
+
+ LISTE DES NOMS DE PARAMETRES:
+ ! ---------- !----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!
+ ! NUME_ORDRE !   AMOR_GENE    !  AMOR_REDUIT   !    CARAELEM    !    CHAMPMAT    !     EXCIT      !FACT_PARTICI_DX !FACT_PARTICI_DY !FACT_PARTICI_DZ !  MASS_EFFE_DX  !  MASS_EFFE_DY  !  MASS_EFFE_DZ  !MASS_EFFE_UN_DY !   MASS_GENE    !     MODELE     !     NORME      !    NUME_DDL    !     OMEGA2     !   RIGI_GENE    !   TYPE_DEFO    !   TYPE_MODE    !
+ ! ---------- !----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!
+ !          1 !       R        !       R        !       K8       !       K8       !      K24       !       R        !       R        !       R        !       R        !       R        !       R        !       R        !       R        !       K8       !      K24       !       I        !       R        !       R        !      K16       !      K16       !
+ !        ... !      ...       !      ...       !      ...       !      ...       !      ...       !      ...       !      ...       !      ...       !      ...       !      ...       !      ...       !      ...       !      ...       !      ...       !      ...       !      ...       !      ...       !      ...       !      ...       !      ...       !
+ !          5 !       R        !       R        !       K8       !       K8       !      K24       !       R        !       R        !       R        !       R        !       R        !       R        !       R        !       R        !       K8       !      K24       !       I        !       R        !       R        !      K16       !      K16       !
+ ! ---------- !----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!
+ ---------------------------------------------------------------------------
+ Concepts de la base: G
+    Nom       Type                 Taille (Mo)         Nombre      Nombre de
+                                                     d'objets       segments
+    TOTAL                                59.74           1354           1598
+
+    MAIL       MAILLAGE_SDASTER           0.12             36             60
+    MODELE     MODELE_SDASTER             0.07              8             13
+    CARAC      CARA_ELEM                  0.29             22             42
+    DYNATRAM   DYNA_TRANS                16.15            623            629
+    NUMEDDL    NUME_DDL_SDASTER           1.38             31             36
+    MODE_DX    MODE_MECA                  0.26             29             35
+    DYNATRAF   DYNA_TRANS                10.29            407            413
+    ACIER      MATER_SDASTER              0.00              5              5
+    CHMAT      CHAM_MATER                 0.00              6             11
+    LISTE      LISTR8_SDASTER             0.02              6              6
+    LISTE2     LISTR8_SDASTER             0.02              6              6
+    CL         CHAR_MECA                  0.04             23             43
+    CHARFX     CHAR_MECA                  0.04             14             29
+    CHARMX     CHAR_MECA                  0.04             14             29
+    _9000000   MATR_ELEM_DEPL_R           0.60              9             32
+    RIGID      MATR_ASSE_DEPL_R           0.92              5             11
+    _9000001   MATR_ELEM_DEPL_R           0.60              6             15
+    MASSE      MATR_ASSE_DEPL_R           0.87              4             10
+    MODE_FZ    MODE_MECA                  0.26             29             35
+    MODE_DRX   MODE_MECA                  0.21             26             32
+    &FOZERO                               0.00              2              2
+    &&_NUM_C                              0.00              1              1
+    &CATA.AC                              0.00              2              4
+    &CATA.CL                              0.85              1              3
+    &CATA.GD                              0.14              4             11
+    &CATA.ME                              0.20              2              4
+    &CATA.OP                              0.32              4             19
+    &CATA.PH                              0.00              1              1
+    &CATA.PR                              0.00              2              4
+    &CATA.TE                             26.04             17             42
+    &CATA.TH                              0.01              2              4
+    &CATA.TM                              0.01              7             11
+ ---------------------------------------------------------------------------
+
+
+     Nom de la base                          :  GLOBALE
+     Nombre d'enregistrements utilisés       :  90
+     Nombre d'enregistrements maximum        :  62914
+     Longueur d'enregistrement (octets)      :  819200
+     Nombre total d'accès en lecture         :  7
+     Volume des accès en lecture             :          5.47 Mo.
+     Nombre total d'accès en écriture        :  106
+     Volume des accès en écriture            :         82.81 Mo.
+     Nombre d'identificateurs utilisés       :  1632
+     Taille maximum du répertoire            :  2000
+     Pourcentage d'utilisation du répertoire :  81 %
+
+
+     Nom de la base                          :  VOLATILE
+     Nombre d'enregistrements utilisés       :  3
+     Nombre d'enregistrements maximum        :  62914
+     Longueur d'enregistrement (octets)      :  819200
+     Nombre total d'accès en lecture         :  0
+     Volume des accès en lecture             :          0.00 Mo.
+     Nombre total d'accès en écriture        :  6
+     Volume des accès en écriture            :          4.69 Mo.
+     Nombre d'identificateurs utilisés       :  957
+     Taille maximum du répertoire            :  2000
+     Pourcentage d'utilisation du répertoire :  47 %
+
+ <FIN> Arrêt normal dans "FIN".
+ <I> <FIN> ARRET NORMAL DANS "FIN" PAR APPEL A "JEFINI".
+
+ La mémoire demandée au lancement est surestimée, elle est de 2048.00 Mo.
+ Le pic mémoire utilisée est de 988.27 Mo.
+
+
+
+     Nom de la base                          :  ELEMBASE
+     Nombre d'enregistrements utilisés       :  44
+     Nombre d'enregistrements maximum        :  512
+     Longueur d'enregistrement (octets)      :  819200
+     Nombre total d'accès en lecture         :  62
+     Volume des accès en lecture             :         48.44 Mo.
+     Nombre total d'accès en écriture        :  0
+     Volume des accès en écriture            :          0.00 Mo.
+     Nombre d'identificateurs utilisés       :  123
+     Taille maximum du répertoire            :  300
+     Pourcentage d'utilisation du répertoire :  41 %
+
+ <I> <FIN> MEMOIRE JEVEUX MINIMALE REQUISE POUR L'EXECUTION :                      35.58 Mo
+ <I> <FIN> MEMOIRE JEVEUX OPTIMALE REQUISE POUR L'EXECUTION :                      69.34 Mo
+ <I> <FIN> MAXIMUM DE MEMOIRE UTILISEE PAR LE PROCESSUS LORS DE L'EXECUTION :     988.27 Mo
+
+ <I>       FERMETURE DES BASES EFFECTUEE
+
+   STATISTIQUES CONCERNANT L'ALLOCATION DYNAMIQUE :
+     TAILLE CUMULEE MAXIMUM            :                   69  Mo.
+     TAILLE CUMULEE LIBEREE            :                  552  Mo.
+     NOMBRE TOTAL D'ALLOCATIONS        :              2434581
+     NOMBRE TOTAL DE LIBERATIONS       :              2434561
+     APPELS AU MECANISME DE LIBERATION :                    0
+     TAILLE MEMOIRE CUMULEE RECUPEREE  :                    0  Mo.
+     VOLUME DES LECTURES               :                    0  Mo.
+     VOLUME DES ECRITURES              :                    0  Mo.
+
+   MEMOIRE JEVEUX MINIMALE REQUISE POUR L'EXECUTION :      35.58 Mo
+     - IMPOSE DE NOMBREUX ACCES DISQUE
+     - RALENTIT LA VITESSE D'EXECUTION
+   MEMOIRE JEVEUX OPTIMALE REQUISE POUR L'EXECUTION :      69.34 Mo
+     - LIMITE LES ACCES DISQUE
+     - AMELIORE LA VITESSE D'EXECUTION
+   MAXIMUM DE MEMOIRE UTILISEE PAR LE PROCESSUS     :     988.27 Mo
+     - COMPREND LA MEMOIRE CONSOMMEE PAR  JEVEUX,
+       LE SUPERVISEUR PYTHON, LES LIBRAIRIES EXTERNES
+
+ <I>       FIN D'EXECUTION LE : SA-19-JANV-2019 18:46:18
+
+
+  <I> Informations sur les temps d'exécution
+      Temps cpu user total                   15.41 s
+      Temps cpu systeme total                 2.01 s
+      Temps elapsed total                    14.80 s
+      Temps restant                         875.20 s
+
+
+  La signature de la base sauvegardée est (à l'adresse 0) :
+    074ebfec8811697fdc83d4125ef5a042dd62298d
+
+ ********************************************************************************
+ * COMMAND                  :       USER :     SYSTEM :   USER+SYS :    ELAPSED *
+ ********************************************************************************
+ * init (jdc)               :       0.56 :       0.13 :       0.69 :       0.70 *
+ *  . compile               :       0.01 :       0.00 :       0.01 :       0.01 *
+ *  . exec_compile          :       0.07 :       0.00 :       0.07 :       0.07 *
+ *  . report                :       0.02 :       0.00 :       0.02 :       0.03 *
+ *  . build                 :       0.00 :       0.00 :       0.00 :       0.00 *
+ * DEBUT                    :       0.02 :       0.01 :       0.03 :       0.04 *
+ * LIRE_MAILLAGE            :       0.01 :       0.00 :       0.01 :       0.01 *
+ * AFFE_MODELE              :       0.00 :       0.01 :       0.01 :       0.01 *
+ * AFFE_CARA_ELEM           :       0.11 :       0.08 :       0.19 :       0.06 *
+ * DEFI_MATERIAU            :       0.00 :       0.00 :       0.00 :       0.00 *
+ * AFFE_MATERIAU            :       0.00 :       0.01 :       0.01 :       0.00 *
+ * DEFI_LIST_REEL           :       0.00 :       0.00 :       0.00 :       0.00 *
+ * DEFI_LIST_REEL           :       0.00 :       0.00 :       0.00 :       0.00 *
+ * AFFE_CHAR_MECA           :       0.00 :       0.00 :       0.00 :       0.01 *
+ * AFFE_CHAR_MECA           :       0.00 :       0.00 :       0.00 :       0.00 *
+ * AFFE_CHAR_MECA           :       0.01 :       0.00 :       0.01 :       0.01 *
+ * ASSEMBLAGE               :       0.05 :       0.04 :       0.09 :       0.02 *
+ * DYNA_VIBRA               :       4.98 :       0.34 :       5.32 :       4.99 *
+ * CALC_MODES               :       0.41 :       0.01 :       0.42 :       0.18 *
+ * CALC_MODES               :       0.39 :       0.01 :       0.40 :       0.18 *
+ * CALC_MODES               :       0.32 :       0.01 :       0.33 :       0.14 *
+ * DYNA_VIBRA               :       7.42 :       0.25 :       7.67 :       7.65 *
+ * CALC_CHAMP               :       0.22 :       0.24 :       0.46 :       0.13 *
+ * CALC_CHAMP               :       0.19 :       0.21 :       0.40 :       0.11 *
+ * CALC_CHAMP               :       0.29 :       0.24 :       0.53 :       0.21 *
+ * CALC_CHAMP               :       0.22 :       0.24 :       0.46 :       0.16 *
+ * TEST_RESU                :       0.01 :       0.00 :       0.01 :       0.00 *
+ * TEST_RESU                :       0.00 :       0.00 :       0.00 :       0.01 *
+ * TEST_RESU                :       0.00 :       0.00 :       0.00 :       0.00 *
+ * TEST_RESU                :       0.00 :       0.00 :       0.00 :       0.00 *
+ * TEST_RESU                :       0.01 :       0.00 :       0.01 :       0.00 *
+ * TEST_RESU                :       0.00 :       0.00 :       0.00 :       0.01 *
+ * TEST_RESU                :       0.00 :       0.00 :       0.00 :       0.00 *
+ * TEST_RESU                :       0.01 :       0.00 :       0.01 :       0.00 *
+ * TEST_RESU                :       0.00 :       0.00 :       0.00 :       0.00 *
+ * TEST_RESU                :       0.00 :       0.00 :       0.00 :       0.01 *
+ * TEST_RESU                :       0.00 :       0.00 :       0.00 :       0.00 *
+ * TEST_RESU                :       0.00 :       0.00 :       0.00 :       0.00 *
+ * TEST_RESU                :       0.00 :       0.00 :       0.00 :       0.00 *
+ * TEST_RESU                :       0.01 :       0.00 :       0.01 :       0.00 *
+ * TEST_RESU                :       0.00 :       0.00 :       0.00 :       0.00 *
+ * TEST_RESU                :       0.00 :       0.00 :       0.00 :       0.01 *
+ * TEST_RESU                :       0.00 :       0.00 :       0.00 :       0.00 *
+ * TEST_RESU                :       0.01 :       0.00 :       0.01 :       0.00 *
+ * TEST_RESU                :       0.00 :       0.00 :       0.00 :       0.00 *
+ * TEST_RESU                :       0.00 :       0.00 :       0.00 :       0.01 *
+ * TEST_RESU                :       0.00 :       0.00 :       0.00 :       0.00 *
+ * TEST_RESU                :       0.00 :       0.00 :       0.00 :       0.00 *
+ * TEST_RESU                :       0.00 :       0.00 :       0.00 :       0.00 *
+ * TEST_RESU                :       0.01 :       0.00 :       0.01 :       0.00 *
+ * TEST_RESU                :       0.00 :       0.00 :       0.00 :       0.01 *
+ * TEST_RESU                :       0.00 :       0.00 :       0.00 :       0.00 *
+ * TEST_RESU                :       0.01 :       0.00 :       0.01 :       0.00 *
+ * TEST_RESU                :       0.00 :       0.00 :       0.00 :       0.01 *
+ * TEST_RESU                :       0.00 :       0.00 :       0.00 :       0.00 *
+ * TEST_RESU                :       0.00 :       0.00 :       0.00 :       0.00 *
+ * TEST_RESU                :       0.00 :       0.00 :       0.00 :       0.00 *
+ * FIN                      :       0.02 :       0.05 :       0.07 :       0.07 *
+ *  . part Superviseur      :       0.76 :       0.31 :       1.07 :       0.86 *
+ *  . part Fortran          :      14.65 :       1.71 :      16.36 :      13.95 *
+ ********************************************************************************
+ * TOTAL_JOB                :      15.41 :       2.01 :      17.42 :      14.80 *
+ ********************************************************************************
+
+EXECUTION_CODE_ASTER_EXIT_18900-0001-dsp0837509=0
+<INFO> Exécution Code_Aster terminée, diagnostic : <A>_ALARM
+
+--------------------------------------------------------------------------------
+ Contenu de /local00/tmp/G79848-dsp0837509-interactif_18900-0001-dsp0837509 après l'exécution
+
+.:
+total 82348
+drwx------  3 G79848 rdusers     4096 janv. 19 18:46 .
+drwxrwxrwt 17 root   root       65536 janv. 19 18:46 ..
+-rw-r--r--  1 G79848 rdusers      773 janv. 19 18:46 18900-0001-dsp0837509.export
+-rw-r--r--  1 G79848 rdusers     3077 janv. 19 18:46 config.txt
+-rw-r--r--  1 G79848 rdusers    18259 janv. 19 18:46 fort.1
+-rw-r--r--  1 G79848 rdusers    18259 janv. 19 18:46 fort.1.1
+-rw-r--r--  1 G79848 rdusers  3437575 janv. 19 18:46 fort.15
+-rw-r--r--  1 G79848 rdusers   114601 janv. 19 18:46 fort.20
+-rw-r--r--  1 G79848 rdusers   187814 janv. 19 18:46 fort.6
+-rw-r--r--  1 G79848 rdusers        0 janv. 19 18:46 fort.8
+-rw-r--r--  1 G79848 rdusers        0 janv. 19 18:46 fort.9
+-rw-r--r--  1 G79848 rdusers 73728008 janv. 19 18:46 glob.1
+-rw-r--r--  1 G79848 rdusers       44 janv. 19 18:46 info_cpu
+-rw-r--r--  1 G79848 rdusers  5068130 janv. 19 18:46 pick.1
+drwxr-xr-x  2 G79848 rdusers     4096 janv. 19 18:46 REPE_OUT
+-rw-r--r--  1 G79848 rdusers  2457608 janv. 19 18:46 vola.1
+
+REPE_OUT:
+total 8
+drwxr-xr-x 2 G79848 rdusers 4096 janv. 19 18:46 .
+drwx------ 3 G79848 rdusers 4096 janv. 19 18:46 ..
+
+
+--------------------------------------------------------------------------------
+ Taille des bases
+
+<INFO> taille de vola.1 :      2457608 octets
+<INFO> taille de glob.1 :     73728008 octets
+<INFO> taille de pick.1 :      5068130 octets
+
+--------------------------------------------------------------------------------
+ Copie des résultats
+
+copie de .../fort.6...                                                  [  OK  ]
+compression de glob.1                                                   [  OK  ]
+compression de pick.1                                                   [  OK  ]
+copie de .../glob.1.gz...                                               [  OK  ]
+copie de .../pick.1.gz...                                               [  OK  ]
+
+<A>_ALARM          Exécution de Code_Aster terminée
+
+
+
+ ---------------------------------------------------------------------------------
+                                            cpu    système    cpu+sys     écoulé
+ ---------------------------------------------------------------------------------
+   Préparation de l'environnement          0.00       0.00       0.00       0.00
+   Copie des données                       0.01       0.01       0.02       0.03
+   Exécution de Code_Aster                16.35       2.42      18.77      15.81
+   Copie des résultats                     1.24       0.04       1.28       1.30
+ ---------------------------------------------------------------------------------
+   Total                                  17.66       2.53      20.19      17.36
+ ---------------------------------------------------------------------------------
+
+as_run 2018.1
+
+------------------------------------------------------------
+--- DIAGNOSTIC JOB : <A>_ALARM
+------------------------------------------------------------
+
+
+EXIT_CODE=0

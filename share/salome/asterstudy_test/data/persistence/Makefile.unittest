@@ -1,0 +1,46 @@
+#------------------------------------------------------------------------------
+diff4ast = $(patsubst %.ajs,%.diff4ast,$(wildcard *.ajs))
+diff4ajs2 = $(patsubst %.ajs,%.diff4ajs2,$(wildcard *.ajs))
+diff4ajs3 = $(patsubst %.ajs,%.diff4ajs3,$(wildcard *.ajs))
+#allajs2 = $(patsubst %.ajs,%.ajs.2,$(wildcard *.ajs))
+
+all: $(diff4ajs2) $(diff4ajs3) $(diff4ast)
+	@echo "OK"
+
+ajs2: $(allajs2)
+	@echo "Compare .ajs and .ajs.2 files"
+
+clean:
+	rm --force *.diff* *.apb* *.ast* *.ajs.* .diff*
+
+#------------------------------------------------------------------------------
+%.diff4ajs2: %.ajs.2
+	diff $*.ajs $< > $@
+
+%.apb.1: %.ajs
+	ajs2apb $< $@
+
+%.ast.1: %.apb.1
+	apb2ast $< $@
+
+%.apb.2: %.ast.1
+	ast2apb $< $@
+
+%.ajs.2: %.apb.2
+	apb2ajs $< $@
+
+#------------------------------------------------------------------------------
+%.diff4ast: %.ast.2
+	diff4ast $*.ast.1 $< > $@
+
+%.ast.2: %.ajs.2
+	ajs2ast $< $@
+
+#------------------------------------------------------------------------------
+%.diff4ajs3: %.ajs.3
+	diff $*.ajs $< > $@
+
+%.ajs.3: %.ast.2
+	ast2ajs $< $@
+
+#------------------------------------------------------------------------------

@@ -1,0 +1,45 @@
+mesh=LIRE_MAILLAGE(FORMAT='MED', UNITE=%INPUT%)
+
+mater=DEFI_MATERIAU(THER=_F(LAMBDA=%LAMBDA%,),)
+
+model=AFFE_MODELE(MAILLAGE=mesh,
+                  AFFE=_F(TOUT='OUI',
+                          PHENOMENE='THERMIQUE',
+                          MODELISATION=%MODELISATION%,),)
+
+matfield=AFFE_MATERIAU(MAILLAGE=mesh,
+                       AFFE=_F(TOUT='OUI',
+                               MATER=mater,),)
+
+
+%COND_STREAM=YES_STREAM{
+loadst=AFFE_CHAR_THER(MODELE=model,
+                      FLUX_REP=%FLUX_REP1%,
+                      TEMP_IMPO=%BC%,)
+}%
+
+%COND_STREAM=NO_STREAM{
+loadst=AFFE_CHAR_THER(MODELE=model,
+                      TEMP_IMPO=%BC%,)
+}%
+
+
+%COND_SOURCE=YES_SOURCE{
+loadso=AFFE_CHAR_THER(MODELE=model,
+                      SOURCE=%SOURCE%,)
+
+temp=THER_LINEAIRE(MODELE=model,
+                   CHAM_MATER=matfield,
+                   EXCIT=(_F(CHARGE=loadst,),
+                          _F(CHARGE=loadso)),)
+}%
+
+%COND_SOURCE=NO_SOURCE{
+temp=THER_LINEAIRE(MODELE=model,
+                   CHAM_MATER=matfield,
+                   EXCIT=_F(CHARGE=loadst,),)
+}%
+
+IMPR_RESU(FORMAT='MED',
+          RESU=_F(RESULTAT=temp),
+          UNITE=%OUTPUT%)

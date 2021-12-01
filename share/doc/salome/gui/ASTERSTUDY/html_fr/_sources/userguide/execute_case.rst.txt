@@ -1,0 +1,193 @@
+.. _userguide-execute_case:
+
+********
+Run case
+********
+
+To execute a case, you have to go to the *History View*.
+
+Select stages to execute
+========================
+
+.. |stage_reuse| image:: /images/rt_reuse.png
+    :height: 24px
+.. |stage_run| image:: /images/rt_run.png
+    :height: 24px
+.. |stage_skip| image:: /images/rt_skip.png
+    :height: 24px
+.. |stage_keep| image:: /images/rt_keep.png
+    :height: 24px
+
+Before starting the calculation, the user must choose the stages to perform.
+To do this, he must click on the icons of the stages he wants to execute in his
+calculation:
+
+* |stage_run| to execute a stage,
+* |stage_skip| to skip a stage,
+* |stage_reuse| to reuse results of the previous calculation for a stage (see
+  below).
+
+.. note::
+    If a stage is selected for execution, the previous stages are also
+    automatically selected.
+
+    Likewise, if a stage is skipped, the following stages are skipped as well.
+
+    By default, if there are previous results, they are reused.
+
+The |stage_keep| button allows the user to specify whether or not to collect
+results from a previous calculation.
+When this button is pressed, the results for given stage are stored separately;
+otherwise, they are appended to the results of next stage.
+
+*Run Parameters* panel allows the user defining the execution parameters,
+such as a server to use, a maximum memory size, a maximum execution time...
+
+.. figure:: /images/execute_case.png
+    :alt: Execution parameters
+    :align: center
+
+    **Execution parameters**
+
+To start the calculation, the user has to
+
+* Select *CurrentCase* item in the *Cases* panel,
+* Select run options for each stage (as described above),
+* Specify the parameters of execution in the *Run parameters* panel,
+* Press **Run** button.
+
+The selected stages are then executed one after another.
+Animated hourglass icon indicates a stage (or stages) being calculated.
+
+.. figure:: /images/case_execution.png
+   :alt: Case execution
+   :align: center
+
+   **Case execution**
+
+.. |state_ok| image:: /images/state_ok.png
+    :height: 24px
+.. |state_error| image:: /images/state_error.png
+    :height: 24px
+.. |state_interrupted| image:: /images/state_interrupted.png
+    :height: 24px
+.. |state_nook| image:: /images/state_nook.png
+    :height: 24px
+
+The stages are represented with:
+
+* |state_ok| for successful execution,
+* |state_error| for failed execution,
+* |state_interrupted| for interrupted execution (time limit for example),
+* |state_nook| for testcases with inexact results (``NOOK_TEST_RESU``).
+
+Stages for which previous results have been kept are displayed in a darker
+color, and with the *ok* icon.
+
+.. figure:: /images/case_execution2.png
+   :alt: Calculation results
+   :align: center
+
+   **Calculation results**
+
+Execution parameters
+====================
+
+Commonly used parameters can be changed in the *Basic* tab.
+The *User description* is a free text to identify a calculation.
+
+The other tab contains *Advanced* parameters. Some of them are dedicated
+to the submission of jobs on clusters (*partition*, *qos*, ...) and are
+the same as those that can be found in **JobManager**.
+
+*Extra parameters* are passed "as is" to the job scheduler.
+For example: ``#SBATCH --begin=now+1hour`` for *Slurm*. See your batch
+scheduler documentation for details.
+
+Track calculations
+==================
+
+The user can follow the execution using the tools located in the lower part of
+the window.
+
+.. figure:: /images/results.png
+    :alt: Track calculations toolbar
+    :align: center
+
+    **Track calculations toolbar**
+
+Output and messages
+===================
+
+The lower part of the window provides access to the output files of the
+execution and messages issued during the calculation (informations, alerts,
+errors).
+
+The *Output* panel allows viewing the log output produced for each run case.
+
+The drop-down list allows displaying a message file generated during the
+execution.
+
+The search box on the right allows you searching the text.
+The searched text is highlighted, and the user can browse its occurrences with
+the previous / next buttons.
+
+.. figure:: /images/execution_output.png
+    :alt: Output panel
+    :align: center
+
+    **Output panel**
+
+The *Messages* panel allows viewing the error, warning or information messages
+generated during the execution.
+
+The user can filter out the messages by categories by activating the buttons
+corresponding to each of the types of messages. It can also filter out
+messages by stages or by source by selecting the desired elements from the
+drop-down lists.
+
+.. figure:: /images/execution_messages.png
+    :alt: Messages panel
+    :align: center
+
+    **Messages panel**
+
+Re-run case
+===========
+
+It is possible to re-run a case by re-executing only some of its stages and
+starting from the results of previous executions.
+
+To do this, the user must select the run of which he wishes to reuse the
+results, then select from the context menu *Copy As Current*.
+
+.. figure:: /images/reuse_case.png
+   :alt: Reuse case results
+   :align: center
+
+   **Reuse case results**
+
+The user can then choose to re-use the results of the first stages by choosing
+the option *reuse* |stage_reuse|.
+
+.. figure:: /images/reuse_case2.png
+    :alt: Run case with reusing previous results
+    :align: center
+
+    **Run case with reusing previous results**
+
+It is thus possible to make several successive calculations.
+
+.. figure:: /images/reuse_case3.png
+    :alt: Successive executions
+    :align: center
+
+    **Successive executions**
+
+.. warning::
+    You must **always select** the *Current Case* (first node of the tree)
+    to start a calculation.
+
+The *Operations > Re-run* main menu (*Case View*) allows quickly re-executing
+the *Current case* with the same parameters as were used in the previous
+execution.

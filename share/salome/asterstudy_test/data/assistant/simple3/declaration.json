@@ -1,0 +1,78 @@
+{
+  "title": "Test calculation assistant",
+  "format": "2.1",
+  "class": "CalcWizard",
+  "pages": [
+    {
+      "title": "Page 1",
+      "parameters": [
+        {
+          "parameters": [
+            {
+              "name": "PARAM1",
+              "title": "Table with different data types",
+              "description": "Description of PARAM1",
+              "typ": "table",
+              "columns": [
+                {
+                  "name": "TABLE_PARAM1",
+                  "title": "String column",
+                  "typ": "string",
+                  "into": ["value1", "value2"]
+                },
+                {
+                  "name": "TABLE_PARAM2",
+                  "title": "Integer column",
+                  "typ": "int",
+                  "val_min": 1,
+                  "val_max": 100,
+                  "default": 10
+                },
+                {
+                  "name": "TABLE_PARAM3",
+                  "title": "Float column",
+                  "typ": "float",
+                  "val_max": 1e6,
+                  "default": 1.234e4
+                },
+                {
+                  "name": "TABLE_PARAM4",
+                  "title": "String column",
+                  "typ": "string",
+                  "regex": "[a-zA-Z]\\w{1,7}",
+                  "default": "test"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Page 2",
+      "parameters": [
+        {
+          "name": "PARAM2",
+          "title": "Integer QLineEdit",
+          "typ": "int",
+          "val_min": 1,
+          "val_max": 100,
+          "default": 10
+        },
+        {
+          "name": "PARAM3",
+          "title": "Integer QComboBox",
+          "typ": "int",
+          "into": [11, 22],
+          "default": 22
+        },
+        {
+          "name": "PARAM4",
+          "title": "QCheckBox",
+          "typ": "bool",
+          "default": true
+        }
+      ]
+    }
+  ]
+}

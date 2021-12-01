@@ -1,0 +1,55 @@
+{
+  "history": {
+    "cases": [
+      {
+        "name": "Case_1",
+        "stages": [
+          1,
+          2
+        ]
+      }
+    ],
+    "stages": [
+      {
+        "name": "Stage_1",
+        "text": "mesh = LIRE_MAILLAGE(FORMAT='MED', NOM_MED='Mesh_recette', UNITE=20)",
+        "files": [
+          {
+            "handle": 20,
+            "filename": "/dn20/salome/akl/ASTERGUI/workspace/asterstudy/test/squish/suite_acceptance_lot1_lot2/tst_commands_creation/Mesh_recette.med",
+            "attr": 1,
+            "embedded": true
+          }
+        ],
+        "result": {
+          "job": {}
+        },
+        "uid": 1
+      },
+      {
+        "name": "Stage_2",
+        "text": "PRE_GMSH(UNITE_GMSH=19, UNITE_MAILLAGE=20)",
+        "mode": "Text",
+        "files": [
+          {
+            "handle": 19,
+            "filename": "/dn20/salome/akl/ASTERGUI/workspace/values.dat",
+            "attr": 1
+          },
+          {
+            "handle": 20,
+            "filename": "/dn20/salome/akl/ASTERGUI/workspace/output.dat"
+          }
+        ],
+        "result": {
+          "job": {}
+        },
+        "uid": 2
+      }
+    ],
+    "aster": "stable",
+    "versionMajor": 14,
+    "versionMinor": 4
+  },
+  "minor": 10
+}

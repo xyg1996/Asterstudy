@@ -1,0 +1,22 @@
+RESU=CALC_CHAMP(reuse=RESU,RESULTAT=RESU,CRITERES=('SIEQ_ELNO'),CONTRAINTE=('SIEF_ELNO'))
+
+
+TA=POST_RELEVE_T(ACTION=_F(OPERATION='EXTREMA',
+                           INTITULE='VALEMAX',
+                           RESULTAT=RESU,
+                           NOM_CHAM='SIEQ_ELNO',),);
+
+TS=MACR_LIGN_COUPE(RESULTAT=RESU,
+                   NOM_CHAM='SIEF_ELNO',
+                   LIGN_COUPE=_F(TYPE='SEGMENT',
+                                 NB_POINTS=10,
+                                 COOR_ORIG=(0.18,3,0,),
+                                 COOR_EXTR=(0.2,3,0,),),);
+
+IMPR_TABLE(TABLE=TS,
+           NOM_PARA='SIYY',);
+
+IMPR_RESU(FORMAT='MED',
+          RESU=(_F(MAILLAGE=MAIL,
+                   RESULTAT=RESU,),
+                _F(RESULTAT=TEMPE,),),);

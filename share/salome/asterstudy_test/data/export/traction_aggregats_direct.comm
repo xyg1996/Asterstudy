@@ -1,0 +1,453 @@
+DEBUT(PAR_LOT='NON');
+
+# Given by Ledbetter
+C11 = 228000.0; # MPa
+C12 = 132000.0; # MPa
+C44 = 116000.0; # MPa
+
+list_temp = [-150,27]
+
+tau_0  = 363.   # MPa
+rho_ini=8.E6    # en mm**-2
+rho_m=1.E6
+#rho_ini_bai= 1.E7    # en mm**-2
+#rho_m_bai=rho_ini_bai
+#y_at   = 2.e-6    # mm
+N      = 20.
+gamma0 = 1.E-6    # s**-1
+GH      = 1.e11    # s**-1
+b      = 0.248E-6 # mm
+DeltaG0= 0.84     # eV  #############=> a convertir en SI, mais pas grave car homogene a  k
+epsi_1 = 3.e-4    # s**-1
+D      = 10e-6   # mm
+#D_bai      = 0.0001   # mm
+beta   = 0.2
+d_lat  = 0.005 #mm
+#d_lat_bai  = 0.001 #mm
+k      = 8.62E-5  # "Constante de Boltzmann, en eV/K"#############=> a convertir en S.I.
+
+a_coli=0.7
+a_ncol=0.1
+a_self=0.1024
+alpha_self=sqrt(a_self)
+#RHO_0  = 1.E5    # en mm**-2
+
+
+#parametres identifies avec MACR_RECAL pour toutes les temperatures
+K_self__ =100.
+K_self=K_self__
+#list_K_self_bai=[10,40,70,70]
+tau_f__ =35.
+tau_f=tau_f__
+y_at=2.e-06
+
+
+mail_libre=0
+defi_groups=1
+defi_orientations=0
+#    prefix_nomgr specifies the prefix of the names of the grains (GROUP_MA)
+prefix_nomgr="GRAI"
+# setting the number of germs (this can be independant from the number
+# of orientations in the texture)
+Ng = 300
+
+#vitess_char=1.e-4
+
+# to be calculated every tensile
+epsmax=6.e-3
+#epsmax=(6.e-2*16.44)/(18.33+6.e-2*16.44)
+#TFIN=epsmax/epsi_1
+TFIN=200
+
+#=====  1 - MESH READING  AND MODEL DEFINITION =================================
+
+MAIL=LIRE_MAILLAGE(UNITE=20, FORMAT='MED',);
+#MAIL=LIRE_MAILLAGE(UNITE=21,FORMAT='ASTER',VERI_MAIL=_F(VERIF='OUI',),);
+
+# global dimension
+
+TABG=RECU_TABLE(CO=MAIL,
+                NOM_TABLE='CARA_GEOM',);
+
+IMPR_TABLE(TABLE=TABG,);
+
+if defi_groups==1:
+   xmin=TABG['X_MIN',1]
+   xmax=TABG['X_MAX',1]
+   ymin=TABG['Y_MIN',1]
+   ymax=TABG['Y_MAX',1]
+   zmin=TABG['Z_MIN',1]
+   zmax=TABG['Z_MAX',1]
+else:
+# 50 microns, en m
+   xmin = 0.0;
+   xmax = 1.0
+   ymin = 0.0;
+   ymax =1.0;
+   zmin = 0.0;
+   zmax = 1.0;
+dim=zmax-zmin
+
+print('Dimensions x',xmin,xmax)
+print('Dimensions y',ymin,ymax)
+print('Dimensions z',zmin,zmax)
+
+haut = (ymax - ymin);
+haut_new=6.
+
+precis = (haut / 1000.0);
+
+MAIL=DEFI_GROUP(reuse =MAIL,
+                MAILLAGE=MAIL,
+                 CREA_GROUP_MA=(
+                                _F(NOM='vol',
+                                   TOUT='OUI',
+                                   TYPE_MAILLE='3D',
+                                   ),
+#                                _F(NOM='TOUT', TOUT='OUI',),
+                              ),
+                  );
+
+
+
+MACR_INFO_MAIL(MAILLAGE=MAIL)
+
+"""
+MO=AFFE_MODELE(MAILLAGE=MAIL,
+#               INFO=2,
+#               DISTRIBUTION=_F(METHODE='GROUP_ELEM'),
+               AFFE=(_F(
+#                        GROUP_MA='vol',
+                       TOUT='OUI',
+                       PHENOMENE='MECANIQUE',
+                       MODELISATION=('3D'),
+#                       MODELISATION=('D_PLAN','D_PLAN_SI',),
+                      ),
+#                      _F(GROUP_MA='PTS',
+#                        PHENOMENE='MECANIQUE',
+#                        MODELISATION='DIS_TR',),
+                     ),
+               );
+
+
+
+
+# define the orientations of each elset for each germ
+INCLUDE(UNITE=31,);
+
+#=====  2 - MATERIAL DEFINITION ================================================
+#print "Defining the material..."
+Coef = 1.0;
+
+TEMPC=list_temp[1]; #en C
+TEMP=(273.15+TEMPC) #en K
+l_c = 500.*b*(TEMP/300.)**2
+Str_titre='Temp='+str(TEMPC)
+
+    #definition de K_f fixé en fonction de K_self
+K_self_sur_K_f=3.
+denom= min( K_self_sur_K_f, 1.+ (K_self_sur_K_f -1.)*TEMP/300.)
+K_f= K_self/denom
+
+ACIER=DEFI_MATERIAU(ELAS_ORTH =_F(E_L = (C11+2*C12)*(C11-C12)*Coef/(C11+C12),
+                                        E_T = (C11+2*C12)*(C11-C12)*Coef/(C11+C12),
+                                        E_N = (C11+2*C12)*(C11-C12)*Coef/(C11+C12),
+                                        NU_LT = C12*Coef/(C11+C12),
+                                        NU_LN = C12*Coef/(C11+C12),
+                                        NU_TN = C12*Coef/(C11+C12),
+                                        G_LT = C44*Coef,
+                                        G_LN = C44*Coef,
+                                        G_TN = C44*Coef,),
+                      MONO_DD_CC=_F(
+                                B       =b,
+                                GH       =GH,
+                                DELTAG0 =DeltaG0,
+                                TAU_0   =tau_0,
+                                TAU_F   =tau_f,
+                                GAMMA0  =gamma0,
+                                N       =N,
+                                RHO_MOB =rho_m,
+                                D       =D,
+#                                BETA    =beta,
+                                D_LAT   =d_lat,
+                                Y_AT    =y_at,
+                                K_F     =K_f,
+                                K_SELF  =K_self,
+                                K_BOLTZ =k,
+                                H1      =a_self,
+                                H2      =a_coli,
+                                H3      =a_ncol,
+                                H4      =a_ncol,
+                                H5      =a_ncol,
+                                H6      =a_ncol,
+                                DEPDT=epsi_1, # version initiale
+#                                MU_MOY  =C12*Coef/(C11+C12),
+                                MU_MOY  =80000., # Average shear modulus
+                                 ),
+                    );
+
+COMPORT=DEFI_COMPOR(MONOCRISTAL=_F(MATER=ACIER,
+                                    ECOULEMENT='MONO_DD_CC',
+                                    ELAS='ELAS_ORTH',
+                                    FAMI_SYST_GLIS='CUBIQUE1',
+                                    ),);
+
+#COMPORT=DEFI_COMPOR(MONOCRISTAL=_F(MATER=ACIER,
+#                                   ECOULEMENT='MONO_VISC1',
+#                                   ECRO_ISOT='MONO_ISOT1',
+#                                   ECRO_CINE='MONO_CINE1',
+#                                   FAMI_SYST_GLIS='BCC24',),);
+TEMP300=CREA_CHAMP(OPERATION='AFFE',TYPE_CHAM='NOEU_TEMP_R',
+                   MAILLAGE=MAIL,
+                   AFFE=_F(TOUT='OUI',
+                           NOM_CMP='TEMP',
+                           VALE=TEMP),
+                   );
+
+CHMAT=AFFE_MATERIAU(MAILLAGE=MAIL,
+                    AFFE=_F(TOUT='OUI',
+                            MATER=ACIER,),
+                    AFFE_VARC=_F(TOUT='OUI',
+                                 NOM_VARC='TEMP',
+                                 CHAM_GD=TEMP300,
+                                 VALE_REF=TEMP,
+                                 ),
+                    );
+
+#CHMAT=AFFE_MATERIAU(MAILLAGE=MAIL,
+#                    AFFE=_F(TOUT='OUI',
+#                            MATER=ACIER,),);
+
+#=====  3 - LOADING AND MATERIAL AFFECTATION ===================================
+FO_EX=DEFI_FONCTION(
+                       NOM_PARA='INST',  NOM_RESU='DEPL',
+                       VALE=(  0. , 0., TFIN, 0.169745298), # INST 10
+#                       VALE=(  0. , 0., TFIN, 3.72780696309677E-01), # INST 20
+                       PROL_DROITE='LINEAIRE',
+                       )
+
+FO_EY=DEFI_FONCTION(
+                       NOM_PARA='INST',  NOM_RESU='DEPL',
+                       VALE=(  0. , 0., TFIN, -2.39080304262479E-01), # INST 10
+#                       VALE=(  0. , 0., TFIN, -5.08265584505613E-01), # INST 20
+                       PROL_DROITE='LINEAIRE',
+                       )
+FO_EZ=DEFI_FONCTION(
+                      NOM_PARA='INST',  NOM_RESU='DEPL',
+                       VALE=(  0. , 0., TFIN,  0.),
+                       PROL_DROITE='LINEAIRE',
+                        )
+
+TRAC1=AFFE_CHAR_MECA_F(MODELE=MO,
+                     DDL_IMPO=(_F(NOEUD='N1068',
+                                   DY=FO_EY,
+				   DX=FO_EX,
+				   DZ=FO_EZ,
+                                   ),
+                                ),
+                       );
+
+
+F1_EX=DEFI_FONCTION(
+                      NOM_PARA='INST',  NOM_RESU='DEPL',
+                       VALE=(  0. , 0., TFIN, 0.329211409),  # The INST 10
+#                       VALE=(  0. , 0., TFIN, 6.49515897869797E-01),  # The INST 20
+                       PROL_DROITE='LINEAIRE',
+                        )
+
+F1_EY=DEFI_FONCTION(
+                      NOM_PARA='INST',  NOM_RESU='DEPL',
+                       VALE=(  0. , 0., TFIN, -2.15557390535176E-01),  # The INST 10
+#                       VALE=(  0. , 0., TFIN, -4.43099956261115E-01),  # The INST 20
+                       PROL_DROITE='LINEAIRE',
+                        )
+#F1_UX=CALC_FONCTION(COMB=_F(FONCTION=FO_EX,
+#                            COEF=haut_new,),);
+
+TRAC2=AFFE_CHAR_MECA_F(MODELE=MO,
+                       DDL_IMPO=(_F(NOEUD='N5385',
+                                   DX=F1_EX,
+				   DY=F1_EY,
+				   DZ=FO_EZ,
+                                   ),
+                                ),
+                       );
+
+
+TRAC3=AFFE_CHAR_MECA_F(MODELE=MO,
+                       DDL_IMPO=(_F(NOEUD='N10385',
+                                   DX=F1_EX,
+				   DY=F1_EY,
+				   DZ=FO_EZ,
+                                   ),
+                                ),
+                       );
+
+#TRAC3=AFFE_CHAR_MECA(MODELE=MO,
+ #                    LIAISON_UNIF=(_F(GROUP_NO='l_0Y',
+  #                                    DDL='DY',),
+   #                               ),);
+
+NPAS = 200;
+
+NARCH = 20;
+
+#Attention, il faut changer chaque fois!
+nbgr=1
+nb_syst=12
+nvar=6 + 3 + nbgr*nb_syst*3 + nbgr*12 + 18
+liste_var = tuple(['V' + str(i) for i in range(1, 1+nvar)])
+liste_vale = 6*[0.0] + nbgr*nb_syst*[rho_ini, 0.0, 0.0] + nbgr*12*[0.0]+3*[0.0]+18*[0.0]
+
+# this list corresponds to the list of the 'archiving' instants
+#LINST=DEFI_LIST_REEL(DEBUT=0.,INTERVALLE=(_F(JUSQU_A=TFIN/10,NOMBRE=NARCH,),_F(JUSQU_A=TFIN,NOMBRE=NARCH,),),);
+LINST=DEFI_LIST_REEL(DEBUT=0.,
+                     INTERVALLE=(_F(JUSQU_A=TFIN,
+                                    NOMBRE=NARCH,),),);
+
+# for the resolution, a maximum increment of deformation of 0.05%
+# is required... Therefore, the number of steps is multiplied so
+# that the increment of deformation is under 5.E-4
+
+LINSTC=DEFI_LIST_REEL(DEBUT=0.,
+                      INTERVALLE=(_F(JUSQU_A=TFIN,
+                                  NOMBRE=NPAS,),),);
+
+LISTPS=DEFI_LIST_INST(DEFI_LIST=_F(LIST_INST=LINSTC,),
+                         ECHEC=_F(SUBD_NIVEAU=10,
+                                  SUBD_METHODE='MANUEL',
+                                  SUBD_PAS=10,
+                                  EVENEMENT='ERREUR',
+                                  SUBD_PAS_MINI=1e-8,
+                                  ACTION='DECOUPE'),
+                                  );                                   
+
+
+DDINIT=CREA_CHAMP(OPERATION='AFFE', TYPE_CHAM='ELGA_VARI_R',
+                   MODELE=MO,
+                   AFFE=_F(TOUT = 'OUI',
+                           NOM_CMP = liste_var,
+                           VALE= liste_vale,
+                           ),
+                   );
+#=====  4 - RESOLUTION ============================================
+
+SIG=STAT_NON_LINE(MODELE=MO,
+                  CHAM_MATER=CHMAT,
+                  CARA_ELEM=ORIELEM,
+                  EXCIT=(
+                         _F(CHARGE=TRAC1,),
+                         _F(CHARGE=TRAC2,),
+                         _F(CHARGE=TRAC3,),
+                         ),
+                  COMPORTEMENT=_F(RELATION='MONOCRISTAL',
+                               COMPOR=COMPORT,
+                               DEFORMATION='SIMO_MIEHE',
+                               RESI_INTE_RELA=1.E-6,
+                               ITER_INTE_MAXI=100,),
+                  ETAT_INIT=_F(VARI=DDINIT,),
+                  INCREMENT=_F(LIST_INST=LISTPS,
+                               INST_FIN=TFIN,),
+                  NEWTON=_F(PREDICTION='EXTRAPOLE',
+                            REAC_ITER=1,),
+                  METHODE='NEWTON_KRYLOV',
+                  SOLVEUR=_F(METHODE='PETSC',
+                            PRE_COND = 'LDLT_SP',
+                            PCENT_PIVOT = 50,
+                            RESI_RELA = 1.E-6,
+                            REAC_PRECOND = 5,
+                            ),
+                  CONVERGENCE=_F(RESI_GLOB_RELA=1.E-6,),
+                  ARCHIVAGE=_F(LIST_INST=LINST,),
+                 );
+
+#=====  5 - OUTPUT FIELDS CALCULATIONS =========================================
+# calculation of stress fields at nodes from gauss points
+# and strain field at nodes from displacement
+
+
+SIG=CALC_CHAMP(reuse=SIG,RESULTAT=SIG,CONTRAINTE=('SIGM_NOEU'));
+SIG=CALC_CHAMP(reuse=SIG,RESULTAT=SIG,CRITERES=('SIEQ_NOEU'))
+SIG=CALC_CHAMP(reuse=SIG,RESULTAT=SIG,VARI_INTERNE=('VARI_NOEU'))
+SIG=CALC_CHAMP(reuse =SIG, RESULTAT=SIG, DEFORMATION=('EPSG_ELGA','EPSG_NOEU'),);  # According to .mess, epsG is correct in the case of grande deformation
+# *** Le programme a besoin d'accéder au champ EPSI_ELGA de la structure  ***
+
+SIG=CALC_CHAMP(reuse =SIG, RESULTAT=SIG, DEFORMATION=('EPSI_ELGA','EPSI_NOEU'),);
+
+resu='SIG_____'
+vari=resu+'VARI_NOEU'
+
+IMPR_RESU(RESU=_F(#RESULTAT=RESUV2,
+                  RESULTAT=SIG,  
+                  MAILLAGE=MAIL,
+#                  GROUP_NO='AllNode',
+#                  GROUP_NO=('l_0X','l_1X','l_1Y','l_0Y'),
+                  TOUT='OUI',
+#                  NUME_ORDRE=(1,2,3),
+                  NOM_CMP=('V1', 'V2', 'V3', 'V4', 'V5', 'V6', 'V7', 'V8', 'V9', 'V10', 'V11', 'V12', 'V13', 'V14', 'V15', 'V16', 'V17', 'V18', 'V19', 'V20', 'V21', 'V22', 'V23', 'V24', 'V25', 'V26', 'V27', 'V28', 'V29', 'V30', 'V31', 'V32', 'V33', 'V34', 'V35', 'V36', 'V37', 'V38', 'V39', 'V40', 'V41', 'V42', 'V43', 'V44', 'V45', 'V46', 'V47', 'V48', 'V49', 'V50', 'V51', 'V52', 'V53', 'V54', 'V55', 'V56', 'V57', 'V58', 'V59', 'V60', 'V61', 'V62', 'V63', 'V64', 'V65', 'V66', 'V67', 'V68', 'V69', 'V70', 'V71', 'V72', 'V73', 'V74', 'V75'),
+                  ),
+          UNITE=35,)
+
+IMPR_RESU(FORMAT='MED',
+          UNITE=87,
+          RESU=_F(RESULTAT=SIG,
+#                  NUME_ORDRE=(10,20),
+                  ),
+          );
+# Calcul des moyennes
+INT_SXX=POST_ELEM(INTEGRALE=_F(TOUT='OUI',
+                               NOM_CHAM='SIEF_ELGA',
+                               NOM_CMP='SIXX',
+                               TYPE_MAILLE='3D',),
+                     MODELE=MO,
+                     RESULTAT=SIG,);
+INT_EXX=POST_ELEM(INTEGRALE=_F(TOUT='OUI',
+                               NOM_CHAM='EPSI_ELGA',
+                               NOM_CMP='EPXX',
+                               TYPE_MAILLE='3D',),
+                     MODELE=MO,
+                     RESULTAT=SIG,);
+
+CURVEX=CALC_TABLE(TABLE=INT_SXX,
+                  ACTION =(_F(OPERATION='COMB',TABLE =INT_EXX, NOM_PARA='INST'),
+                          )
+                  )
+
+IMPR_TABLE(TABLE=CURVEX,
+           FORMAT='TABLEAU',
+           NOM_PARA=('INST','MOYE_EPXX','MOYE_SIXX'),
+           UNITE=36,);
+
+TAB1=POST_RELEVE_T(ACTION=_F(OPERATION='EXTRACTION',
+                             INTITULE='deplacements',
+                             RESULTAT=SIG,
+                             NOM_CHAM='DEPL',
+                             NOEUD=('N1068', 'N1070', 'N1071', 'N1121', 'N1122', 'N1172', 'N1173', 'N1244', 'N1245', 'N1312', 'N1314', 'N1334', 'N1335', 'N1385', 'N1387', 'N1408', 'N6061', 'N6062', 'N6063', 'N6064', 'N6403', 'N6404', 'N6405', 'N6406', 'N6407', 'N6408', 'N6734', 'N6735', 'N6736', 'N6737', 'N6738', 'N6739', 'N6740', 'N6741', 'N6742', 'N6743', 'N6744', 'N6745', 'N6746', 'N6747', 'N6748', 'N6749', 'N6750', 'N6751', 'N6960', 'N6961', 'N6963', 'N6964', 'N7045', 'N7046', 'N7047', 'N7048', 'N7049', 'N7050', 'N7051', 'N7052', 'N7053', 'N7054', 'N7055', 'N7056', 'N7057', 'N7058', 'N7059', 'N7060', 'N7061', 'N7062', 'N7063', 'N7064', 'N7065', 'N7066', 'N7067', 'N7068', 'N7069', 'N7070', 'N7071', 'N7072', 'N7073', 'N7074', 'N7305', 'N7306', 'N7307', 'N7308', 'N7373', 'N7374', 'N7377', 'N7378'),
+                             NUME_ORDRE=(20,),
+#                             GROUP_NO='FAC1XY',
+#                             TOUT_CMP='OUI',
+                             NOM_CMP='DX',
+                             ),
+                  );
+
+IMPR_TABLE(TABLE=TAB1,
+           UNITE=61,
+           );
+
+TAB2=POST_RELEVE_T(ACTION=_F(OPERATION='EXTRACTION',
+                             INTITULE='deplacements',
+                             RESULTAT=SIG,
+                             NOM_CHAM='DEPL',
+                             NOEUD=('N1068', 'N1070', 'N1071', 'N1121', 'N1122', 'N1172', 'N1173', 'N1244', 'N1245', 'N1312', 'N1314', 'N1334', 'N1335', 'N1385', 'N1387', 'N1408', 'N6061', 'N6062', 'N6063', 'N6064', 'N6403', 'N6404', 'N6405', 'N6406', 'N6407', 'N6408', 'N6734', 'N6735', 'N6736', 'N6737', 'N6738', 'N6739', 'N6740', 'N6741', 'N6742', 'N6743', 'N6744', 'N6745', 'N6746', 'N6747', 'N6748', 'N6749', 'N6750', 'N6751', 'N6960', 'N6961', 'N6963', 'N6964', 'N7045', 'N7046', 'N7047', 'N7048', 'N7049', 'N7050', 'N7051', 'N7052', 'N7053', 'N7054', 'N7055', 'N7056', 'N7057', 'N7058', 'N7059', 'N7060', 'N7061', 'N7062', 'N7063', 'N7064', 'N7065', 'N7066', 'N7067', 'N7068', 'N7069', 'N7070', 'N7071', 'N7072', 'N7073', 'N7074', 'N7305', 'N7306', 'N7307', 'N7308', 'N7373', 'N7374', 'N7377', 'N7378'),
+                             NUME_ORDRE=(20,),
+#                             GROUP_NO='FAC1XY',
+#                             TOUT_CMP='OUI',
+                             NOM_CMP='DY',
+                             ),
+                  );
+
+IMPR_TABLE(TABLE=TAB2,
+           UNITE=62,
+           );
+"""
+FIN();

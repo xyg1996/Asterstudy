@@ -1,0 +1,200 @@
+{
+  "title": "Modal analysis",
+  "class": "ModalAnalysis",
+  "description": "Modal analysis case study",
+  "format": "2.1",
+  "pages": [
+    {
+      "title": "",
+      "description": "",
+      "parameters": [
+        {
+          "name": "INTRO",
+          "title": "Introduction",
+          "text": [
+            "This wizard will create a simple modal analysis.",
+            "",
+            "Boundary conditions are applied as blocked displacements.",
+            "",
+            "Requirements:",
+            "- MED file containing a 2D or 3D mesh."
+          ],
+          "typ": "text"
+        }
+      ]
+    },
+    {
+      "title": "Mesh selection",
+      "parameters": [
+        {
+          "name": "INPUT",
+          "title": "Specify input mesh",
+          "description": "Enter a path to the MED file or select an existing Mesh object from the list",
+          "typ": "mesh",
+          "unit": 20
+        }
+      ]
+    },
+    {
+      "title": "Model definition",
+      "parameters": [
+        {
+          "name": "MODELISATION",
+          "title": "What kind of model do you want to work on?",
+          "description": "Choose model type from the list",
+          "typ": "string",
+          "into": ["3D", "C_PLAN", "D_PLAN", "AXIS"],
+          "default": "3D"
+        }
+      ]
+    },
+    {
+      "title": "Material properties",
+      "parameters": [
+        {
+          "name": "E",
+          "title": "Young's modulus (E)",
+          "description": "Enter value >= {val_min}",
+          "typ": "float",
+          "val_min": 0,
+          "default": 2.1e11
+        },
+        {
+          "name": "RHO",
+          "title": "Density (p)",
+          "description": "Enter value >= {val_min}",
+          "typ": "float",
+          "val_min": 0,
+          "default": 7800.0
+        },
+        {
+          "name": "NU",
+          "title": "Poisson's ratio (v)",
+          "description": "Enter value between {val_min} and {val_max}",
+          "typ": "float",
+          "val_min": -1,
+          "val_max": 0.5,
+          "default": 0.3
+        }
+      ]
+    },
+    {
+      "title": "Boundary conditions",
+      "parameters": [
+        {
+          "name": "BC",
+          "title": "Imposed degrees of freedom on groups",
+          "description": "Select mesh groups and apply degrees of freedom on them",
+          "typ": "table",
+          "columns": [
+            {
+              "name": "GROUP_MA",
+              "title": "Group",
+              "typ": "groups_ma"
+            },
+            {
+              "name": "DX",
+              "typ": "float",
+              "mandatory": false
+            },
+            {
+              "name": "DY",
+              "typ": "float",
+              "mandatory": false
+            },
+            {
+              "name": "DZ",
+              "typ": "float",
+              "mandatory": false
+            }
+          ],
+          "rule": "{GROUP_MA!r} is not None and ({DX!r} is not None or {DY!r} is not None or {DZ!r} is not None)"
+        }
+      ]
+    },
+    {
+      "title": "Number of modes",
+      "parameters": [
+        {
+          "name": "MODES",
+          "title": "Criterion for eigenmodes search",
+          "description": "Choose a way to define modes and specify frequency parameters",
+          "typ": "choice",
+          "choices": [
+            {
+              "name": "PETITE",
+              "title": "N first eigenmodes",
+              "parameters": [
+                {
+                  "name": "FREQ_PETITE_NMAX",
+                  "title": "Number of frequencies",
+                  "description": "Enter value >= {val_min}",
+                  "typ": "int",
+                  "val_min": 0,
+                  "default": 10
+                }
+              ]
+            },
+            {
+              "name": "BANDE",
+              "title": "Frequency band",
+              "parameters": [
+                {
+                  "name": "FREQ_BANDE_LOWER",
+                  "title": "Lower frequency",
+                  "description": "Enter value >= {val_min}",
+                  "typ": "float",
+                  "val_min": 0,
+                  "default": 0
+                },
+                {
+                  "name": "FREQ_BANDE_UPPER",
+                  "title": "Upper frequency",
+                  "description": "Enter value >= {val_min}",
+                  "typ": "float",
+                  "val_min": 0,
+                  "default": 0
+                }
+              ]
+            },
+            {
+              "name": "CENTRE",
+              "title": "Frequency centered",
+              "parameters": [
+                {
+                  "name": "FREQ_CENTRE_TARGET",
+                  "title": "Target frequency",
+                  "description": "Enter value >= {val_min}",
+                  "typ": "float",
+                  "val_min": 0,
+                  "default": 0
+                },
+                {
+                  "name": "FREQ_CENTRE_NMAX",
+                  "title": "Number of frequencies",
+                  "description": "Enter value >= {val_min}",
+                  "typ": "int",
+                  "val_min": 0,
+                  "default": 10
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Result",
+      "parameters": [
+        {
+          "name": "OUTPUT",
+          "title": "Specify output result file",
+          "description": "Enter a path to the MED result file",
+          "typ": "file",
+          "mode": "out",
+          "unit": 80
+        }
+      ]
+    }
+  ]
+}
